@@ -197,6 +197,20 @@ dialog::backdrop{background:rgba(10,12,28,.55)}
 .mt-box p{color:var(--muted)}
 .mt-box svg{width:72px;height:72px;stroke:var(--brand);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 .mt-act{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:8px}
+a.chip{display:inline-block}
+.cats{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:14px}
+.ct{text-align:center;display:grid;gap:6px;justify-items:center;padding:6px 4px;border-radius:18px}
+.ct:hover i{transform:translateY(-3px)}
+.ct i{width:68px;height:68px;border-radius:22px;display:grid;place-items:center;font-size:1.8rem;font-style:normal;color:#15182E;transition:transform .15s}
+.ct b{font-size:.9rem;font-weight:600;line-height:1.2}.ct small{color:var(--muted);font-size:.75rem}
+.kl{font-size:.78rem;color:var(--brand);font-weight:600}
+.kat{padding-bottom:60px}
+.crumb{font-size:.9rem;color:var(--muted);margin:22px 0 14px}.crumb a{color:var(--brand);font-weight:600}
+.khero{display:flex;gap:18px;align-items:center;border-radius:28px;padding:28px 30px;margin-bottom:18px;color:#15182E}
+.khero.all{color:#fff;background:var(--brand)}
+.khero.nf{color:var(--ink);background:var(--surface);border:1px solid var(--line)}
+.khero i{width:72px;height:72px;border-radius:22px;background:rgba(255,255,255,.55);display:grid;place-items:center;font-size:2.2rem;font-style:normal;flex:none}
+.khero h1{font-size:clamp(1.8rem,5vw,2.8rem)}.khero p{opacity:.85;margin-top:4px}
 /* Akun */
 .acc{padding:28px 0 60px}
 .me{display:flex;align-items:center;gap:16px;background:var(--brand);color:#fff;border-radius:24px;padding:22px 24px;flex-wrap:wrap}
@@ -271,7 +285,7 @@ dialog::backdrop{background:rgba(10,12,28,.55)}
     </div>
   </div>
   <div class="subnav"><div class="wrap"><nav class="links" aria-label="Navigasi utama">
-    <a href="#produk">Produk</a><a href="#kenapa">Keunggulan</a><a href="#testimoni">Ulasan</a><a href="#lokasi">Lokasi</a><a href="#faq">FAQ</a><a href="#akun">Pesanan saya</a>
+    <a href="#produk">Produk</a><a href="#kategori">Kategori</a><a href="#kenapa">Keunggulan</a><a href="#testimoni">Ulasan</a><a href="#lokasi">Lokasi</a><a href="#faq">FAQ</a><a href="#akun">Pesanan saya</a>
   </nav></div></div>
 </header>
 
@@ -306,13 +320,20 @@ dialog::backdrop{background:rgba(10,12,28,.55)}
     </aside>
   </div>
 
+  <section id="jelajah" hidden style="padding-bottom:0">
+    <div class="wrap">
+      <div class="head"><h2>Belanja per kategori</h2><a class="btn btn-ghost sm" href="#kategori">Lihat semua</a></div>
+      <div class="cats" id="catGrid"></div>
+    </div>
+  </section>
+
   <section id="produk">
     <div class="wrap">
       <div class="head">
         <h2>Produk yang paling dicari</h2>
         <p>Masukkan ke keranjang, checkout, lalu selesaikan pembayaran lewat WhatsApp.</p>
       </div>
-      <div class="tools" id="sortBar" role="group" aria-label="Urutkan produk">
+      <div class="tools sortbar" id="sortBar" role="group" aria-label="Urutkan produk">
         <button class="chip on" data-sort="new" type="button">Terbaru</button>
         <button class="chip" data-sort="low" type="button">Termurah</button>
         <button class="chip" data-sort="high" type="button">Termahal</button>
@@ -389,6 +410,20 @@ dialog::backdrop{background:rgba(10,12,28,.55)}
       </div>
     </div>
   </section>
+</main>
+
+<!-- ============ KATEGORI ============ -->
+<main id="viewKat" class="wrap kat" hidden>
+  <nav class="crumb" aria-label="Breadcrumb"><a href="#">Beranda</a> / <a href="#kategori">Kategori</a><span id="kCrumb"></span></nav>
+  <div class="khero" id="kHero"><i id="kIco"></i><div><h1 id="kName"></h1><p id="kDesc"></p></div></div>
+  <div class="tools" id="kChips" role="navigation" aria-label="Pilih kategori"></div>
+  <div class="tools sortbar" id="sortBarKat" role="group" aria-label="Urutkan produk">
+    <button class="chip on" data-sort="new" type="button">Terbaru</button>
+    <button class="chip" data-sort="low" type="button">Termurah</button>
+    <button class="chip" data-sort="high" type="button">Termahal</button>
+    <button class="chip" data-sort="disc" type="button">Diskon terbesar</button>
+  </div>
+  <div class="grid" id="gridKat"></div>
 </main>
 
 <!-- ============ AKUN ============ -->
@@ -562,6 +597,8 @@ const byId = id => products.find(p => p.id === id);
 const isOut = p => p.stock != null && p.stock <= 0;
 const maxQty = p => p.stock == null ? 99 : Math.max(0, p.stock);
 
+let cats = [], catsLoaded = false, curKat = "";
+const origTitle = document.title;
 $("strip").textContent = CONFIG.stripText;
 $("yr").textContent = new Date().getFullYear();
 
@@ -570,32 +607,59 @@ const unit = p => !PROMO || p.price < (PROMO.min || 0) ? p.price : PROMO.type ==
 
 /* ---------- Produk ---------- */
 const pctOff = p => p.old > p.price ? Math.round((1 - p.price / p.old) * 100) : 0;
-function renderProducts(){
-  let list = products.filter(p => !term || (p.name + " " + (p.desc || "") + " " + (p.tag || "")).toLowerCase().includes(term));
-  const sorters = { new: null, low: (a, b) => a.price - b.price, high: (a, b) => b.price - a.price, disc: (a, b) => pctOff(b) - pctOff(a) };
-  if (sorters[sortBy]) list = list.slice().sort(sorters[sortBy]);
-  if (!list.length) { $("grid").innerHTML = `<p class="none">${term ? "Produk tidak ditemukan. Coba kata kunci lain." : "Belum ada produk."}</p>`; return; }
-  $("grid").innerHTML = list.map(p => {
-    const out = isOut(p), off = pctOff(p);
-    const stk = p.stock == null ? "" : out ? `<span class="stk low">Stok habis</span>` : `<span class="stk${p.stock <= 5 ? " low" : ""}">Stok ${p.stock}</span>`;
-    const act = isDemo ? `<button class="btn btn-ghost" disabled style="grid-column:1/-1">Contoh produk</button>`
-      : out ? `<button class="btn btn-ghost" disabled style="grid-column:1/-1">Stok habis</button>`
-      : `<button class="btn btn-ghost" data-add="${esc(p.id)}" aria-label="Tambah ${esc(p.name)} ke keranjang"><svg viewBox="0 0 24 24"><path d="M3 4h2l2.4 11.2a1 1 0 0 0 1 .8h8.8a1 1 0 0 0 1-.8L20 8H6.2"/><circle cx="9.5" cy="20" r="1.3"/><circle cx="17" cy="20" r="1.3"/></svg><span>Keranjang</span></button><button class="btn btn-primary" data-buy="${esc(p.id)}">Beli sekarang</button>`;
-    return `<article class="card">
+function cardHtml(p){
+  const out = isOut(p), off = pctOff(p), c = p.cat && cats.find(x => x.id === p.cat);
+  const stk = p.stock == null ? "" : out ? `<span class="stk low">Stok habis</span>` : `<span class="stk${p.stock <= 5 ? " low" : ""}">Stok ${p.stock}</span>`;
+  const act = isDemo ? `<button class="btn btn-ghost" disabled style="grid-column:1/-1">Contoh produk</button>`
+    : out ? `<button class="btn btn-ghost" disabled style="grid-column:1/-1">Stok habis</button>`
+    : `<button class="btn btn-ghost" data-add="${esc(p.id)}" aria-label="Tambah ${esc(p.name)} ke keranjang"><svg viewBox="0 0 24 24"><path d="M3 4h2l2.4 11.2a1 1 0 0 0 1 .8h8.8a1 1 0 0 0 1-.8L20 8H6.2"/><circle cx="9.5" cy="20" r="1.3"/><circle cx="17" cy="20" r="1.3"/></svg><span>Keranjang</span></button><button class="btn btn-primary" data-buy="${esc(p.id)}">Beli sekarang</button>`;
+  return `<article class="card">
     <div class="thumb${p.img ? " has-img" : ""}" style="background-color:${esc(p.color || "#ddd")};${bgImg(p)}">${p.tag ? `<span class="tag">${esc(p.tag)}</span>` : ""}${off ? `<span class="pct">-${off}%</span>` : ""}<i></i></div>
-    <div class="info"><h3>${esc(p.name)}</h3><p>${esc(p.desc)}</p>
+    <div class="info">${c ? `<a class="kl" href="#kategori/${esc(c.id)}">${esc(c.name)}</a>` : ""}<h3>${esc(p.name)}</h3><p>${esc(p.desc)}</p>
       <div class="price"><b>${rp(p.price)}</b>${p.old > p.price ? `<s>${rp(p.old)}</s>` : ""}</div>${stk}</div>
     <div class="acts">${act}</div></article>`;
-  }).join("");
 }
-$("grid").onclick = e => {
+function filtered(list){
+  let l = list.filter(p => !term || (p.name + " " + (p.desc || "") + " " + (p.tag || "")).toLowerCase().includes(term));
+  const sorters = { low: (a, b) => a.price - b.price, high: (a, b) => b.price - a.price, disc: (a, b) => pctOff(b) - pctOff(a) };
+  return sorters[sortBy] ? l.slice().sort(sorters[sortBy]) : l;
+}
+function renderProducts(){
+  const list = filtered(products);
+  $("grid").innerHTML = list.length ? list.map(cardHtml).join("") : `<p class="none">${term ? "Produk tidak ditemukan. Coba kata kunci lain." : "Belum ada produk."}</p>`;
+}
+/* Kategori: tile di beranda + halaman sendiri per kategori (#kategori/nama) */
+function renderCats(){
+  $("jelajah").hidden = !cats.length; if (!cats.length) return;
+  $("catGrid").innerHTML = cats.map(c => { const n = products.filter(p => p.cat === c.id).length;
+    return `<a class="ct" href="#kategori/${esc(c.id)}"><i style="background:${esc(c.color || "#B8B2FF")}">${esc(c.icon || "🛍️")}</i><b>${esc(c.name)}</b><small>${n} produk</small></a>`; }).join("");
+}
+function renderKat(){
+  if ($("viewKat").hidden) return;
+  const c = curKat ? cats.find(x => x.id === curKat) : null, hero = $("kHero");
+  $("kChips").innerHTML = `<a class="chip${!curKat ? " on" : ""}" href="#kategori">Semua produk</a>` + cats.map(x => `<a class="chip${x.id === curKat ? " on" : ""}" href="#kategori/${esc(x.id)}">${esc((x.icon ? x.icon + " " : "") + x.name)}</a>`).join("");
+  if (curKat && !c) {
+    hero.className = "khero nf"; hero.style.background = ""; $("kIco").textContent = "🔎";
+    $("kName").textContent = catsLoaded ? "Kategori tidak ditemukan" : "Memuat..."; $("kDesc").textContent = catsLoaded ? "Kategori ini tidak ada atau sedang disembunyikan." : "";
+    $("kCrumb").textContent = ""; $("gridKat").innerHTML = ""; document.title = origTitle; return;
+  }
+  hero.className = "khero" + (c ? "" : " all"); hero.style.background = c ? (c.color || "#B8B2FF") : "";
+  $("kIco").textContent = c ? (c.icon || "🛍️") : "🛒"; $("kName").textContent = c ? c.name : "Semua produk";
+  $("kDesc").textContent = c ? (c.desc || "") : "Pilih kategori di bawah untuk menyaring produk.";
+  $("kCrumb").textContent = c ? " / " + c.name : ""; document.title = (c ? c.name : "Semua produk") + " – Tokoku";
+  const list = filtered(products.filter(p => !c || p.cat === c.id));
+  $("gridKat").innerHTML = list.length ? list.map(cardHtml).join("") : `<p class="none">${term ? "Produk tidak ditemukan di kategori ini." : "Belum ada produk di kategori ini."}</p>`;
+}
+const gridClick = e => {
   const a = e.target.closest("[data-add]"), b = e.target.closest("[data-buy]");
   if (a) addCart(a.dataset.add);
   if (b) { if (addCart(b.dataset.buy, 1, true)) openCart(); }
 };
-$("sortBar").onclick = e => { const b = e.target.closest("[data-sort]"); if (!b) return; sortBy = b.dataset.sort; document.querySelectorAll("#sortBar .chip").forEach(c => c.classList.toggle("on", c === b)); renderProducts(); };
-$("searchForm").onsubmit = e => { e.preventDefault(); term = $("q").value.trim().toLowerCase(); if (location.hash === "#akun") location.hash = "#produk"; renderProducts(); document.getElementById("produk").scrollIntoView(); };
-$("q").oninput = () => { if (!$("q").value) { term = ""; renderProducts(); } };
+$("grid").onclick = gridClick; $("gridKat").onclick = gridClick;
+const sortClick = e => { const b = e.target.closest("[data-sort]"); if (!b) return; sortBy = b.dataset.sort; document.querySelectorAll(".sortbar .chip").forEach(c => c.classList.toggle("on", c.dataset.sort === sortBy)); renderProducts(); renderKat(); };
+$("sortBar").onclick = sortClick; $("sortBarKat").onclick = sortClick;
+$("searchForm").onsubmit = e => { e.preventDefault(); term = $("q").value.trim().toLowerCase(); if (location.hash === "#akun") location.hash = "#produk"; renderProducts(); renderKat(); if (!$("viewHome").hidden) document.getElementById("produk").scrollIntoView(); };
+$("q").oninput = () => { if (!$("q").value) { term = ""; renderProducts(); renderKat(); } };
 
 /* ---------- Keranjang ---------- */
 function cartLines(){
@@ -849,11 +913,13 @@ $("profForm").onsubmit = async e => {
 /* ---------- Routing sederhana ---------- */
 let routed = false;
 function route(){
-  const akun = location.hash === "#akun";
+  const h = location.hash, akun = h === "#akun", km = h.match(/^#kategori(?:\/([a-z0-9-]*))?$/), kat = !!km;
   if (akun && !user) { if (routed) { openAuth("in"); } location.hash = ""; return; }
-  $("viewHome").hidden = akun; $("viewAkun").hidden = !akun;
-  if (akun) { window.scrollTo(0, 0); renderOrders(); }
-  else if (location.hash.length > 1) setTimeout(() => document.querySelector(location.hash)?.scrollIntoView(), 0);
+  $("viewHome").hidden = akun || kat; $("viewAkun").hidden = !akun; $("viewKat").hidden = !kat;
+  if (!kat) document.title = origTitle;
+  if (kat) { curKat = km[1] || ""; window.scrollTo(0, 0); renderKat(); }
+  else if (akun) { window.scrollTo(0, 0); renderOrders(); }
+  else if (h.length > 1) setTimeout(() => { try { document.querySelector(h)?.scrollIntoView(); } catch (e) {} }, 0);
 }
 window.addEventListener("hashchange", () => { routed = true; route(); });
 setTimeout(() => { routed = true; }, 1500);
@@ -916,12 +982,16 @@ onSnapshot(collection(db, "products"), snap => {
   const list = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(p => p.active !== false).sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
   isDemo = !snap.size; products = snap.size ? list : DEMO;
   if (!isDemo) Object.keys(cart).forEach(id => { if (!byId(id)) delete cart[id]; });
-  renderProducts(); renderCart(); if (user) renderOrders();
+  renderProducts(); renderCats(); renderKat(); renderCart(); if (user) renderOrders();
 }, e => console.warn("Memakai data contoh:", e.code));
 onSnapshot(doc(db, "settings", "store"), s => { if (s.exists()) applySettings(s.data()); }, e => console.warn("Pengaturan tidak terbaca:", e.code));
 onSnapshot(collection(db, "banners"), snap => {
   renderBanners(snap.docs.map(d => d.data()).filter(b => b.active !== false).sort((a, b) => (a.order || 0) - (b.order || 0)));
 }, e => console.warn("Banner tidak terbaca:", e.code));
+onSnapshot(collection(db, "categories"), snap => {
+  cats = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(c => c.active !== false).sort((a, b) => (a.order || 0) - (b.order || 0));
+  catsLoaded = true; renderCats(); renderProducts(); renderKat();
+}, e => { catsLoaded = true; console.warn("Kategori tidak terbaca:", e.code); renderKat(); });
 </script>
 </body>
 </html>
