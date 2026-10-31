@@ -254,6 +254,11 @@ header nav{display:grid;grid-template-columns:1fr auto 1fr}
 .cform{display:flex;gap:8px;padding:10px;border-top:1px solid var(--line);align-items:flex-end}
 .cform textarea{resize:none;max-height:110px}
 .cform .btn{padding:11px 18px}
+.vb{display:inline-flex;width:17px;height:17px;flex:none}
+.vb svg{width:100%;height:100%}
+.cn{display:flex;align-items:center;gap:5px;font:700 .76rem var(--font-body);letter-spacing:.05em;margin-bottom:4px}
+.ch b.ct{display:flex;align-items:center;gap:6px;letter-spacing:.03em}
+.ch b.ct .vb{width:20px;height:20px}
 </style>
 </head>
 <body>
@@ -428,7 +433,7 @@ header nav{display:grid;grid-template-columns:1fr auto 1fr}
 
 <button class="cbtn" id="chatBtn" type="button" aria-controls="chatWin" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg><span>Chat admin</span><b class="cbadge" id="chatBadge" hidden>0</b></button>
 <section class="cwin" id="chatWin" role="dialog" aria-label="Chat dengan admin" hidden>
-  <div class="ch"><div><b>Chat dengan admin</b><small>Tanya produk, stok, atau pengiriman</small></div><button id="chatClose" type="button" aria-label="Tutup chat">&times;</button></div>
+  <div class="ch"><div><b class="ct">ADMIN TOKOKU <span class="vb" title="Akun resmi terverifikasi"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#C9A24B" d="M12 1.8l2.4 1.7 2.9-.1 1 2.8 2.4 1.7-.9 2.8.9 2.8-2.4 1.7-1 2.8-2.9-.1L12 22.2l-2.4-1.7-2.9.1-1-2.8-2.4-1.7.9-2.8-.9-2.8 2.4-1.7 1-2.8 2.9.1z"/><path d="M8 12.3l2.7 2.7 5.5-5.5" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></b><small>Akun resmi &middot; Tanya produk, stok, atau pengiriman</small></div><button id="chatClose" type="button" aria-label="Tutup chat">&times;</button></div>
   <form class="cname" id="chatNameForm" hidden>
     <p>Isi nama dulu supaya admin tahu siapa yang chat.</p>
     <input id="chatName" maxlength="40" required placeholder="Nama kamu" autocomplete="name" aria-label="Nama">
@@ -682,12 +687,14 @@ const cLS = { get: k => { try { return localStorage.getItem(k) || ""; } catch (e
 const cNameNow = () => (cUser && (cUser.displayName || (cUser.email || "").split("@")[0])) || cLS.get("tk_chat_name");
 const cTime = ts => ts && ts.seconds ? new Date(ts.seconds * 1000).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }) : "";
 
+const CHAT_VB = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#C9A24B" d="M12 1.8l2.4 1.7 2.9-.1 1 2.8 2.4 1.7-.9 2.8.9 2.8-2.4 1.7-1 2.8-2.9-.1L12 22.2l-2.4-1.7-2.9.1-1-2.8-2.4-1.7.9-2.8-.9-2.8 2.4-1.7 1-2.8 2.9.1z"/><path d="M8 12.3l2.7 2.7 5.5-5.5" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 function cNote(t){ const b = $c("chatMsgs"); b.textContent = ""; const p = document.createElement("p"); p.className = "cempty"; p.textContent = t; b.append(p); }
 function cRenderMsgs(list){
   const box = $c("chatMsgs"); box.textContent = "";
   if (!list.length) { cNote("Halo! Tanyakan apa saja soal produk, stok, atau pengiriman. Admin akan membalas di sini."); return; }
   list.forEach(m => {
     const d = document.createElement("div"); d.className = "cm " + (m.from === "admin" ? "adm" : "usr");
+    if (m.from === "admin") { const n = document.createElement("div"); n.className = "cn"; n.append(document.createTextNode("ADMIN TOKOKU")); const v = document.createElement("span"); v.className = "vb"; v.title = "Akun resmi terverifikasi"; v.innerHTML = CHAT_VB; n.append(v); d.append(n); }
     if (m.prodName) { const p = document.createElement("div"); p.className = "cp"; p.textContent = "Produk: " + m.prodName + (m.prodPrice ? " · " + rp(m.prodPrice) : ""); d.append(p); }
     const t = document.createElement("div"); t.textContent = m.text; d.append(t);
     const tm = document.createElement("small"); tm.textContent = cTime(m.createdAt); d.append(tm);
