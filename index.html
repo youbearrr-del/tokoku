@@ -1,115 +1,770 @@
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-
-    // GANTI dengan email admin yang sama seperti ADMIN_EMAILS di admin.html
-    function isAdmin() {
-      return request.auth != null
-        && 'email' in request.auth.token
-        && request.auth.token.email in ['admin@tokoku.com'];
-    }
-
-    // Pemilik dokumen (uid di path sama dengan uid yang login, termasuk login anonim)
-    function isOwner(uid) {
-      return request.auth != null && request.auth.uid == uid;
-    }
-
-    // Saat mode maintenance aktif (settings/store.maintenance), pelanggan tidak bisa membuat pesanan
-    function inMaintenance() {
-      return exists(/databases/$(database)/documents/settings/store)
-        && get(/databases/$(database)/documents/settings/store).data.get('maintenance', false) == true;
-    }
-
-    // Validasi isi satu pesan chat
-    function msgOk(d) {
-      return d.keys().hasOnly(['from', 'text', 'name', 'prodName', 'prodPrice', 'createdAt'])
-        && d.keys().hasAll(['from', 'text', 'createdAt'])
-        && d.text is string && d.text.size() > 0 && d.text.size() <= 1000
-        && d.createdAt == request.time
-        && (!('name' in d) || (d.name is string && d.name.size() <= 40))
-        && (!('prodName' in d) || (d.prodName is string && d.prodName.size() <= 120))
-        && (!('prodPrice' in d) || d.prodPrice is number);
-    }
-
-    // Etalase: siapa pun boleh melihat, hanya admin yang boleh mengubah
-    match /products/{id} { allow read: if true; allow write: if isAdmin(); }
-    match /banners/{id}  { allow read: if true; allow write: if isAdmin(); }
-    match /categories/{id} { allow read: if true; allow write: if isAdmin(); }
-    match /settings/{id} { allow read: if true; allow write: if isAdmin(); }
-
-    // Kode promo: pembeli hanya bisa memeriksa satu kode, tidak bisa melihat daftar
-    match /promos/{code} {
-      allow get: if true;
-      allow list, write: if isAdmin();
-    }
-
-    // Keuangan: hanya admin
-    match /finance/{id} { allow read, write: if isAdmin(); }
-
-    // Riwayat stok: hanya admin
-    match /stocklog/{id} { allow read, write: if isAdmin(); }
-
-    // Pesanan: pelanggan yang login boleh membuat dan melihat pesanannya sendiri.
-    // Hanya admin yang boleh mengubah status, konfirmasi pembayaran, atau menghapus.
-    match /orders/{id} {
-      allow create: if request.auth != null
-        && request.resource.data.uid == request.auth.uid
-        && request.resource.data.status == 'Menunggu Pembayaran'
-        && request.resource.data.paid == false
-        && request.resource.data.total is number
-        && request.resource.data.total >= 0
-        && request.resource.data.items is list
-        && request.resource.data.items.size() > 0
-        && request.resource.data.items.size() <= 30
-        && (!inMaintenance() || isAdmin());
-      allow read: if isAdmin()
-        || (request.auth != null && resource.data.uid == request.auth.uid);
-      allow update, delete: if isAdmin();
-    }
-
-    // Profil pelanggan: pemiliknya dan admin.
-    // Pelanggan tidak boleh mengubah field blocked dan note (hanya admin).
-    match /users/{uid} {
-      allow read: if isAdmin() || isOwner(uid);
-      allow create: if isAdmin()
-        || (isOwner(uid) && !('blocked' in request.resource.data) && !('note' in request.resource.data));
-      allow update: if isAdmin()
-        || (isOwner(uid)
-            && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['blocked', 'note']));
-    }
-
-    // ===== CHAT PELANGGAN <-> ADMIN =====
-    // chats/{uid}            : ringkasan percakapan (satu dokumen per pelanggan)
-    // chats/{uid}/messages/* : isi pesan
-    match /chats/{uid} {
-      allow read: if isAdmin() || isOwner(uid);
-
-      allow create: if isAdmin()
-        || (isOwner(uid)
-            && request.resource.data.uid == uid
-            && request.resource.data.keys().hasOnly(['uid', 'name', 'email', 'lastMsg', 'lastFrom', 'lastAt', 'unreadAdmin', 'unreadUser', 'prod'])
-            && request.resource.data.get('name', '') is string
-            && request.resource.data.get('name', '').size() <= 40
-            && request.resource.data.get('lastMsg', '').size() <= 100);
-
-      allow update: if isAdmin()
-        || (isOwner(uid)
-            && request.resource.data.uid == resource.data.uid
-            && request.resource.data.diff(resource.data).affectedKeys()
-                 .hasOnly(['name', 'email', 'lastMsg', 'lastFrom', 'lastAt', 'unreadAdmin', 'unreadUser', 'prod'])
-            && request.resource.data.get('name', '').size() <= 40
-            && request.resource.data.get('lastMsg', '').size() <= 100);
-
-      allow delete: if isAdmin();
-
-      match /messages/{mid} {
-        allow read: if isAdmin() || isOwner(uid);
-        allow create: if msgOk(request.resource.data)
-          && ((isAdmin() && request.resource.data.from == 'admin')
-              || (isOwner(uid) && request.resource.data.from == 'user'));
-        allow update: if false;
-        allow delete: if isAdmin();
-      }
-    }
-  }
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tokoku – Belanja Hemat, Promo Setiap Minggu</title>
+<meta name="description" content="Produk pilihan dengan harga terbaik, promo terbatas, dan pengiriman cepat ke seluruh Indonesia.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F5F6FA; --surface:#FFFFFF; --ink:#15182E; --muted:#5B607A; --line:#E3E5EF;
+  --brand:#4A3AFF; --brand-ink:#FFFFFF; --sun:#FFD84D; --sun-ink:#3A2E00;
+  --radius:20px;
+  --font-display:'Bricolage Grotesque',system-ui,sans-serif;
+  --font-body:'Geist',system-ui,-apple-system,'Segoe UI',sans-serif;
 }
+@media (prefers-color-scheme:dark){
+  :root{--bg:#0F1120; --surface:#181B30; --ink:#F1F2FA; --muted:#A2A7C4; --line:#2A2E4A; --brand:#7C70FF; --brand-ink:#0F1120}
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:3px solid var(--brand);outline-offset:3px;border-radius:8px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+h1,h2,h3{font-family:var(--font-display);line-height:1.08;letter-spacing:-.02em}
+h1{font-size:clamp(2.4rem,6.5vw,4.6rem);font-weight:800}
+h2{font-size:clamp(1.7rem,4vw,2.5rem);font-weight:700}
+h3{font-size:1.15rem;font-weight:700;letter-spacing:-.01em}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 26px;border-radius:999px;font-weight:600;border:0;cursor:pointer;font:600 1rem var(--font-body);transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translateY(-2px)}
+.btn-primary{background:var(--brand);color:var(--brand-ink);box-shadow:0 10px 24px -10px var(--brand)}
+.btn-ghost{background:transparent;border:1.5px solid var(--line);color:var(--ink)}
+
+/* Top promo strip */
+.strip{background:var(--sun);color:var(--sun-ink);text-align:center;font-size:.9rem;font-weight:500;padding:9px 16px}
+
+/* Nav */
+header{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+header nav{display:flex;align-items:center;justify-content:space-between;height:68px}
+.logo{font:800 1.5rem var(--font-display);letter-spacing:-.03em}
+.logo span{color:var(--brand)}
+.links{display:flex;gap:28px;font-weight:500;color:var(--muted)}
+.links a:hover{color:var(--ink)}
+.nav-cta{padding:10px 20px}
+
+/* Hero */
+.hero{padding:72px 0 56px;display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:center}
+.hero p.lead{font-size:1.15rem;color:var(--muted);max-width:30em;margin:22px 0 32px}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap}
+.trust{display:flex;gap:24px;margin-top:36px;color:var(--muted);font-size:.92rem;flex-wrap:wrap}
+.trust b{color:var(--ink);font-family:var(--font-display);font-size:1.35rem;display:block}
+
+/* Promo card = satu momen utama */
+.promo{background:var(--brand);color:#fff;border-radius:28px;padding:32px;position:relative;overflow:hidden}
+.promo::after{content:"";position:absolute;right:-60px;top:-60px;width:200px;height:200px;border-radius:50%;background:var(--sun);opacity:.95}
+.promo .off{position:absolute;right:26px;top:30px;z-index:1;color:var(--sun-ink);font:800 2.1rem/1 var(--font-display);text-align:center}
+.promo .off small{display:block;font:600 .8rem var(--font-body)}
+.promo h3{font-size:1.6rem;max-width:9em;position:relative;z-index:1;margin-top:64px}
+.promo p{opacity:.85;margin:10px 0 22px;position:relative;z-index:1}
+.timer{display:flex;gap:10px;position:relative;z-index:1}
+.timer div{background:rgba(255,255,255,.16);border-radius:14px;padding:10px 0;width:68px;text-align:center}
+.timer b{display:block;font:800 1.7rem/1.1 var(--font-display);font-variant-numeric:tabular-nums}
+.timer span{font-size:.75rem;opacity:.8}
+.promo .btn{margin-top:22px;background:#fff;color:var(--brand);position:relative;z-index:1}
+
+/* Sections */
+section{padding:64px 0}
+.head{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:32px;flex-wrap:wrap}
+.head p{color:var(--muted);max-width:28em}
+
+/* Produk */
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column}
+.thumb{aspect-ratio:1/1;display:grid;place-items:center;position:relative}
+.thumb i{width:46%;aspect-ratio:1;border-radius:34% 66% 58% 42%/42% 44% 56% 58%;background:rgba(255,255,255,.55)}
+.thumb.has-img i{display:none}
+.tag{position:absolute;left:12px;top:12px;background:var(--ink);color:var(--bg);font-size:.78rem;font-weight:600;padding:4px 10px;border-radius:999px}
+.info{padding:16px 18px 20px;display:flex;flex-direction:column;gap:6px;flex:1}
+.info p{color:var(--muted);font-size:.92rem}
+.price{margin-top:auto;padding-top:10px;display:flex;align-items:baseline;gap:8px}
+.price b{font:700 1.2rem var(--font-display)}
+.price s{color:var(--muted);font-size:.88rem}
+.card .btn{margin:0 18px 18px;padding:11px 18px;font-size:.93rem}
+
+/* Keunggulan */
+.perks{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.perk{padding:28px;border-radius:var(--radius);background:var(--surface);border:1px solid var(--line)}
+.perk svg{width:28px;height:28px;stroke:var(--brand);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;margin-bottom:16px}
+.perk p{color:var(--muted);margin-top:6px}
+
+/* Testimoni */
+.quotes{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+blockquote{padding:26px;border-radius:var(--radius);background:var(--surface);border:1px solid var(--line);display:flex;flex-direction:column;gap:18px}
+blockquote p{font-size:1.02rem}
+blockquote cite{font-style:normal;color:var(--muted);font-size:.9rem}
+blockquote cite b{color:var(--ink);display:block}
+
+/* FAQ */
+.faq{max-width:760px}
+details{border-bottom:1px solid var(--line);padding:18px 0}
+summary{cursor:pointer;font:600 1.05rem var(--font-body);list-style:none;display:flex;justify-content:space-between;gap:16px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font-size:1.4rem;line-height:1;color:var(--brand);transition:transform .2s}
+details[open] summary::after{transform:rotate(45deg)}
+details p{color:var(--muted);margin-top:10px}
+
+/* CTA akhir */
+.final{background:var(--ink);color:var(--bg);border-radius:32px;padding:56px 32px;text-align:center}
+.final p{opacity:.75;margin:14px auto 28px;max-width:30em}
+.final .btn{background:var(--sun);color:var(--sun-ink)}
+
+footer{padding:36px 0 48px;color:var(--muted);font-size:.9rem}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+
+/* WhatsApp mengambang */
+.wa{position:fixed;right:18px;bottom:18px;z-index:30;width:56px;height:56px;border-radius:50%;background:#25D366;display:grid;place-items:center;box-shadow:0 10px 24px -8px rgba(0,0,0,.4)}
+.wa svg{width:28px;height:28px;fill:#fff}
+
+/* Satu animasi saat halaman dibuka */
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.hero>*{animation:rise .7s cubic-bezier(.2,.7,.2,1) both}
+.hero>*:nth-child(2){animation-delay:.12s}
+@media (prefers-reduced-motion:reduce){.hero>*{animation:none}html{scroll-behavior:auto}.btn{transition:none}}
+
+@media (max-width:900px){
+  .hero{grid-template-columns:1fr;padding-top:44px}
+  .grid{grid-template-columns:repeat(2,1fr)}
+  .perks,.quotes{grid-template-columns:1fr}
+  .links{display:none}
+}
+@media (max-width:480px){.grid{gap:12px}.info{padding:12px 12px 16px}.card .btn{margin:0 12px 14px}.timer div{width:60px}}
+[hidden]{display:none!important}
+.bn{position:relative;overflow:hidden;border-radius:28px;margin-top:20px;aspect-ratio:21/8;min-height:210px;background:var(--ink)}
+.sl{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity .6s;display:flex;align-items:flex-end;pointer-events:none}
+.sl.on{opacity:1;pointer-events:auto}
+.sl::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.55),rgba(0,0,0,0) 70%)}
+.sl-t{position:relative;color:#fff;padding:clamp(20px,4vw,44px);max-width:34em}
+.sl-t h2{font-size:clamp(1.5rem,4vw,2.6rem)}
+.sl-t p{margin:8px 0 16px;opacity:.9}
+.sl-t .btn{background:var(--sun);color:var(--sun-ink);padding:11px 22px}
+.dots{position:absolute;right:18px;bottom:16px;display:flex;gap:8px}
+.dots button{width:10px;height:10px;border-radius:50%;border:0;background:rgba(255,255,255,.5);cursor:pointer;padding:0}
+.dots button.on{background:#fff;width:24px;border-radius:99px}
+.loc{display:grid;grid-template-columns:1.4fr 1fr;gap:18px}
+.loc iframe{width:100%;min-height:340px;height:100%;border:0;border-radius:var(--radius);background:var(--line)}
+.loc-i{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:28px;display:flex;flex-direction:column;gap:12px;justify-content:center}
+.loc-i p{color:var(--muted)}
+.loc-i .btn{align-self:flex-start;margin-top:8px}
+@media (max-width:900px){.loc{grid-template-columns:1fr}.bn{aspect-ratio:16/9}}
+@media (prefers-reduced-motion:reduce){.sl{transition:none}}
+.pin{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:22px}
+.pin input{font:400 1rem var(--font-body);padding:12px 16px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);text-transform:uppercase;width:min(260px,100%)}
+.pin .btn{padding:12px 22px}
+#promoMsg{font-size:.92rem;color:var(--muted)}
+#promoMsg.ok{color:#16A34A;font-weight:600}#promoMsg.bad{color:#D92D4B}
+
+/* ===== Sentuhan batik emas-cokelat (hanya detail kecil) ===== */
+:root{--gold:#C9A24B;--gold-d:#B58A2E;--brown:#2B1A0C;--cream:#F3E4BC;--goldgrad:linear-gradient(135deg,#F0D27A,#B58A2E 55%,#E3C063)}
+/* Strip atas: pita parang */
+.strip{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='14'%3E%3Crect width='28' height='14' fill='%232B1A0C'/%3E%3Cg fill='none' stroke='%23C9A24B' stroke-width='1.5'%3E%3Cpath d='M0 14C7 14 7 7 14 7S21 0 28 0'/%3E%3Cpath d='M-14 7C-7 7 -7 0 0 0M14 14C21 14 21 7 28 7'/%3E%3C/g%3E%3Ccircle cx='21' cy='11' r='1.2' fill='%23C9A24B'/%3E%3Ccircle cx='7' cy='4' r='1.2' fill='%23C9A24B'/%3E%3C/svg%3E") 0 100%/28px 14px repeat-x,var(--brown);color:var(--cream);padding:9px 16px 26px}
+header{border-bottom-color:var(--gold)}
+/* Pemisah ornamen di bawah judul bagian */
+.head h2::after,.final h2::after{content:"";display:block;width:140px;height:14px;margin-top:12px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='14'%3E%3Cg fill='none' stroke='%23B58A2E' stroke-width='1.2'%3E%3Cpath d='M0 7H56M84 7H140'/%3E%3Cpolygon points='70,1 77,7 70,13 63,7'/%3E%3C/g%3E%3Ccircle cx='58' cy='7' r='1.6' fill='%23B58A2E'/%3E%3Ccircle cx='82' cy='7' r='1.6' fill='%23B58A2E'/%3E%3Ccircle cx='70' cy='7' r='1.6' fill='%23B58A2E'/%3E%3C/svg%3E") no-repeat}
+.final h2::after{margin:14px auto 0}
+/* Kartu promo: bingkai emas + gunungan */
+.promo{background-color:var(--brown);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Cg fill='none' stroke='%23C9A24B' stroke-opacity='.22'%3E%3Cellipse cx='20' cy='10' rx='6' ry='10'/%3E%3Cellipse cx='20' cy='30' rx='6' ry='10'/%3E%3Cellipse cx='10' cy='20' rx='10' ry='6'/%3E%3Cellipse cx='30' cy='20' rx='10' ry='6'/%3E%3C/g%3E%3C/svg%3E");border:2px solid var(--gold);color:var(--cream);box-shadow:inset 0 0 0 7px var(--brown),inset 0 0 0 8px rgba(201,162,75,.85)}
+.promo::before{content:"";position:absolute;left:30px;top:28px;width:40px;height:60px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='60' viewBox='0 0 40 60'%3E%3Cg fill='none' stroke='%23E3C063' stroke-width='1.6'%3E%3Cpath d='M20 2C26 14 38 20 38 36C38 52 30 58 20 58C10 58 2 52 2 36C2 20 14 14 20 2Z'/%3E%3Cpath d='M20 18C25 26 30 30 30 38C30 46 25 50 20 50C15 50 10 46 10 38C10 30 15 26 20 18Z'/%3E%3Cpath d='M20 30L25 38L20 46L15 38Z'/%3E%3C/g%3E%3Ccircle cx='20' cy='38' r='1.8' fill='%23E3C063'/%3E%3C/svg%3E") no-repeat center/contain}
+.promo::after{background:var(--goldgrad)}
+.promo .off{color:var(--brown)}
+.promo h3{background:var(--goldgrad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.timer div{background:rgba(0,0,0,.35);border:1px solid rgba(201,162,75,.6)}
+.promo .btn{background:var(--goldgrad);color:var(--brown)}
+/* Produk */
+.card{border-top:3px solid var(--gold-d)}
+.tag{background:var(--brown);color:var(--gold)}
+.perk svg{stroke:#9A6B1C}
+summary::after{color:var(--gold-d)}
+/* Banner: bingkai tipis seperti kartu */
+.bn{outline:1.5px solid rgba(232,199,112,.85);outline-offset:-10px}
+/* CTA akhir */
+.final{background-color:var(--brown);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Cg fill='none' stroke='%23C9A24B' stroke-opacity='.22'%3E%3Cellipse cx='20' cy='10' rx='6' ry='10'/%3E%3Cellipse cx='20' cy='30' rx='6' ry='10'/%3E%3Cellipse cx='10' cy='20' rx='10' ry='6'/%3E%3Cellipse cx='30' cy='20' rx='10' ry='6'/%3E%3C/g%3E%3C/svg%3E");color:var(--cream);border:2px solid var(--gold);box-shadow:inset 0 0 0 7px var(--brown),inset 0 0 0 8px rgba(201,162,75,.85)}
+.final h2{color:#E8C770}
+.final .btn{background:var(--goldgrad);color:var(--brown)}
+/* Footer: pita parang */
+footer{padding-top:0}
+footer::before{content:"";display:block;height:14px;margin-bottom:30px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='14'%3E%3Crect width='28' height='14' fill='%232B1A0C'/%3E%3Cg fill='none' stroke='%23C9A24B' stroke-width='1.5'%3E%3Cpath d='M0 14C7 14 7 7 14 7S21 0 28 0'/%3E%3Cpath d='M-14 7C-7 7 -7 0 0 0M14 14C21 14 21 7 28 7'/%3E%3C/g%3E%3Ccircle cx='21' cy='11' r='1.2' fill='%23C9A24B'/%3E%3Ccircle cx='7' cy='4' r='1.2' fill='%23C9A24B'/%3E%3C/svg%3E") 0 0/28px 14px}
+
+/* ===== Menu layar penuh & halaman kategori ===== */
+header nav{display:grid;grid-template-columns:1fr auto 1fr}
+.mbtn{justify-self:start;display:flex;align-items:center;gap:12px;background:none;border:0;color:var(--ink);font:500 .98rem var(--font-body);cursor:pointer;padding:8px 4px}
+.mbtn svg,.mclose svg{width:26px;height:26px;stroke:currentColor;stroke-width:1.5;fill:none;stroke-linecap:round}
+.nav-r{justify-self:end;display:flex;align-items:center;gap:24px;color:var(--muted);font-weight:500}
+.nav-r a.lk:hover{color:var(--ink)}
+.lock{overflow:hidden}
+.menu{position:fixed;inset:0;z-index:60;background:var(--bg);overflow:auto;padding:22px clamp(20px,6vw,64px) 48px;animation:menuIn .25s ease}
+@keyframes menuIn{from{opacity:0;transform:translateY(-10px)}}
+.mclose{display:flex;align-items:center;gap:10px;background:none;border:0;color:var(--ink);font:500 .95rem var(--font-body);cursor:pointer;padding:8px 0}
+.mlist{display:flex;flex-direction:column;gap:4px;margin:min(9vh,72px) 0 0 clamp(0px,12vw,180px)}
+.mlist a{width:fit-content;padding:6px 0;font:700 clamp(1.7rem,5vw,2.9rem)/1.2 var(--font-display);letter-spacing:-.02em}
+.mlist a:hover{color:var(--brand)}
+.mlist a[aria-current]{color:var(--brand);text-decoration:underline 3px var(--gold);text-underline-offset:8px}
+.msub{display:flex;gap:26px;flex-wrap:wrap;margin:36px 0 0 clamp(0px,12vw,180px);color:var(--muted)}
+.msub a:hover{color:var(--ink)}
+.cats{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.cat{--c:#B8B2FF;display:flex;flex-direction:column;gap:6px;min-height:150px;padding:22px;border-radius:var(--radius);border:1px solid var(--line);background:color-mix(in srgb,var(--c) 30%,var(--surface))}
+.cat i{font:normal 2rem/1 var(--font-body)}
+.cat b{margin-top:auto;font:700 1.15rem var(--font-display)}
+.cat span,.cat small{color:var(--muted);font-size:.9rem}
+.crumb{padding:24px 0 14px;color:var(--muted);font-size:.92rem}
+.crumb a:hover{color:var(--ink)}
+.khero{--c:#B8B2FF;display:flex;gap:22px;align-items:center;padding:30px 32px;border-radius:28px;border:2px solid var(--gold);background:color-mix(in srgb,var(--c) 26%,var(--surface))}
+.khero i{font:normal 3.2rem/1 var(--font-body)}
+.khero h1{font-size:clamp(1.9rem,5vw,3.1rem)}
+.khero p{margin-top:8px;max-width:36em;color:var(--muted)}
+.chips{display:flex;gap:10px;overflow-x:auto;padding:18px 0 6px}
+.chips a{flex:none;padding:9px 18px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);font-weight:500}
+.chips a[aria-current]{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.bar{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:22px}
+.bar .pin{margin:0}
+.sort{display:flex;gap:8px;align-items:center;color:var(--muted);font-size:.92rem}
+.sort select{font:400 1rem var(--font-body);padding:10px 14px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink)}
+.none{padding:48px 20px;text-align:center;color:var(--muted);border:1.5px dashed var(--line);border-radius:var(--radius)}
+.none a{color:var(--brand);font-weight:600;text-decoration:underline}
+@media (max-width:900px){.cats{grid-template-columns:repeat(2,1fr)}.nav-r a.lk{display:none}.khero{padding:22px}}
+@media (max-width:480px){.mbtn{font-size:.92rem}.nav-cta{padding:9px 14px;font-size:.88rem}.khero i{font-size:2.4rem}}
+@media (prefers-reduced-motion:reduce){.menu{animation:none}}
+.cat i:empty,.khero i:empty{display:none}
+.cat b{margin-top:auto}
+
+/* ===== Chat langsung dengan admin ===== */
+.cbtn{position:fixed;right:18px;bottom:88px;z-index:31;display:flex;align-items:center;gap:8px;padding:13px 20px;border-radius:999px;border:0;background:var(--goldgrad);color:var(--brown);font:600 .95rem var(--font-body);cursor:pointer;box-shadow:0 10px 24px -8px rgba(0,0,0,.45)}
+.cbtn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.cbadge{min-width:20px;height:20px;padding:0 6px;border-radius:99px;background:#D92D4B;color:#fff;font-size:.75rem;font-weight:700;display:grid;place-items:center}
+.cwin{position:fixed;right:18px;bottom:18px;z-index:70;width:min(380px,calc(100vw - 24px));height:min(560px,calc(100vh - 36px));background:var(--surface);border:2px solid var(--gold);border-radius:22px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 24px 60px -16px rgba(0,0,0,.5)}
+.ch{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 16px;background:var(--brown);color:var(--cream)}
+.ch b{font:700 1.05rem var(--font-display);display:block}
+.ch small{opacity:.8;font-size:.8rem}
+.ch button{background:none;border:0;color:inherit;font-size:1.6rem;line-height:1;cursor:pointer;padding:2px 8px}
+.cmsgs{flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:8px;background:var(--bg)}
+.cempty{color:var(--muted);text-align:center;font-size:.92rem;margin:auto 10px}
+.cm{max-width:82%;padding:9px 13px;border-radius:16px;white-space:pre-wrap;word-break:break-word;font-size:.95rem;line-height:1.45}
+.cm.usr{align-self:flex-end;background:var(--brand);color:var(--brand-ink);border-bottom-right-radius:4px}
+.cm.adm{align-self:flex-start;background:var(--surface);border:1px solid var(--line);border-bottom-left-radius:4px}
+.cm small{display:block;opacity:.65;font-size:.72rem;margin-top:3px}
+.cm .cp{font-size:.78rem;font-weight:600;opacity:.9;margin-bottom:5px;padding-bottom:5px;border-bottom:1px solid currentColor}
+.cname{padding:22px 18px;display:flex;flex-direction:column;gap:12px;flex:1;justify-content:center}
+.cname p{color:var(--muted)}
+.cname input,.cform textarea{font:400 1rem var(--font-body);padding:11px 14px;border-radius:14px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);width:100%}
+.cprod{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 14px;background:color-mix(in srgb,var(--gold) 18%,var(--surface));font-size:.85rem;border-top:1px solid var(--line)}
+.cprod button{background:none;border:0;color:inherit;font-size:1.2rem;cursor:pointer}
+.cform{display:flex;gap:8px;padding:10px;border-top:1px solid var(--line);align-items:flex-end}
+.cform textarea{resize:none;max-height:110px}
+.cform .btn{padding:11px 18px}
+</style>
+</head>
+<body>
+
+<div class="strip" id="strip">Gratis ongkir untuk pembelian pertama. Kode: HEMAT10</div>
+
+<header>
+  <div class="wrap">
+    <nav aria-label="Navigasi utama">
+      <button class="mbtn" id="menuBtn" type="button" aria-expanded="false" aria-controls="menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h18M3 12h18M3 17h18"/></svg>Menu</button>
+      <a href="#beranda" class="logo">toko<span>ku</span></a>
+      <div class="nav-r">
+        <a class="lk" href="#lokasi">Lokasi</a>
+        <a class="lk" href="#faq">Bantuan</a>
+        <a class="btn btn-primary nav-cta" data-wa="Halo, saya mau tanya produk Tokoku" href="#">Chat WhatsApp</a>
+      </div>
+    </nav>
+  </div>
+</header>
+<div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Menu kategori" hidden>
+  <button class="mclose" id="mClose" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4l16 16M20 4L4 20"/></svg>Tutup</button>
+  <nav class="mlist" id="mList" aria-label="Kategori"></nav>
+  <div class="msub"><a href="#lokasi">Lokasi toko</a><a href="#faq">Bantuan</a><a data-wa="Halo, saya mau tanya produk Tokoku" href="#">Chat WhatsApp</a></div>
+</div>
+
+<main>
+<div id="viewHome">
+  <div class="wrap" id="bannerWrap" hidden><div class="bn" id="bn" role="region" aria-roledescription="carousel" aria-label="Banner promo"></div></div>
+  <div class="wrap hero">
+    <div>
+      <h1>Belanja hemat, barang langsung sampai.</h1>
+      <p class="lead">Produk pilihan dengan harga yang jujur, promo baru setiap minggu, dan pengiriman cepat ke seluruh Indonesia.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#belanja">Lihat kategori</a>
+        <a class="btn btn-ghost" data-wa="Halo, saya mau tanya promo yang sedang berjalan" href="#">Tanya promo</a>
+      </div>
+      <div class="trust">
+        <div><b>5.000+</b>pesanan terkirim</div>
+        <div><b>4,9/5</b>rating pelanggan</div>
+        <div><b>1 hari</b>proses kirim</div>
+      </div>
+    </div>
+
+    <aside class="promo" aria-label="Promo terbatas">
+      <div class="off">30%<small>diskon</small></div>
+      <h3>Promo akhir bulan, stok terbatas</h3>
+      <p>Berlaku untuk semua produk pilihan sampai waktu habis.</p>
+      <div class="timer" role="timer" aria-live="off">
+        <div><b id="d">00</b><span>hari</span></div>
+        <div><b id="h">00</b><span>jam</span></div>
+        <div><b id="m">00</b><span>menit</span></div>
+        <div><b id="s">00</b><span>detik</span></div>
+      </div>
+      <a class="btn" href="#produk">Ambil promonya</a>
+    </aside>
+  </div>
+
+  <section id="belanja">
+    <div class="wrap">
+      <div class="head"><h2>Belanja per kategori</h2><p>Pilih kategori untuk membuka halaman khusus berisi semua produknya.</p></div>
+      <div class="cats" id="catGrid"></div>
+    </div>
+  </section>
+
+  <section id="produk">
+    <div class="wrap">
+      <div class="head">
+        <h2>Produk terbaru</h2>
+        <a class="btn btn-ghost" href="#kategori/semua">Lihat semua produk</a>
+      </div>
+      <div class="grid" id="grid"></div>
+    </div>
+  </section>
+
+  <section id="kenapa">
+    <div class="wrap">
+      <div class="head"><h2>Kenapa belanja di sini</h2></div>
+      <div class="perks">
+        <div class="perk">
+          <svg viewBox="0 0 24 24"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="18" r="1.6"/><circle cx="17" cy="18" r="1.6"/></svg>
+          <h3>Kirim cepat</h3><p>Pesanan sebelum jam 3 sore diproses di hari yang sama.</p>
+        </div>
+        <div class="perk">
+          <svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5L15.5 10"/></svg>
+          <h3>Garansi uang kembali</h3><p>Barang rusak atau tidak sesuai, kami ganti atau kembalikan dana.</p>
+        </div>
+        <div class="perk">
+          <svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></svg>
+          <h3>Admin yang membalas</h3><p>Tanya apa saja sebelum beli, dibalas orang sungguhan, bukan bot.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="testimoni">
+    <div class="wrap">
+      <div class="head"><h2>Kata mereka yang sudah beli</h2></div>
+      <div class="quotes">
+        <blockquote><p>Barang sampai dua hari, packing rapi, dan sesuai foto. Sudah order tiga kali.</p><cite><b>Rina A.</b>Bandung</cite></blockquote>
+        <blockquote><p>Adminnya sabar menjawab semua pertanyaan. Harganya juga paling masuk akal.</p><cite><b>Dimas P.</b>Surabaya</cite></blockquote>
+        <blockquote><p>Sempat salah ukuran, langsung ditukar tanpa ribet. Recommended.</p><cite><b>Sari W.</b>Medan</cite></blockquote>
+      </div>
+    </div>
+  </section>
+
+  <section id="lokasi" hidden>
+    <div class="wrap">
+      <div class="head"><h2>Kunjungi toko kami</h2><p>Mampir langsung untuk lihat produk dan ambil pesananmu.</p></div>
+      <div class="loc">
+        <iframe id="map" title="Peta lokasi toko Tokoku" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        <div class="loc-i">
+          <h3>Tokoku</h3>
+          <p id="lAddr"></p>
+          <p id="lHours"></p>
+          <a class="btn btn-primary" id="lDir" target="_blank" rel="noopener">Petunjuk arah</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="wrap">
+      <div class="head"><h2>Pertanyaan yang sering muncul</h2></div>
+      <div class="faq">
+        <details><summary>Bagaimana cara memesan?</summary><p>Klik tombol Pesan pada produk, kirim pesan WhatsApp yang sudah terisi, lalu admin akan mengonfirmasi stok dan total pembayaran.</p></details>
+        <details><summary>Metode pembayaran apa saja?</summary><p>Transfer bank, e-wallet, dan QRIS. Detailnya dikirim admin setelah pesanan dikonfirmasi.</p></details>
+        <details><summary>Berapa lama pengiriman?</summary><p>Pesanan diproses 1 hari kerja. Estimasi tiba 2 sampai 5 hari tergantung kota tujuan.</p></details>
+        <details><summary>Apakah bisa retur?</summary><p>Bisa dalam 7 hari setelah barang diterima, selama kondisi barang sesuai syarat retur kami.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="final">
+        <h2>Promo berakhir sebentar lagi</h2>
+        <p>Amankan produk favoritmu dengan harga spesial sebelum stok habis.</p>
+        <a class="btn" data-wa="Halo, saya mau pesan dengan harga promo" href="#">Pesan lewat WhatsApp</a>
+      </div>
+    </div>
+  </section>
+</div>
+<div id="viewKat" hidden>
+  <div class="wrap">
+    <div class="crumb"><a href="#beranda">Beranda</a> / <span id="kcrumb">Kategori</span></div>
+    <div class="khero" id="khero"><i id="kIcon" aria-hidden="true"></i><div><h1 id="kName">Memuat…</h1><p id="kDesc"></p></div></div>
+    <nav class="chips" id="kchips" aria-label="Pilih kategori"></nav>
+  </div>
+  <section id="kproduk" style="padding-top:28px">
+    <div class="wrap">
+      <div class="bar">
+        <form class="pin" id="promoForm"><input id="promoCode" placeholder="Punya kode promo?" maxlength="20" autocomplete="off" aria-label="Kode promo"><button class="btn btn-primary" type="submit">Pakai</button><span id="promoMsg" role="status"></span></form>
+        <label class="sort"><span id="kcount"></span><select id="ksort" aria-label="Urutkan produk"><option value="new">Terbaru</option><option value="low">Harga terendah</option><option value="high">Harga tertinggi</option></select></label>
+      </div>
+      <div class="grid" id="kgrid"></div>
+      <div class="none" id="knone" hidden></div>
+    </div>
+  </section>
+</div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>&copy; <span id="yr"></span> Tokoku. Semua hak dilindungi.</span>
+    <span>Instagram &middot; TikTok &middot; Shopee</span>
+  </div>
+</footer>
+
+<a class="wa" data-wa="Halo, saya mau tanya produk Tokoku" href="#" aria-label="Chat WhatsApp">
+  <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.2 14.1c-.2.6-1.300 1.200-1.800 1.200-.5.1-1 .2-3.300-.7-2.800-1.100-4.600-4-4.700-4.200-.1-.2-1.100-1.500-1.100-2.800 0-1.300.7-1.900.9-2.200.2-.3.500-.3.700-.3h.5c.2 0 .4 0 .6.500l.8 2c.1.200.1.400 0 .5l-.3.500-.4.400c-.1.200-.3.300-.1.600.2.300.8 1.300 1.700 2.100 1.200 1 2.100 1.300 2.400 1.500.3.100.5.100.6-.1l.9-1.100c.2-.3.400-.2.600-.1l1.900.9c.3.100.5.200.5.300.1.200.1.800-.1 1.400z"/></svg>
+</a>
+
+<button class="cbtn" id="chatBtn" type="button" aria-controls="chatWin" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg><span>Chat admin</span><b class="cbadge" id="chatBadge" hidden>0</b></button>
+<section class="cwin" id="chatWin" role="dialog" aria-label="Chat dengan admin" hidden>
+  <div class="ch"><div><b>Chat dengan admin</b><small>Tanya produk, stok, atau pengiriman</small></div><button id="chatClose" type="button" aria-label="Tutup chat">&times;</button></div>
+  <form class="cname" id="chatNameForm" hidden>
+    <p>Isi nama dulu supaya admin tahu siapa yang chat.</p>
+    <input id="chatName" maxlength="40" required placeholder="Nama kamu" autocomplete="name" aria-label="Nama">
+    <button class="btn btn-primary" type="submit">Mulai chat</button>
+  </form>
+  <div class="cmsgs" id="chatMsgs" role="log" aria-live="polite"></div>
+  <div class="cprod" id="chatProd" hidden><span id="chatProdTxt"></span><button id="chatProdX" type="button" aria-label="Lepas produk">&times;</button></div>
+  <form class="cform" id="chatForm"><textarea id="chatText" rows="1" maxlength="1000" placeholder="Tulis pesan..." aria-label="Pesan"></textarea><button class="btn btn-primary" id="chatSend" type="submit">Kirim</button></form>
+</section>
+
+<script>
+/* ====== EDIT BAGIAN INI ====== */
+const CONFIG = {
+  waNumber: "6281234567890",           // nomor WhatsApp, format 62 tanpa + atau 0
+  promoEnd: "2026-11-30T23:59:59",     // batas waktu promo
+  stripText: "Gratis ongkir untuk pembelian pertama. Kode: HEMAT10"
+};
+const PRODUCTS = [
+  { name:"Produk Satu",  desc:"Deskripsi singkat produk, satu kalimat.", price:149000, old:199000, tag:"Terlaris", color:"#B8B2FF" },
+  { name:"Produk Dua",   desc:"Deskripsi singkat produk, satu kalimat.", price:89000,  old:129000, tag:"Promo",    color:"#FFD84D" },
+  { name:"Produk Tiga",  desc:"Deskripsi singkat produk, satu kalimat.", price:219000, old:279000, tag:"Baru",     color:"#9BE3D0" },
+  { name:"Produk Empat", desc:"Deskripsi singkat produk, satu kalimat.", price:59000,  old:79000,  tag:"Hemat",    color:"#FFB4A2" }
+];
+/* ============================= */
+
+const rp = n => "Rp" + Number(n).toLocaleString("id-ID");
+const wa = t => `https://wa.me/${CONFIG.waNumber}?text=${encodeURIComponent(t)}`;
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+document.getElementById("strip").textContent = CONFIG.stripText;
+document.getElementById("yr").textContent = new Date().getFullYear();
+
+let PROMO = null, lastList = [], CATS = {}, REAL = [], pOk = false, cOk = false, SLUG = null;
+const disc = p => !PROMO || p.price < (PROMO.min || 0) ? p.price : PROMO.type === "pct" ? Math.round(p.price * (100 - PROMO.value) / 100) : Math.max(0, p.price - PROMO.value);
+function card(p){
+  const fp = disc(p), orig = fp < p.price ? p.price : p.old;
+  const soldOut = p.stock != null && p.stock <= 0;
+  const img = p.img ? `background-image:url('${encodeURI(p.img)}');background-size:cover;background-position:center;` : "";
+  return `
+  <article class="card">
+    <div class="thumb${p.img ? " has-img" : ""}" style="background-color:${esc(p.color || "#ddd")};${img}">${p.tag ? `<span class="tag">${esc(p.tag)}</span>` : ""}<i></i></div>
+    <div class="info">
+      <h3>${esc(p.name)}</h3>
+      <p>${esc(p.desc)}</p>
+      <div class="price"><b>${rp(fp)}</b>${orig > fp ? `<s>${rp(orig)}</s>` : ""}</div>
+    </div>
+    <button class="btn btn-ghost" type="button" data-ask data-pn="${esc(p.name)}" data-pp="${fp}" style="margin-bottom:10px">Tanya admin</button>
+    ${soldOut
+      ? `<span class="btn btn-ghost" style="opacity:.55;pointer-events:none">Stok habis</span>`
+      : `<a class="btn btn-primary" href="${wa("Halo, saya mau pesan " + p.name + " (" + rp(fp) + ")" + (fp < p.price ? " dengan kode promo " + PROMO.code : ""))}" target="_blank" rel="noopener">Pesan</a>`}
+  </article>`;
+}
+function renderProducts(list){
+  lastList = list;
+  document.getElementById("grid").innerHTML = list.slice(0, 8).map(card).join("");
+  renderCats();
+}
+
+function wireWa(){
+  document.querySelectorAll("[data-wa]").forEach(a => {
+    a.href = wa(a.dataset.wa);
+    a.target = "_blank";
+    a.rel = "noopener";
+  });
+}
+
+function applySettings(s){
+  if (s.waNumber) CONFIG.waNumber = s.waNumber;
+  if ("stripText" in s) { const st = document.getElementById("strip"); st.textContent = s.stripText; st.hidden = !s.stripText; }
+  if (s.promoEnd) { end = new Date(s.promoEnd).getTime(); tick(); }
+  renderLoc(s);
+  wireWa();
+}
+
+/* Banner geser otomatis */
+let bnT, bnI = 0;
+const safeLink = u => /^(https?:\/\/|#|\/)/.test(u || "") ? u : "";
+function bnShow(i){
+  const sl = document.querySelectorAll("#bn .sl"), dt = document.querySelectorAll("#bn .dots button");
+  bnI = (i + sl.length) % sl.length;
+  sl.forEach((x, k) => x.classList.toggle("on", k === bnI));
+  dt.forEach((x, k) => x.classList.toggle("on", k === bnI));
+}
+function renderBanners(list){
+  const w = document.getElementById("bannerWrap"), b = document.getElementById("bn");
+  clearInterval(bnT); bnI = 0;
+  w.hidden = !list.length; if (!list.length) return;
+  b.innerHTML = list.map((x, i) => `<div class="sl${i ? "" : " on"}" style="background-color:${esc(x.color || "#4A3AFF")};${x.img ? `background-image:url('${encodeURI(x.img)}')` : ""}"><div class="sl-t"><h2>${esc(x.title)}</h2>${x.sub ? `<p>${esc(x.sub)}</p>` : ""}${safeLink(x.link) ? `<a class="btn" href="${esc(safeLink(x.link))}">${esc(x.btn || "Lihat")}</a>` : ""}</div></div>`).join("")
+    + (list.length > 1 ? `<div class="dots">${list.map((_, i) => `<button type="button" aria-label="Banner ${i + 1}" class="${i ? "" : "on"}" data-i="${i}"></button>`).join("")}</div>` : "");
+  b.querySelectorAll(".dots button").forEach(d => d.onclick = () => { bnShow(+d.dataset.i); });
+  if (list.length > 1 && !matchMedia("(prefers-reduced-motion:reduce)").matches) bnT = setInterval(() => bnShow(bnI + 1), 5000);
+}
+
+/* Lokasi toko & peta */
+function renderLoc(s){
+  const has = s.address || (s.lat != null && s.lng != null);
+  document.getElementById("lokasi").hidden = !has; if (!has) return;
+  const q = s.lat != null && s.lng != null ? s.lat + "," + s.lng : s.address;
+  document.getElementById("map").src = "https://maps.google.com/maps?q=" + encodeURIComponent(q) + "&z=16&output=embed";
+  document.getElementById("lDir").href = "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent(q);
+  document.getElementById("lAddr").textContent = s.address || "";
+  document.getElementById("lHours").textContent = s.hours ? "Jam buka: " + s.hours : "";
+}
+
+const byId = id => document.getElementById(id);
+const safeColor = c => /^#[0-9a-f]{3,8}$/i.test(c || "") ? c : "#B8B2FF";
+const allCats = () => { const o = { ...CATS }; REAL.forEach(p => { if (p.cat && !o[p.cat]) o[p.cat] = { name: p.cat.replace(/-/g, " ").replace(/\b\w/g, m => m.toUpperCase()), order: 999 }; }); return o; };
+const catList = () => Object.entries(allCats()).filter(([, c]) => c.active !== false).sort((a, b) => (a[1].order || 0) - (b[1].order || 0));
+const menuHtml = cur => [["#beranda", "Beranda", "home"], ["#kategori/semua", "Semua produk", "semua"], ...catList().map(([id, c]) => ["#kategori/" + encodeURIComponent(id), c.name, id])]
+  .map(([h, t, id]) => `<a href="${h}"${id === cur ? ' aria-current="page"' : ""}>${esc(t)}</a>`).join("");
+(function(){
+  const menu = byId("menu"), btn = byId("menuBtn"); let back;
+  function open(o){ menu.hidden = !o; document.body.classList.toggle("lock", o); btn.setAttribute("aria-expanded", o); if (o) { back = document.activeElement; byId("mClose").focus(); } else if (back) back.focus(); }
+  btn.onclick = () => open(true); byId("mClose").onclick = () => open(false);
+  menu.addEventListener("click", e => { if (e.target.closest("a")) open(false); });
+  document.addEventListener("keydown", e => {
+    if (menu.hidden) return;
+    if (e.key === "Escape") return open(false);
+    if (e.key === "Tab") { const f = [...menu.querySelectorAll("a[href],button")], a = f[0], z = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === a) { e.preventDefault(); z.focus(); } else if (!e.shiftKey && document.activeElement === z) { e.preventDefault(); a.focus(); } }
+  });
+})();
+function renderCats(){
+  const n = {}; lastList.forEach(p => { if (p.cat) n[p.cat] = (n[p.cat] || 0) + 1; });
+  const tile = (h, i, t, c, x) => `<a class="cat" href="${h}" style="--c:${safeColor(c)}"><i>${esc(i)}</i><b>${esc(t)}</b><span>${x[0]}</span>${x[1] ? `<small>${esc(x[1])}</small>` : ""}</a>`;
+  byId("catGrid").innerHTML = tile("#kategori/semua", "", "Semua produk", "#C9A24B", [lastList.length + " produk"])
+    + catList().map(([id, c]) => tile("#kategori/" + encodeURIComponent(id), c.icon || "", c.name, c.color, [(n[id] || 0) + " produk", c.desc])).join("");
+  byId("mList").innerHTML = menuHtml(SLUG == null ? "home" : SLUG);
+}
+
+renderProducts(PRODUCTS);
+wireWa();
+
+let end = new Date(CONFIG.promoEnd).getTime();
+const $t = id => document.getElementById(id);
+const pad = n => String(n).padStart(2, "0");
+function tick(){
+  let t = Math.max(0, end - Date.now());
+  const d = Math.floor(t / 864e5); t %= 864e5;
+  const h = Math.floor(t / 36e5);  t %= 36e5;
+  const m = Math.floor(t / 6e4);   t %= 6e4;
+  $t("d").textContent = pad(d); $t("h").textContent = pad(h);
+  $t("m").textContent = pad(m); $t("s").textContent = pad(Math.floor(t / 1e3));
+}
+tick(); setInterval(tick, 1000);
+
+/* Halaman kategori (satu file, alamat #kategori/nama) */
+const HOME_TITLE = document.title;
+function renderKat(){
+  if (SLUG == null) return;
+  const all = SLUG === "semua", c = allCats()[SLUG], known = all || (c && c.active !== false);
+  byId("mList").innerHTML = menuHtml(SLUG);
+  byId("kchips").innerHTML = [["semua", "Semua"], ...catList().map(([id, x]) => [id, x.name])]
+    .map(([id, n]) => `<a href="#kategori/${encodeURIComponent(id)}"${id === SLUG ? ' aria-current="page"' : ""}>${esc(n)}</a>`).join("");
+  const name = all ? "Semua produk" : known ? c.name : cOk ? "Kategori tidak ditemukan" : "Memuat…";
+  byId("kName").textContent = name;
+  byId("kIcon").textContent = all ? "" : known ? (c.icon || "") : "";
+  byId("kDesc").textContent = all ? "Semua produk Tokoku dalam satu halaman." : known ? (c.desc || "") : "";
+  byId("khero").style.setProperty("--c", all ? "#C9A24B" : safeColor(known ? c.color : ""));
+  byId("kcrumb").textContent = name;
+  document.title = name + " – Tokoku";
+  const grid = byId("kgrid"), none = byId("knone");
+  if (!all && cOk && !known) { grid.innerHTML = ""; none.hidden = false; none.innerHTML = 'Kategori ini tidak ada atau sedang disembunyikan. <a href="#kategori/semua">Lihat semua produk</a>'; byId("kcount").textContent = ""; return; }
+  const key = byId("ksort").value, ts = p => p.createdAt?.seconds || 0;
+  const list = REAL.filter(p => all || p.cat === SLUG)
+    .sort(key === "low" ? (a, b) => disc(a) - disc(b) : key === "high" ? (a, b) => disc(b) - disc(a) : (a, b) => ts(b) - ts(a));
+  grid.innerHTML = list.map(card).join("");
+  none.hidden = pOk && list.length > 0;
+  none.textContent = pOk ? "Belum ada produk di kategori ini." : "Memuat produk…";
+  byId("kcount").textContent = pOk ? list.length + " produk" : "";
+}
+function route(){
+  const m = location.hash.match(/^#kategori\/([a-z0-9-]*)$/i);
+  byId("viewHome").hidden = !!m; byId("viewKat").hidden = !m;
+  if (m) { SLUG = m[1].toLowerCase() || "semua"; renderKat(); window.scrollTo(0, 0); }
+  else { SLUG = null; document.title = HOME_TITLE; renderCats(); const t = location.hash.length > 1 && document.getElementById(location.hash.slice(1)); t ? t.scrollIntoView() : window.scrollTo(0, 0); }
+}
+byId("ksort").onchange = renderKat;
+addEventListener("hashchange", route);
+route();
+</script>
+<!-- ================= FIREBASE (tersinkron real-time dengan admin.html) ================= -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, doc, getDoc, setDoc, addDoc, updateDoc, onSnapshot, query, orderBy, serverTimestamp, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+/* ====== KONFIGURASI FIREBASE (harus sama dengan di admin.html) ====== */
+const firebaseConfig = {
+  apiKey: "AIzaSyCqhLvrLnJwZnaqthRJjqDwUN9_xpgWyZI",
+  authDomain: "database-e5b59.firebaseapp.com",
+  projectId: "database-e5b59",
+  storageBucket: "database-e5b59.firebasestorage.app",
+  messagingSenderId: "1068757334273",
+  appId: "1:1068757334273:web:a542af0c1d901f88848300",
+  measurementId: "G-X31DP5DZ1T"
+};
+/* ==================================================================== */
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+import("https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js")
+  .then(m => m.isSupported().then(ok => ok && m.getAnalytics(app))).catch(() => {});
+
+/* Produk: tampil otomatis setiap kali admin menambah, mengubah, atau menghapus */
+onSnapshot(collection(db, "products"), snap => {
+  const list = snap.docs.map(d => d.data()).filter(p => p.active !== false)
+    .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+  REAL = list; pOk = true;
+  renderProducts(snap.size ? list : PRODUCTS);   // kosong = tampilkan produk contoh
+  renderKat();
+}, e => { pOk = true; console.warn("Memakai data contoh:", e.code); renderKat(); });
+
+/* Pengaturan: nomor WhatsApp, waktu promo, teks banner */
+onSnapshot(doc(db, "settings", "store"), s => { if (s.exists()) applySettings(s.data()); },
+  e => console.warn("Pengaturan tidak terbaca:", e.code));
+
+/* Kode promo: dicek ke database, lalu harga produk dihitung ulang */
+document.getElementById("promoForm").onsubmit = async e => {
+  e.preventDefault();
+  const msg = document.getElementById("promoMsg"), code = document.getElementById("promoCode").value.trim().toUpperCase().replace(/[^A-Z0-9_-]/g, "");
+  const set = (t, c) => { msg.textContent = t; msg.className = c || ""; };
+  const redraw = () => { renderProducts(lastList); renderKat(); };
+  const no = t => { PROMO = null; redraw(); set(t, "bad"); };
+  if (!code) { PROMO = null; redraw(); return set(""); }
+  try {
+    const d = await getDoc(doc(db, "promos", code)), m = d.exists() ? d.data() : null;
+    if (!m || m.active === false) return no("Kode promo tidak ditemukan.");
+    if (m.until && new Date(m.until + "T23:59:59") < new Date()) return no("Kode promo sudah kedaluwarsa.");
+    if (m.quota && (m.used || 0) >= m.quota) return no("Kuota kode promo sudah habis.");
+    PROMO = { code, type: m.type, value: m.value, min: m.min || 0 };
+    redraw();
+    set("Kode " + code + " dipakai: " + (m.type === "pct" ? m.value + "%" : rp(m.value)) + " off" + (m.min ? " untuk produk min. " + rp(m.min) : "") + ".", "ok");
+  } catch (err) { set("Kode tidak bisa dicek sekarang. Coba lagi.", "bad"); }
+};
+
+/* Kategori: tampil otomatis di menu dan kartu kategori */
+onSnapshot(collection(db, "categories"), snap => { CATS = {}; snap.forEach(d => CATS[d.id] = d.data()); cOk = true; renderCats(); renderKat(); },
+  e => { cOk = true; console.warn("Kategori tidak terbaca:", e.code); renderKat(); });
+
+/* Banner: tampil otomatis sesuai urutan dari admin */
+onSnapshot(collection(db, "banners"), snap => {
+  renderBanners(snap.docs.map(d => d.data()).filter(b => b.active !== false).sort((a, b) => (a.order || 0) - (b.order || 0)));
+}, e => console.warn("Banner tidak terbaca:", e.code));
+
+/* ====== CHAT LANGSUNG DENGAN ADMIN (tersambung ke tab Chat di admin.html) ====== */
+const auth = getAuth(app);
+const $c = id => document.getElementById(id);
+let cUser = null, cOpen = false, cProd = null, cUnread = 0, cUnsubMsgs = null, cUnsubDoc = null, cSending = false;
+const cLS = { get: k => { try { return localStorage.getItem(k) || ""; } catch (e) { return ""; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} } };
+const cNameNow = () => (cUser && (cUser.displayName || (cUser.email || "").split("@")[0])) || cLS.get("tk_chat_name");
+const cTime = ts => ts && ts.seconds ? new Date(ts.seconds * 1000).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }) : "";
+
+function cNote(t){ const b = $c("chatMsgs"); b.textContent = ""; const p = document.createElement("p"); p.className = "cempty"; p.textContent = t; b.append(p); }
+function cRenderMsgs(list){
+  const box = $c("chatMsgs"); box.textContent = "";
+  if (!list.length) { cNote("Halo! Tanyakan apa saja soal produk, stok, atau pengiriman. Admin akan membalas di sini."); return; }
+  list.forEach(m => {
+    const d = document.createElement("div"); d.className = "cm " + (m.from === "admin" ? "adm" : "usr");
+    if (m.prodName) { const p = document.createElement("div"); p.className = "cp"; p.textContent = "Produk: " + m.prodName + (m.prodPrice ? " · " + rp(m.prodPrice) : ""); d.append(p); }
+    const t = document.createElement("div"); t.textContent = m.text; d.append(t);
+    const tm = document.createElement("small"); tm.textContent = cTime(m.createdAt); d.append(tm);
+    box.append(d);
+  });
+  box.scrollTop = box.scrollHeight;
+}
+function cRenderBadge(){ const b = $c("chatBadge"); b.hidden = cOpen || cUnread <= 0; b.textContent = cUnread > 9 ? "9+" : cUnread; }
+function cRenderProd(){ $c("chatProd").hidden = !cProd; if (cProd) $c("chatProdTxt").textContent = cProd.name + (cProd.price ? " · " + rp(cProd.price) : ""); }
+function cStop(){ if (cUnsubMsgs) cUnsubMsgs(); if (cUnsubDoc) cUnsubDoc(); cUnsubMsgs = cUnsubDoc = null; cUnread = 0; cRenderBadge(); }
+function cMarkRead(){ if (cUser && cOpen && cUnread > 0) updateDoc(doc(db, "chats", cUser.uid), { unreadUser: 0 }).catch(() => {}); }
+function cStart(){
+  cStop(); if (!cUser) return;
+  const uid = cUser.uid;
+  cUnsubDoc = onSnapshot(doc(db, "chats", uid), d => { cUnread = d.exists() ? (d.data().unreadUser || 0) : 0; cMarkRead(); cRenderBadge(); }, () => {});
+  cUnsubMsgs = onSnapshot(query(collection(db, "chats", uid, "messages"), orderBy("createdAt", "asc")),
+    s => cRenderMsgs(s.docs.map(d => d.data())), e => cNote("Pesan tidak bisa dimuat (" + e.code + ")."));
+}
+async function cPrepare(){
+  const need = !cNameNow();
+  $c("chatNameForm").hidden = !need; $c("chatMsgs").hidden = need; $c("chatForm").hidden = need;
+  if (need) { $c("chatName").focus(); return; }
+  if (!cUser) {
+    cNote("Menyambungkan…");
+    try { await signInAnonymously(auth); }
+    catch (err) { cNote(err.code === "auth/operation-not-allowed" || err.code === "auth/admin-restricted-operation" ? "Chat belum aktif: login Anonymous belum diaktifkan di Firebase Authentication." : "Chat belum bisa tersambung. Periksa internet lalu coba lagi."); }
+    return;
+  }
+  $c("chatText").focus();
+}
+function cOpenChat(){
+  cOpen = true; $c("chatWin").hidden = false; $c("chatBtn").hidden = true; $c("chatBtn").setAttribute("aria-expanded", "true");
+  cRenderBadge(); cRenderProd(); cMarkRead(); cPrepare();
+}
+function cCloseChat(){
+  cOpen = false; $c("chatWin").hidden = true; $c("chatBtn").hidden = false; $c("chatBtn").setAttribute("aria-expanded", "false");
+  cRenderBadge(); $c("chatBtn").focus();
+}
+onAuthStateChanged(auth, u => { cUser = u; if (u) cStart(); else cStop(); if (cOpen) cPrepare(); });
+
+$c("chatBtn").onclick = cOpenChat;
+$c("chatClose").onclick = cCloseChat;
+$c("chatProdX").onclick = () => { cProd = null; cRenderProd(); };
+document.addEventListener("keydown", e => { if (e.key === "Escape" && cOpen) cCloseChat(); });
+$c("chatText").addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); $c("chatForm").requestSubmit(); } });
+$c("chatNameForm").onsubmit = e => { e.preventDefault(); const n = $c("chatName").value.trim().slice(0, 40); if (!n) return; cLS.set("tk_chat_name", n); cPrepare(); };
+
+/* Tombol "Tanya admin" pada kartu produk: buka chat dengan produk terlampir */
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-ask]"); if (!b) return;
+  cProd = { name: b.dataset.pn, price: Number(b.dataset.pp) || 0 };
+  cOpenChat();
+  const ta = $c("chatText"); if (!ta.value) ta.value = "Halo, saya mau tanya tentang " + cProd.name + ".";
+  cRenderProd(); ta.focus();
+});
+
+$c("chatForm").onsubmit = async e => {
+  e.preventDefault();
+  const ta = $c("chatText"), text = ta.value.trim();
+  if (!text || !cUser || cSending) return;
+  cSending = true; $c("chatSend").disabled = true;
+  const name = cNameNow() || "Pelanggan", prod = cProd;
+  const msg = { from: "user", text, name, createdAt: serverTimestamp() };
+  if (prod) { msg.prodName = prod.name.slice(0, 120); msg.prodPrice = Number(prod.price) || 0; }
+  ta.value = "";
+  try {
+    await addDoc(collection(db, "chats", cUser.uid, "messages"), msg);
+    await setDoc(doc(db, "chats", cUser.uid), Object.assign(
+      { uid: cUser.uid, name, email: cUser.email || "", lastMsg: text.slice(0, 100), lastFrom: "user", lastAt: serverTimestamp(), unreadAdmin: increment(1), unreadUser: 0 },
+      prod ? { prod: prod.name.slice(0, 120) } : {}), { merge: true });
+    if (prod) { cProd = null; cRenderProd(); }
+  } catch (err) {
+    ta.value = text;
+    const m = document.createElement("div"); m.className = "cempty"; m.textContent = "Pesan gagal terkirim (" + (err.code || err.message) + "). Coba lagi."; $c("chatMsgs").append(m);
+  }
+  cSending = false; $c("chatSend").disabled = false; ta.focus();
+};
+</script>
+</body>
+</html>
