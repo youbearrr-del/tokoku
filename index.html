@@ -212,6 +212,19 @@ header nav{display:grid;grid-template-columns:1fr auto 1fr}
 .account-status{min-height:1.4em;color:var(--muted);font-size:.9rem}
 .account-orders{display:grid;gap:10px;margin:12px 0}
 .account-order{padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--bg)}
+.account-address{padding:12px;border:1px solid var(--line);border-radius:14px;margin:10px 0;background:var(--bg)}
+.account-address .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.cart-btn{position:fixed;right:18px;bottom:158px;z-index:31;display:flex;align-items:center;gap:8px;padding:13px 18px;border-radius:999px;border:1px solid var(--gold);background:var(--brown);color:var(--cream);font:600 .95rem var(--font-body);cursor:pointer;box-shadow:0 10px 24px -8px rgba(0,0,0,.45)}
+.cart-win{position:fixed;inset:0;z-index:89;background:rgba(20,15,8,.62);display:grid;place-items:center;padding:16px}
+.cart-card{width:min(620px,100%);max-height:min(90vh,800px);overflow:auto;background:var(--surface);color:var(--ink);border:2px solid var(--gold);border-radius:24px;padding:24px;box-shadow:0 24px 70px #0007}
+.cart-lines{display:grid;gap:10px;margin:14px 0}
+.cart-line{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--bg)}
+.cart-line small{display:block;color:var(--muted)}
+.cart-qty{display:flex;align-items:center;gap:8px}
+.cart-qty button{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:700 1rem var(--font-body);cursor:pointer}
+.cart-total{display:flex;justify-content:space-between;padding:14px 0;border-top:1px solid var(--line);font-weight:700}
+.card-actions{display:grid;gap:8px;padding:0 18px 18px}
+.card-actions .btn{margin:0!important;width:100%;padding:10px 12px;font-size:.9rem}
 .lock{overflow:hidden}
 .menu{position:fixed;inset:0;z-index:60;background:var(--bg);overflow:auto;padding:22px clamp(20px,6vw,64px) 48px;animation:menuIn .25s ease}
 @keyframes menuIn{from{opacity:0;transform:translateY(-10px)}}
@@ -350,16 +363,40 @@ header nav{display:grid;grid-template-columns:1fr auto 1fr}
     </div>
     <div id="accountMember" hidden>
       <p class="account-note" id="accountEmailText"></p>
+      <h3>Data pelanggan</h3>
       <form class="account-form" id="profileForm">
-        <label>Nama penerima<input id="profileName" autocomplete="name" maxlength="60" required></label>
-        <label>Nomor WhatsApp<input id="profilePhone" type="tel" autocomplete="tel" maxlength="24" required></label>
-        <label>Alamat lengkap<textarea id="profileAddress" autocomplete="street-address" maxlength="500" required placeholder="Jalan, nomor rumah, RT/RW, kelurahan, kecamatan, kota, provinsi, kode pos"></textarea></label>
-        <button class="btn btn-primary" type="submit">Simpan alamat</button>
+        <label>Nama akun<input id="profileName" autocomplete="name" maxlength="60" required></label>
+        <label>Nomor WhatsApp utama<input id="profilePhone" type="tel" autocomplete="tel" maxlength="24" required></label>
+        <button class="btn btn-ghost" type="submit">Simpan data akun</button>
         <p class="account-status" id="profileStatus" role="status"></p>
+      </form>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:22px"><h3>Alamat pengiriman</h3><button class="btn btn-ghost" id="addAddress" type="button">Tambah alamat</button></div>
+      <div id="addressList"></div>
+      <form class="account-form" id="addressForm" hidden style="padding:14px;border:1px solid var(--line);border-radius:16px;margin-top:12px">
+        <input id="addressId" type="hidden">
+        <label>Label alamat<input id="addressLabel" maxlength="30" placeholder="Rumah, Kantor" required></label>
+        <label>Nama penerima<input id="addressName" autocomplete="name" maxlength="60" required></label>
+        <label>Nomor WhatsApp<input id="addressPhone" type="tel" autocomplete="tel" maxlength="24" required></label>
+        <label>Alamat lengkap<textarea id="addressText" autocomplete="street-address" maxlength="500" required placeholder="Jalan, nomor rumah, RT/RW, kelurahan, kecamatan, kota, provinsi, kode pos"></textarea></label>
+        <label style="display:flex;align-items:center;gap:8px"><input id="addressDefault" type="checkbox" style="width:auto">Jadikan alamat utama</label>
+        <div class="row"><button class="btn btn-primary" type="submit">Simpan alamat</button><button class="btn btn-ghost" id="cancelAddress" type="button">Batal</button></div>
+        <p class="account-status" id="addressStatus" role="status"></p>
       </form>
       <h3 style="margin-top:22px">Pesanan saya</h3><div class="account-orders" id="accountOrders"><p class="account-note">Memuat pesanan…</p></div>
       <button class="btn btn-ghost" id="accountSignOut" type="button">Keluar dari akun</button>
     </div>
+  </div>
+</section>
+<button class="cart-btn" id="cartBtn" type="button" aria-label="Buka keranjang">Keranjang <b class="cbadge" id="cartBadge">0</b></button>
+<section class="cart-win" id="cartWin" role="dialog" aria-modal="true" aria-labelledby="cartTitle" hidden>
+  <div class="cart-card">
+    <div class="account-head"><h2 id="cartTitle">Keranjang belanja</h2><button class="account-close" id="cartClose" type="button" aria-label="Tutup keranjang">&times;</button></div>
+    <div class="cart-lines" id="cartLines"></div>
+    <div class="cart-total"><span>Subtotal produk</span><span id="cartSubtotal">Rp0</span></div>
+    <p class="account-note">Ongkir dikonfirmasi admin setelah kurir dan tujuan diperiksa.</p>
+    <label class="account-form" style="margin:10px 0">Alamat tujuan<select id="cartAddress" style="width:100%;padding:12px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);font:inherit"></select></label>
+    <button class="btn btn-primary" id="checkoutBtn" type="button" style="width:100%">Lanjut checkout</button>
+    <p class="account-status" id="cartStatus" role="status"></p>
   </div>
 </section>
 <div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Menu kategori" hidden>
@@ -589,7 +626,7 @@ function card(p){
   const ask = `<button class="btn btn-ghost" type="button" data-ask${ag ? ` data-ag="${esc(p.agentId)}"` : ""} data-pn="${esc(p.name)}" data-pp="${fp}" style="margin-bottom:10px">${ag ? "Chat penjual" : "Tanya admin"}</button>`;
   const order = soldOut
     ? `<span class="btn btn-ghost" style="opacity:.55;pointer-events:none">Stok habis</span>`
-    : `<button class="btn btn-primary" type="button" data-buy data-pid="${esc(p.id || "")}" data-pn="${esc(p.name)}"${!p.id ? " disabled" : ""}>Pesan lewat Tokoku</button>`;
+    : `<div class="card-actions"><button class="btn btn-ghost" type="button" data-cart-add data-pid="${esc(p.id || "")}"${!p.id ? " disabled" : ""}>Tambah ke keranjang</button><button class="btn btn-primary" type="button" data-buy data-pid="${esc(p.id || "")}"${!p.id ? " disabled" : ""}>Pesan sekarang</button></div>`;
   return `
   <article class="card">
     <div class="thumb${safeImg ? " has-img" : ""}" style="background-color:${safeColor(p.color || "#ddd")};${img}">${p.tag ? `<span class="tag">${esc(p.tag)}</span>` : ""}<i></i></div>
@@ -939,9 +976,62 @@ onAuthStateChanged(auth, u => { cUser = u; if (u) cStart(); else cStop(); if (cO
 /* ====== AKUN PELANGGAN, ALAMAT TERSIMPAN, DAN RIWAYAT PESANAN ====== */
 const acct = id => document.getElementById(id);
 let accountRegister = false, customerProfile = null, accountOrdersStop = null;
+const cartKey = uid => uid && uid !== "guest" ? "tk_cart_" + uid : "tk_cart_guest";
+function readCart(key) { try { const v=JSON.parse(localStorage.getItem(key)||"[]"); return Array.isArray(v) ? v.filter(x=>x && typeof x.id==="string" && Number.isInteger(x.qty) && x.qty>0).slice(0,20) : []; } catch (_) { return []; } }
+let cartItems = readCart(cartKey(auth.currentUser?.uid));
+function persistCart() { try { localStorage.setItem(cartKey(auth.currentUser && !auth.currentUser.isAnonymous ? auth.currentUser.uid : "guest"),JSON.stringify(cartItems)); } catch (_) {} }
+function migrateCart(user) {
+  if(!user || user.isAnonymous) { cartItems=readCart(cartKey("guest")); renderCart(); return; }
+  const saved=readCart(cartKey(user.uid)), guest=readCart(cartKey("guest")), merged=new Map(saved.map(x=>[x.id,x.qty]));
+  guest.forEach(x=>merged.set(x.id,Math.min(20,(merged.get(x.id)||0)+x.qty)));
+  cartItems=[...merged].map(([id,qty])=>({id,qty})).slice(0,20);
+  try { localStorage.setItem(cartKey(user.uid),JSON.stringify(cartItems)); localStorage.removeItem(cartKey("guest")); } catch (_) {}
+  renderCart();
+}
 const accountOpen = () => { acct("accountWin").hidden = false; renderAccount(); };
 const accountClose = () => { acct("accountWin").hidden = true; if (accountOrdersStop) accountOrdersStop(); accountOrdersStop = null; };
 function accountStatus(message, id = "accountStatus") { acct(id).textContent = message || ""; }
+const legacyAddress = p => p?.address ? [{ id:"alamat-lama", label:"Alamat utama", name:p.name || "", phone:p.phone || "", address:p.address, isDefault:true }] : [];
+function customerAddresses() { return Array.isArray(customerProfile?.addresses) && customerProfile.addresses.length ? customerProfile.addresses : legacyAddress(customerProfile); }
+function renderAddresses() {
+  const box = acct("addressList"), addresses = customerAddresses(); box.textContent = "";
+  if (!addresses.length) { const p = document.createElement("p"); p.className="account-note"; p.textContent="Belum ada alamat. Tambahkan alamat untuk mulai memesan."; box.append(p); }
+  addresses.forEach(a => {
+    const card = document.createElement("div"); card.className="account-address";
+    const title = document.createElement("b"); title.textContent=(a.label || "Alamat") + (a.isDefault ? " · Alamat utama" : "");
+    const who = document.createElement("small"); who.style.display="block"; who.textContent=(a.name || "") + (a.phone ? " · " + a.phone : "");
+    const addr = document.createElement("small"); addr.style.display="block"; addr.textContent=a.address || "";
+    const actions = document.createElement("div"); actions.className="row";
+    const edit = document.createElement("button"); edit.type="button"; edit.className="btn btn-ghost"; edit.textContent="Ubah"; edit.onclick=()=>editAddress(a);
+    actions.append(edit);
+    if (!a.isDefault) { const primary=document.createElement("button"); primary.type="button"; primary.className="btn btn-ghost"; primary.textContent="Jadikan utama"; primary.onclick=()=>saveAddressList(addresses.map(x=>({...x,isDefault:x.id===a.id}))); actions.append(primary); }
+    const remove=document.createElement("button"); remove.type="button"; remove.className="btn btn-ghost"; remove.textContent="Hapus"; remove.onclick=()=>{ if(confirm("Hapus alamat ini?")) saveAddressList(addresses.filter(x=>x.id!==a.id)); }; actions.append(remove);
+    card.append(title,who,addr,actions); box.append(card);
+  });
+  const select=acct("cartAddress"), old=select.value; select.textContent="";
+  addresses.forEach(a=>{ const op=document.createElement("option"); op.value=a.id; op.textContent=(a.label || "Alamat") + (a.isDefault ? " (utama)" : "") + " — " + (a.address || ""); select.append(op); });
+  if(addresses.some(a=>a.id===old)) select.value=old; else { const primary=addresses.find(a=>a.isDefault)||addresses[0]; if(primary) select.value=primary.id; }
+  if(!addresses.length){ const op=document.createElement("option"); op.value=""; op.textContent="Tambahkan alamat di profil"; select.append(op); }
+  renderCart();
+}
+function editAddress(a) {
+  acct("addressId").value=a.id || ""; acct("addressLabel").value=a.label || "Rumah";
+  acct("addressName").value=a.name || ""; acct("addressPhone").value=a.phone || "";
+  acct("addressText").value=a.address || ""; acct("addressDefault").checked=!!a.isDefault;
+  acct("addressForm").hidden=false; acct("addressLabel").focus();
+}
+async function saveAddressList(addresses) {
+  const user=auth.currentUser; if(!user || user.isAnonymous) return;
+  if(addresses.length>8) return accountStatus("Maksimal 8 alamat tersimpan.","addressStatus");
+  if(addresses.length && !addresses.some(a=>a.isDefault)) addresses[0].isDefault=true;
+  let defaultSeen=false;
+  addresses=addresses.map(a=>{const isDefault=!!a.isDefault && !defaultSeen;if(isDefault)defaultSeen=true;return {...a,isDefault};});
+  const primary=addresses.find(a=>a.isDefault)||addresses[0]||null;
+  const profile={...(customerProfile||{}),name:acct("profileName").value.trim() || primary?.name || user.displayName || "",phone:acct("profilePhone").value.trim() || primary?.phone || "",addresses,
+    address:primary?.address || "",email:user.email || "",updatedAt:serverTimestamp()};
+  try { await setDoc(doc(db,"users",user.uid),profile,{merge:true}); customerProfile=profile; acct("addressForm").hidden=true; accountStatus("Alamat berhasil disimpan.","addressStatus"); renderAddresses(); }
+  catch(e){ accountStatus("Alamat belum tersimpan. Pastikan aturan Firebase sudah diperbarui.","addressStatus"); }
+}
 function renderAccount() {
   const user = auth.currentUser;
   const member = !!user && !user.isAnonymous;
@@ -951,7 +1041,7 @@ function renderAccount() {
   acct("accountEmailText").textContent = user.email || "Akun pelanggan";
   acct("profileName").value = customerProfile?.name || user.displayName || "";
   acct("profilePhone").value = customerProfile?.phone || "";
-  acct("profileAddress").value = customerProfile?.address || "";
+  renderAddresses();
   if (accountOrdersStop) accountOrdersStop();
   acct("accountOrders").textContent = "Memuat pesanan…";
   accountOrdersStop = onSnapshot(query(collection(db, "orders"), where("uid", "==", user.uid)), snap => {
@@ -963,7 +1053,9 @@ function renderAccount() {
       const name = document.createElement("b"); name.textContent = o.prod || (o.items || []).map(x => x.name).join(", ") || "Pesanan Tokoku";
       const state = document.createElement("small"); state.textContent = "Pesanan #" + o.id.slice(0, 6).toUpperCase() + " · " + (o.status || "Diproses");
       const total = document.createElement("small"); total.textContent = "Total " + rp(o.total || 0) + (o.paid ? " · Sudah dibayar" : " · Menunggu pembayaran");
-      row.append(name, state, total); box.append(row);
+      row.append(name, state, total);
+      if(o.courier || o.resi){ const ship=document.createElement("small"); ship.textContent="Pengiriman: "+(o.courier||"Kurir belum ditentukan")+(o.resi?" · Resi "+o.resi:""); row.append(ship); }
+      box.append(row);
     });
   }, () => { acct("accountOrders").textContent = "Pesanan belum dapat dimuat. Coba buka kembali."; });
 }
@@ -990,7 +1082,7 @@ acct("googleLogin").onclick = async () => {
     const saved = await getDoc(doc(db, "users", auth.currentUser.uid));
     customerProfile = saved.exists() ? saved.data() : null;
     renderAccount();
-    if (!customerProfile?.address || !customerProfile?.phone) accountStatus("Google berhasil. Lengkapi nomor WhatsApp dan alamat pengiriman, lalu simpan.", "profileStatus");
+    if (!customerProfile?.phone || !customerAddresses().length) accountStatus("Google berhasil. Lengkapi nomor WhatsApp dan tambahkan alamat pengiriman.", "profileStatus");
   } catch (err) {
     const messages = {
       "auth/operation-not-allowed": "Login Google belum diaktifkan di Firebase Authentication.",
@@ -1012,7 +1104,7 @@ acct("accountAuthForm").onsubmit = async e => {
       const credential = await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(credential.user, { displayName: name });
       customerProfile = { name, phone: "", address: "" }; renderAccount();
-      accountStatus("Akun berhasil dibuat. Lengkapi nomor WhatsApp dan alamat, lalu simpan.", "profileStatus");
+      accountStatus("Akun berhasil dibuat. Lengkapi nomor WhatsApp dan tambahkan alamat pengiriman.", "profileStatus");
     } else { await signInWithEmailAndPassword(auth, email, password); customerProfile = null; renderAccount(); }
   } catch (err) {
     const messages = { "auth/email-already-in-use":"Email sudah terdaftar. Silakan masuk.", "auth/invalid-credential":"Email atau kata sandi salah.", "auth/weak-password":"Kata sandi minimal 8 karakter.", "auth/invalid-email":"Format email belum benar.", "auth/too-many-requests":"Terlalu banyak percobaan. Coba lagi nanti.", "auth/operation-not-allowed":"Login email belum diaktifkan di Firebase Authentication." };
@@ -1027,17 +1119,38 @@ acct("forgotPassword").onclick = async () => {
 };
 acct("profileForm").onsubmit = async e => {
   e.preventDefault(); const user = auth.currentUser; if (!user || user.isAnonymous) return accountOpen();
-  const profile = { name: acct("profileName").value.trim(), phone: acct("profilePhone").value.trim(), address: acct("profileAddress").value.trim() };
-  if (!profile.name || !profile.phone || !profile.address) return accountStatus("Lengkapi nama, nomor WhatsApp, dan alamat.", "profileStatus");
+  const profile = { name: acct("profileName").value.trim(), phone: acct("profilePhone").value.trim() };
+  if (!profile.name || !profile.phone) return accountStatus("Isi nama dan nomor WhatsApp utama.", "profileStatus");
   if (!/^[0-9+() .-]{8,24}$/.test(profile.phone)) return accountStatus("Nomor WhatsApp belum valid.", "profileStatus");
-  accountStatus("Menyimpan alamat…", "profileStatus");
+  accountStatus("Menyimpan data akun…", "profileStatus");
   try {
+    await updateProfile(user,{displayName:profile.name});
     await setDoc(doc(db, "users", user.uid), { ...profile, email: user.email || "", updatedAt: serverTimestamp() }, { merge: true });
-    customerProfile = profile; accountStatus("Alamat pengiriman tersimpan.", "profileStatus");
-  } catch (err) { accountStatus("Alamat belum tersimpan. Pastikan aturan Firebase terbaru sudah diterapkan.", "profileStatus"); }
+    customerProfile = { ...(customerProfile || {}), ...profile }; accountStatus("Data akun berhasil disimpan.", "profileStatus"); renderAddresses();
+  } catch (err) { accountStatus("Data belum tersimpan. Pastikan aturan Firebase terbaru sudah diterapkan.", "profileStatus"); }
+};
+acct("addAddress").onclick=()=>{
+  if(customerAddresses().length>=8) return accountStatus("Maksimal 8 alamat tersimpan.","addressStatus");
+  acct("addressForm").reset(); acct("addressId").value=""; acct("addressLabel").value=customerAddresses().length ? "Rumah" : "Rumah";
+  acct("addressName").value=acct("profileName").value || auth.currentUser?.displayName || "";
+  acct("addressPhone").value=acct("profilePhone").value || ""; acct("addressDefault").checked=customerAddresses().length===0;
+  acct("addressForm").hidden=false; acct("addressLabel").focus();
+};
+acct("cancelAddress").onclick=()=>{acct("addressForm").hidden=true;accountStatus("","addressStatus");};
+acct("addressForm").onsubmit=async e=>{
+  e.preventDefault();
+  const id=acct("addressId").value || (crypto.randomUUID ? crypto.randomUUID() : "addr-"+Date.now());
+  const value={id,label:acct("addressLabel").value.trim(),name:acct("addressName").value.trim(),phone:acct("addressPhone").value.trim(),address:acct("addressText").value.trim(),isDefault:acct("addressDefault").checked};
+  if(!value.label || !value.name || !value.phone || !value.address) return accountStatus("Lengkapi label, penerima, nomor WhatsApp, dan alamat.","addressStatus");
+  if(!/^[0-9+() .-]{8,24}$/.test(value.phone)) return accountStatus("Nomor WhatsApp alamat belum valid.","addressStatus");
+  let addresses=customerAddresses().filter(a=>a.id!==id).map(a=>({...a}));
+  if(value.isDefault || !addresses.length) addresses=addresses.map(a=>({...a,isDefault:false}));
+  value.isDefault=value.isDefault || !addresses.length; addresses.push(value);
+  await saveAddressList(addresses);
 };
 acct("accountSignOut").onclick = async () => { if (accountOrdersStop) accountOrdersStop(); accountOrdersStop = null; customerProfile = null; await signOut(auth); setAccountMode(false); renderAccount(); };
 onAuthStateChanged(auth, async user => {
+  migrateCart(user);
   customerProfile = null;
   if (user && !user.isAnonymous) {
     try { const s = await getDoc(doc(db, "users", user.uid)); if (auth.currentUser?.uid === user.uid && s.exists()) customerProfile = s.data(); } catch (_) {}
@@ -1053,30 +1166,80 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && cOpen) cCl
 $c("chatText").addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); $c("chatForm").requestSubmit(); } });
 $c("chatNameForm").onsubmit = e => { e.preventDefault(); const n = $c("chatName").value.trim().slice(0, 40); if (!n) return; cLS.set("tk_chat_name", n); cPrepare(); };
 
-async function placeTrackedOrder(pid, productName){
-  if (!pid) { alert("Produk ini belum tersedia untuk dipesan online."); return; }
-  const user = auth.currentUser;
-  if (!user || user.isAnonymous) { accountOpen(); accountStatus("Masuk atau daftar untuk melanjutkan pemesanan."); return; }
-  try {
-    const saved = await getDoc(doc(db, "users", user.uid));
-    customerProfile = saved.exists() ? saved.data() : null;
-  } catch (_) { alert("Profil pelanggan belum dapat dimuat. Coba lagi."); return; }
-  if (!customerProfile?.name || !customerProfile?.phone || !customerProfile?.address) {
-    accountOpen(); accountStatus("Lengkapi alamat pengiriman lalu simpan sebelum memesan.", "profileStatus"); return;
-  }
-  const qtyText = prompt("Jumlah produk (maksimal 20):", "1"); if (qtyText == null) return;
-  const qty = Number(qtyText); if (!Number.isInteger(qty) || qty < 1 || qty > 20) { alert("Jumlah harus 1 sampai 20."); return; }
-  try {
-    const slugMatch = location.hash.match(/^#agen\/([a-z0-9-]+)/i);
-    const product = RAW.find(p => p.id === pid);
-    const promoCode = product && !product.agentId && PROMO ? PROMO.code : "";
-    const createOrder = httpsCallable(getFunctions(app, "asia-southeast1"), "createStoreOrder");
-    const result = await createOrder({ pid, qty, referralSlug: slugMatch ? slugMatch[1].toLowerCase() : "", promoCode });
-    const data = result.data || {};
-    alert("Pesanan #" + (data.orderCode || "") + " tercatat di Tokoku. Total: " + rp(data.total) + ". Admin Tokoku akan menghubungi Anda untuk pembayaran dan pengiriman.");
-  } catch (err) { alert("Pesanan gagal dicatat. " + (err.message || "Periksa koneksi lalu coba lagi.")); }
+function cartProduct(id) { return RAW.find(p=>p.id===id) || REAL.find(p=>p.id===id) || null; }
+function renderCart() {
+  const box=acct("cartLines"); if(!box) return;
+  box.textContent="";
+  let count=0,total=0;
+  cartItems.forEach(item=>{
+    count+=item.qty; const p=cartProduct(item.id), row=document.createElement("div"); row.className="cart-line";
+    if(!p){ row.innerHTML='<div><b>Produk tidak tersedia</b><small>Produk mungkin sudah dihapus dari toko.</small></div>'; }
+    else {
+      const left=document.createElement("div"), title=document.createElement("b"), sub=document.createElement("small");
+      title.textContent=p.name || "Produk Tokoku"; sub.textContent=rp(p.price||0)+" × "+item.qty; left.append(title,sub);
+      const qty=document.createElement("div"); qty.className="cart-qty";
+      const dec=document.createElement("button"); dec.type="button"; dec.textContent="−"; dec.setAttribute("aria-label","Kurangi jumlah"); dec.dataset.cartDec=item.id;
+      const val=document.createElement("b"); val.textContent=item.qty;
+      const inc=document.createElement("button"); inc.type="button"; inc.textContent="+"; inc.setAttribute("aria-label","Tambah jumlah"); inc.dataset.cartInc=item.id;
+      const del=document.createElement("button"); del.type="button"; del.textContent="×"; del.title="Hapus produk"; del.dataset.cartRemove=item.id;
+      qty.append(dec,val,inc,del); row.append(left,qty); total+=Number(p.price||0)*item.qty;
+      if(p.stock!=null && item.qty>p.stock) sub.textContent += " · stok tersedia "+p.stock;
+    }
+    box.append(row);
+  });
+  acct("cartBadge").textContent=count>99?"99+":String(count);
+  acct("cartSubtotal").textContent=rp(total);
+  acct("checkoutBtn").disabled=!cartItems.length;
+  if(!cartItems.length){const empty=document.createElement("p");empty.className="account-note";empty.textContent="Keranjang masih kosong. Tambahkan produk yang ingin dibeli.";box.append(empty);}
+  const addresses=customerAddresses();
+  acct("cartAddress").disabled=!addresses.length;
 }
-document.addEventListener("click", e => { const b = e.target.closest("[data-buy]"); if (b) placeTrackedOrder(b.dataset.pid, b.dataset.pn); });
+function updateCart(id, delta, remove=false) {
+  const p=cartProduct(id), item=cartItems.find(x=>x.id===id);
+  if(remove) cartItems=cartItems.filter(x=>x.id!==id);
+  else if(item){ const next=item.qty+delta; if(next<1) cartItems=cartItems.filter(x=>x.id!==id); else if(next>20) { acct("cartStatus").textContent="Maksimal 20 unit per produk."; return; } else if(p && p.stock!=null && next>p.stock){acct("cartStatus").textContent="Jumlah melebihi stok yang tersedia.";return;} else item.qty=next; }
+  else if(p && delta>0){ if(cartItems.length>=20){acct("cartStatus").textContent="Maksimal 20 jenis produk dalam satu checkout.";return;} if(p.stock!=null && p.stock<1){acct("cartStatus").textContent="Stok produk habis.";return;} cartItems.push({id,qty:1}); }
+  persistCart(); acct("cartStatus").textContent=""; renderCart();
+}
+function addToCart(id, open=true) {
+  const p=cartProduct(id); if(!id || !p){alert("Produk ini belum tersedia untuk dipesan online.");return;}
+  const item=cartItems.find(x=>x.id===id), next=(item?.qty||0)+1;
+  if(next>20 || (p.stock!=null && next>p.stock)){acct("cartStatus").textContent="Jumlah melebihi stok yang tersedia.";acct("cartWin").hidden=false;return;}
+  updateCart(id,1); if(open) acct("cartWin").hidden=false;
+}
+async function checkoutCart(){
+  if(!cartItems.length) return;
+  const user=auth.currentUser;
+  if(!user || user.isAnonymous){acct("cartWin").hidden=true;accountOpen();accountStatus("Masuk atau daftar untuk melanjutkan checkout.");return;}
+  try { const saved=await getDoc(doc(db,"users",user.uid)); customerProfile=saved.exists()?saved.data():null; }
+  catch(_){acct("cartStatus").textContent="Profil belum dapat dimuat. Coba lagi.";return;}
+  const addresses=customerAddresses(), address=addresses.find(a=>a.id===acct("cartAddress").value);
+  if(!address){acct("cartWin").hidden=true;accountOpen();accountStatus("Tambahkan alamat pengiriman sebelum checkout.","addressStatus");return;}
+  const unavailable=cartItems.find(x=>!cartProduct(x.id));
+  if(unavailable){acct("cartStatus").textContent="Hapus produk yang sudah tidak tersedia dari keranjang.";return;}
+  const oldText=acct("checkoutBtn").textContent; acct("checkoutBtn").disabled=true;acct("checkoutBtn").textContent="Mencatat pesanan…";
+  try {
+    const slugMatch=location.hash.match(/^#agen\/([a-z0-9-]+)/i);
+    const createOrder=httpsCallable(getFunctions(app,"asia-southeast1"),"createStoreOrder");
+    const result=await createOrder({items:cartItems.map(x=>({pid:x.id,qty:x.qty})),addressId:address.id,referralSlug:slugMatch?slugMatch[1].toLowerCase():"",promoCode:PROMO?.code||""});
+    const data=result.data||{}, rows=data.orders||[];
+    cartItems=[];persistCart();renderCart();acct("cartWin").hidden=true;
+    alert("Pesanan berhasil dibuat. "+rows.map(x=>"#"+(x.orderCode||"")+" "+rp(x.total||0)).join(" · ")+". Ongkir dan pembayaran akan dikonfirmasi admin Tokoku.");
+    accountOpen();
+  } catch(err){acct("cartStatus").textContent=err.message||"Pesanan gagal dicatat. Periksa koneksi lalu coba lagi.";}
+  finally{acct("checkoutBtn").disabled=!cartItems.length;acct("checkoutBtn").textContent=oldText;}
+}
+acct("cartBtn").onclick=()=>{acct("cartWin").hidden=false;renderCart();};
+acct("cartClose").onclick=()=>{acct("cartWin").hidden=true;};
+acct("cartWin").addEventListener("click",e=>{if(e.target===acct("cartWin"))acct("cartWin").hidden=true;});
+acct("checkoutBtn").onclick=checkoutCart;
+document.addEventListener("click", e=>{
+  const add=e.target.closest("[data-cart-add]"); if(add){updateCart(add.dataset.pid,1);acct("cartWin").hidden=false;return;}
+  const buy=e.target.closest("[data-buy]"); if(buy){addToCart(buy.dataset.pid,true);return;}
+  const inc=e.target.closest("[data-cart-inc]"); if(inc){updateCart(inc.dataset.cartInc,1);return;}
+  const dec=e.target.closest("[data-cart-dec]"); if(dec){updateCart(dec.dataset.cartDec,-1);return;}
+  const rem=e.target.closest("[data-cart-remove]"); if(rem)updateCart(rem.dataset.cartRemove,0,true);
+});
 /* Tombol "Tanya admin" / "Chat penjual": buka chat ke pemilik produk (agen) atau admin, produk terlampir */
 document.addEventListener("click", e => {
   const b = e.target.closest("[data-ask]"); if (!b) return;
