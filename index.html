@@ -227,6 +227,8 @@ header nav{display:grid;grid-template-columns:1fr auto 1fr}
 @media (max-width:900px){.cats{grid-template-columns:repeat(2,1fr)}.nav-r a.lk{display:none}.khero{padding:22px}}
 @media (max-width:480px){.mbtn{font-size:.92rem}.nav-cta{padding:9px 14px;font-size:.88rem}.khero i{font-size:2.4rem}}
 @media (prefers-reduced-motion:reduce){.menu{animation:none}}
+.cat i:empty,.khero i:empty{display:none}
+.cat b{margin-top:auto}
 </style>
 </head>
 <body>
@@ -513,8 +515,8 @@ const menuHtml = cur => [["#beranda", "Beranda", "home"], ["#kategori/semua", "S
 function renderCats(){
   const n = {}; lastList.forEach(p => { if (p.cat) n[p.cat] = (n[p.cat] || 0) + 1; });
   const tile = (h, i, t, c, x) => `<a class="cat" href="${h}" style="--c:${safeColor(c)}"><i>${esc(i)}</i><b>${esc(t)}</b><span>${x[0]}</span>${x[1] ? `<small>${esc(x[1])}</small>` : ""}</a>`;
-  byId("catGrid").innerHTML = tile("#kategori/semua", "🛍️", "Semua produk", "#C9A24B", [lastList.length + " produk"])
-    + catList().map(([id, c]) => tile("#kategori/" + encodeURIComponent(id), c.icon || "🏷️", c.name, c.color, [(n[id] || 0) + " produk", c.desc])).join("");
+  byId("catGrid").innerHTML = tile("#kategori/semua", "", "Semua produk", "#C9A24B", [lastList.length + " produk"])
+    + catList().map(([id, c]) => tile("#kategori/" + encodeURIComponent(id), c.icon || "", c.name, c.color, [(n[id] || 0) + " produk", c.desc])).join("");
   byId("mList").innerHTML = menuHtml(SLUG == null ? "home" : SLUG);
 }
 
@@ -544,7 +546,7 @@ function renderKat(){
     .map(([id, n]) => `<a href="#kategori/${encodeURIComponent(id)}"${id === SLUG ? ' aria-current="page"' : ""}>${esc(n)}</a>`).join("");
   const name = all ? "Semua produk" : known ? c.name : cOk ? "Kategori tidak ditemukan" : "Memuat…";
   byId("kName").textContent = name;
-  byId("kIcon").textContent = all ? "🛍️" : known ? (c.icon || "🏷️") : "";
+  byId("kIcon").textContent = all ? "" : known ? (c.icon || "") : "";
   byId("kDesc").textContent = all ? "Semua produk Tokoku dalam satu halaman." : known ? (c.desc || "") : "";
   byId("khero").style.setProperty("--c", all ? "#C9A24B" : safeColor(known ? c.color : ""));
   byId("kcrumb").textContent = name;
