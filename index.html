@@ -50,6 +50,7 @@ header nav{display:flex;align-items:center;justify-content:space-between;height:
 .hero{padding:72px 0 56px;display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:center}
 .hero p.lead{font-size:1.15rem;color:var(--muted);max-width:30em;margin:22px 0 32px}
 .hero-actions{display:flex;gap:12px;flex-wrap:wrap}
+.app-hint{color:var(--muted);font-size:.84rem;margin-top:8px}
 .trust{display:flex;gap:24px;margin-top:36px;color:var(--muted);font-size:.92rem;flex-wrap:wrap}
 .trust b{color:var(--ink);font-family:var(--font-display);font-size:1.35rem;display:block}
 
@@ -194,6 +195,23 @@ header nav{display:grid;grid-template-columns:1fr auto 1fr}
 .mbtn svg,.mclose svg{width:26px;height:26px;stroke:currentColor;stroke-width:1.5;fill:none;stroke-linecap:round}
 .nav-r{justify-self:end;display:flex;align-items:center;gap:24px;color:var(--muted);font-weight:500}
 .nav-r a.lk:hover{color:var(--ink)}
+.account-btn{padding:10px 16px;white-space:nowrap}
+.account-win{position:fixed;inset:0;z-index:90;background:rgba(20,15,8,.62);display:grid;place-items:center;padding:16px}
+.account-card{width:min(520px,100%);max-height:min(90vh,760px);overflow:auto;background:var(--surface);color:var(--ink);border:2px solid var(--gold);border-radius:24px;padding:24px;box-shadow:0 24px 70px #0007}
+.account-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.account-head h2{font-size:1.6rem}
+.account-close{background:transparent;border:0;color:var(--ink);font-size:1.8rem;cursor:pointer}
+.account-tabs{display:flex;gap:8px;margin-bottom:16px}
+.account-tabs button{flex:1;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);font:inherit;cursor:pointer}
+.account-tabs button[aria-selected=true]{background:var(--brown);color:var(--cream);border-color:var(--gold)}
+.account-form{display:grid;gap:12px}
+.account-form label{display:grid;gap:5px;font-weight:600;font-size:.92rem}
+.account-form input,.account-form textarea{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);font:400 1rem var(--font-body)}
+.account-form textarea{min-height:88px;resize:vertical}
+.account-note{color:var(--muted);font-size:.9rem;margin:0 0 14px}
+.account-status{min-height:1.4em;color:var(--muted);font-size:.9rem}
+.account-orders{display:grid;gap:10px;margin:12px 0}
+.account-order{padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--bg)}
 .lock{overflow:hidden}
 .menu{position:fixed;inset:0;z-index:60;background:var(--bg);overflow:auto;padding:22px clamp(20px,6vw,64px) 48px;animation:menuIn .25s ease}
 @keyframes menuIn{from{opacity:0;transform:translateY(-10px)}}
@@ -226,6 +244,7 @@ header nav{display:grid;grid-template-columns:1fr auto 1fr}
 .none a{color:var(--brand);font-weight:600;text-decoration:underline}
 @media (max-width:900px){.cats{grid-template-columns:repeat(2,1fr)}.nav-r a.lk{display:none}.khero{padding:22px}}
 @media (max-width:480px){.mbtn{font-size:.92rem}.nav-cta{padding:9px 14px;font-size:.88rem}.khero i{font-size:2.4rem}}
+@media (max-width:900px){.nav-r{gap:10px}.account-btn{padding:9px 12px;font-size:.85rem}}
 @media (prefers-reduced-motion:reduce){.menu{animation:none}}
 .cat i:empty,.khero i:empty{display:none}
 .cat b{margin-top:auto}
@@ -307,15 +326,46 @@ header nav{display:grid;grid-template-columns:1fr auto 1fr}
       <div class="nav-r">
         <a class="lk" href="#lokasi">Lokasi</a>
         <a class="lk" href="#faq">Bantuan</a>
+        <button class="btn btn-ghost account-btn" id="accountBtn" type="button">Akun saya</button>
         <a class="btn btn-primary nav-cta" data-wa="Halo, saya mau tanya produk Tokoku" href="#">Chat WhatsApp</a>
       </div>
     </nav>
   </div>
 </header>
+<section class="account-win" id="accountWin" role="dialog" aria-modal="true" aria-labelledby="accountTitle" hidden>
+  <div class="account-card">
+    <div class="account-head"><h2 id="accountTitle">Akun pelanggan</h2><button class="account-close" id="accountClose" type="button" aria-label="Tutup">&times;</button></div>
+    <div id="accountGuest">
+      <p class="account-note">Masuk atau daftar supaya alamat tersimpan dan pesanan bisa dilihat kembali.</p>
+      <div class="account-tabs" role="tablist"><button type="button" id="loginTab" aria-selected="true">Masuk</button><button type="button" id="registerTab" aria-selected="false">Daftar</button></div>
+      <form class="account-form" id="accountAuthForm">
+        <label id="accountNameWrap" hidden>Nama lengkap<input id="accountName" autocomplete="name" maxlength="60"></label>
+        <label>Email<input id="accountEmail" type="email" autocomplete="email" required maxlength="160"></label>
+        <label>Kata sandi<input id="accountPassword" type="password" autocomplete="current-password" required minlength="8"></label>
+        <button class="btn btn-primary" id="accountSubmit" type="submit">Masuk</button>
+        <button class="btn btn-ghost" id="googleLogin" type="button"><svg aria-hidden="true" viewBox="0 0 48 48" width="20" height="20"><path fill="#4285F4" d="M43.6 24.5c0-1.4-.1-2.8-.4-4.1H24v7.8h11a9.4 9.4 0 0 1-4.1 6.2v5.1h6.7c3.9-3.6 6-8.8 6-15z"/><path fill="#34A853" d="M24 44c5.5 0 10.1-1.8 13.5-4.9l-6.7-5.1c-1.8 1.2-4 1.9-6.8 1.9-5.2 0-9.7-3.5-11.3-8.2H5.8v5.2A20 20 0 0 0 24 44z"/><path fill="#FBBC05" d="M12.7 27.7a12 12 0 0 1 0-7.4v-5.2H5.8a20 20 0 0 0 0 17.8z"/><path fill="#EA4335" d="M24 12.1c3 0 5.7 1 7.8 3.1l5.8-5.8A19.4 19.4 0 0 0 24 4 20 20 0 0 0 5.8 15.1l6.9 5.2C14.3 15.6 18.8 12.1 24 12.1z"/></svg>Masuk dengan Google</button>
+        <button class="btn btn-ghost" id="forgotPassword" type="button">Lupa kata sandi?</button>
+        <p class="account-status" id="accountStatus" role="status"></p>
+      </form>
+    </div>
+    <div id="accountMember" hidden>
+      <p class="account-note" id="accountEmailText"></p>
+      <form class="account-form" id="profileForm">
+        <label>Nama penerima<input id="profileName" autocomplete="name" maxlength="60" required></label>
+        <label>Nomor WhatsApp<input id="profilePhone" type="tel" autocomplete="tel" maxlength="24" required></label>
+        <label>Alamat lengkap<textarea id="profileAddress" autocomplete="street-address" maxlength="500" required placeholder="Jalan, nomor rumah, RT/RW, kelurahan, kecamatan, kota, provinsi, kode pos"></textarea></label>
+        <button class="btn btn-primary" type="submit">Simpan alamat</button>
+        <p class="account-status" id="profileStatus" role="status"></p>
+      </form>
+      <h3 style="margin-top:22px">Pesanan saya</h3><div class="account-orders" id="accountOrders"><p class="account-note">Memuat pesanan…</p></div>
+      <button class="btn btn-ghost" id="accountSignOut" type="button">Keluar dari akun</button>
+    </div>
+  </div>
+</section>
 <div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Menu kategori" hidden>
   <button class="mclose" id="mClose" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4l16 16M20 4L4 20"/></svg>Tutup</button>
   <nav class="mlist" id="mList" aria-label="Kategori"></nav>
-  <div class="msub"><a href="#lokasi">Lokasi toko</a><a href="#faq">Bantuan</a><a data-wa="Halo, saya mau tanya produk Tokoku" href="#">Chat WhatsApp</a></div>
+  <div class="msub"><a href="#lokasi">Lokasi toko</a><a href="#faq">Bantuan</a><a data-wa="Halo, saya mau tanya produk Tokoku" href="#">Chat WhatsApp</a><a href="https://admintokoku.vercel.app/">Admin Tokoku</a><a href="https://agentokoku.vercel.app/">Portal mitra</a><a href="/Tokoku.apk" download="Tokoku.apk" data-android-app>Unduh aplikasi Android</a></div>
 </div>
 
 <main>
@@ -328,7 +378,9 @@ header nav{display:grid;grid-template-columns:1fr auto 1fr}
       <div class="hero-actions">
         <a class="btn btn-primary" href="#belanja">Lihat kategori</a>
         <a class="btn btn-ghost" data-wa="Halo, saya mau tanya promo yang sedang berjalan" href="#">Tanya promo</a>
+        <a class="btn btn-ghost" href="/Tokoku.apk" download="Tokoku.apk" data-android-app aria-label="Unduh aplikasi Tokoku untuk Android">Unduh aplikasi Android</a>
       </div>
+      <p class="app-hint" data-android-app>Setelah diunduh, buka Tokoku.apk dari folder Unduhan lalu pilih Instal.</p>
       <div class="trust">
         <div><b>5.000+</b>pesanan terkirim</div>
         <div><b>4,9/5</b>rating pelanggan</div>
@@ -537,7 +589,7 @@ function card(p){
   const ask = `<button class="btn btn-ghost" type="button" data-ask${ag ? ` data-ag="${esc(p.agentId)}"` : ""} data-pn="${esc(p.name)}" data-pp="${fp}" style="margin-bottom:10px">${ag ? "Chat penjual" : "Tanya admin"}</button>`;
   const order = soldOut
     ? `<span class="btn btn-ghost" style="opacity:.55;pointer-events:none">Stok habis</span>`
-    : `<a class="btn btn-primary" href="${ag ? agWa(p, "Halo " + ag.name + ", saya mau pesan " + p.name + " (" + rp(fp) + ") dari Tokoku.") : wa("Halo, saya mau pesan " + p.name + " (" + rp(fp) + ")" + (fp < p.price ? " dengan kode promo " + PROMO.code : ""))}" target="_blank" rel="noopener">Pesan</a>`;
+    : `<button class="btn btn-primary" type="button" data-buy data-pid="${esc(p.id || "")}" data-pn="${esc(p.name)}"${!p.id ? " disabled" : ""}>Pesan lewat Tokoku</button>`;
   return `
   <article class="card">
     <div class="thumb${safeImg ? " has-img" : ""}" style="background-color:${safeColor(p.color || "#ddd")};${img}">${p.tag ? `<span class="tag">${esc(p.tag)}</span>` : ""}<i></i></div>
@@ -700,8 +752,7 @@ function renderAgen(){
   byId("aDesc").textContent = a ? (a.desc || "") : "";
   const lg = byId("aLogo"); if (a) agLogo(a, lg); else { lg.style.backgroundImage = "none"; lg.style.backgroundColor = "var(--line)"; lg.textContent = ""; }
   byId("aHero").style.setProperty("--c", a ? safeColor(a.color) : "#4A3AFF");
-  const wb = byId("aWa"), n = a ? String(a.wa || "").replace(/\D/g, "") : ""; wb.hidden = !n;
-  if (n) wb.href = "https://wa.me/" + n + "?text=" + encodeURIComponent("Halo " + a.name + ", saya lihat toko Anda di Tokoku.");
+  const wb = byId("aWa"); wb.hidden = true; wb.removeAttribute("href");
   const ac = byId("aChat"); ac.hidden = !a; if (a) ac.dataset.ag = a.id;
   if (!a) { grid.innerHTML = ""; byId("acount").textContent = ""; none.hidden = false; if (aOk) none.innerHTML = 'Toko ini tidak ada atau sedang tidak aktif. <a href="#beranda">Kembali ke beranda</a>'; else none.textContent = "Memuat toko…"; return; }
   const list = REAL.filter(p => p.agentId === a.id);
@@ -727,7 +778,8 @@ route();
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, doc, getDoc, setDoc, addDoc, updateDoc, onSnapshot, query, where, orderBy, serverTimestamp, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { getAuth, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js";
+import { getAuth, onAuthStateChanged, signInAnonymously, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail, updateProfile, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 /* ====== KONFIGURASI FIREBASE (harus sama dengan di admin.html) ====== */
 const firebaseConfig = {
@@ -748,7 +800,7 @@ import("https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js")
 
 /* Produk: tampil otomatis setiap kali admin menambah, mengubah, atau menghapus */
 onSnapshot(collection(db, "products"), snap => {
-  RAW = snap.docs.map(d => d.data()).filter(p => p.active !== false)
+  RAW = snap.docs.map(d => ({ ...d.data(), id: d.id })).filter(p => p.active !== false)
     .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
   pOk = true;
   rebuild();   // kosong = tampilkan produk contoh; produk mitra disaring sesuai status mitra
@@ -836,7 +888,8 @@ const CT_HTML = document.querySelector("#chatWin .ct").innerHTML, CT_SUB = docum
 function cRenderHead(){
   const ct = document.querySelector("#chatWin .ct"), sm = document.querySelector("#chatWin .ch > div small");
   if (cTarget === "admin") { ct.innerHTML = CT_HTML; sm.innerHTML = CT_SUB; $c("chatWin").setAttribute("aria-label", "Chat dengan admin"); }
-  else { ct.textContent = cAgName(cTarget); sm.textContent = "Penjual di Tokoku · Tanya produk, stok, atau pengiriman"; $c("chatWin").setAttribute("aria-label", "Chat dengan " + cAgName(cTarget)); }
+  else { ct.textContent = cAgName(cTarget); sm.textContent = "Penjual Tokoku - Tanya produk, stok, atau pengiriman"; $c("chatWin").setAttribute("aria-label", "Chat dengan " + cAgName(cTarget)); }
+  $c("chatWa").hidden = cTarget !== "admin";
 }
 function cRenderWho(){
   const sel = $c("chatWho"), ids = Object.keys(cThreads);
@@ -883,6 +936,115 @@ function cCloseChat(){
 }
 onAuthStateChanged(auth, u => { cUser = u; if (u) cStart(); else cStop(); if (cOpen) cPrepare(); });
 
+/* ====== AKUN PELANGGAN, ALAMAT TERSIMPAN, DAN RIWAYAT PESANAN ====== */
+const acct = id => document.getElementById(id);
+let accountRegister = false, customerProfile = null, accountOrdersStop = null;
+const accountOpen = () => { acct("accountWin").hidden = false; renderAccount(); };
+const accountClose = () => { acct("accountWin").hidden = true; if (accountOrdersStop) accountOrdersStop(); accountOrdersStop = null; };
+function accountStatus(message, id = "accountStatus") { acct(id).textContent = message || ""; }
+function renderAccount() {
+  const user = auth.currentUser;
+  const member = !!user && !user.isAnonymous;
+  acct("accountGuest").hidden = member; acct("accountMember").hidden = !member;
+  acct("accountBtn").textContent = member ? "Akun saya" : "Masuk / Daftar";
+  if (!member) return;
+  acct("accountEmailText").textContent = user.email || "Akun pelanggan";
+  acct("profileName").value = customerProfile?.name || user.displayName || "";
+  acct("profilePhone").value = customerProfile?.phone || "";
+  acct("profileAddress").value = customerProfile?.address || "";
+  if (accountOrdersStop) accountOrdersStop();
+  acct("accountOrders").textContent = "Memuat pesanan…";
+  accountOrdersStop = onSnapshot(query(collection(db, "orders"), where("uid", "==", user.uid)), snap => {
+    const box = acct("accountOrders"); box.textContent = "";
+    const rows = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+    if (!rows.length) { const p = document.createElement("p"); p.className = "account-note"; p.textContent = "Belum ada pesanan."; box.append(p); return; }
+    rows.slice(0, 20).forEach(o => {
+      const row = document.createElement("div"); row.className = "account-order";
+      const name = document.createElement("b"); name.textContent = o.prod || (o.items || []).map(x => x.name).join(", ") || "Pesanan Tokoku";
+      const state = document.createElement("small"); state.textContent = "Pesanan #" + o.id.slice(0, 6).toUpperCase() + " · " + (o.status || "Diproses");
+      const total = document.createElement("small"); total.textContent = "Total " + rp(o.total || 0) + (o.paid ? " · Sudah dibayar" : " · Menunggu pembayaran");
+      row.append(name, state, total); box.append(row);
+    });
+  }, () => { acct("accountOrders").textContent = "Pesanan belum dapat dimuat. Coba buka kembali."; });
+}
+function setAccountMode(register) {
+  accountRegister = register;
+  acct("loginTab").setAttribute("aria-selected", String(!register));
+  acct("registerTab").setAttribute("aria-selected", String(register));
+  acct("accountNameWrap").hidden = !register;
+  acct("accountPassword").autocomplete = register ? "new-password" : "current-password";
+  acct("accountPassword").minLength = register ? 8 : 1;
+  acct("accountSubmit").textContent = register ? "Buat akun" : "Masuk";
+  acct("forgotPassword").hidden = register; accountStatus("");
+}
+acct("accountBtn").onclick = accountOpen; acct("accountClose").onclick = accountClose;
+acct("accountWin").addEventListener("click", e => { if (e.target === acct("accountWin")) accountClose(); });
+acct("loginTab").onclick = () => setAccountMode(false); acct("registerTab").onclick = () => setAccountMode(true);
+acct("googleLogin").onclick = async () => {
+  accountStatus("Membuka masuk Google…");
+  try {
+    const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: "select_account" });
+    await signInWithPopup(auth, provider);
+    customerProfile = null; renderAccount();
+    const saved = await getDoc(doc(db, "users", auth.currentUser.uid));
+    customerProfile = saved.exists() ? saved.data() : null;
+    renderAccount();
+    if (!customerProfile?.address || !customerProfile?.phone) accountStatus("Google berhasil. Lengkapi nomor WhatsApp dan alamat pengiriman, lalu simpan.", "profileStatus");
+  } catch (err) {
+    const messages = {
+      "auth/operation-not-allowed": "Login Google belum diaktifkan di Firebase Authentication.",
+      "auth/unauthorized-domain": "Domain website belum ditambahkan ke Authorized domains Firebase Authentication.",
+      "auth/popup-blocked": "Jendela masuk Google diblokir. Izinkan pop-up lalu coba lagi.",
+      "auth/popup-closed-by-user": "Proses masuk Google dibatalkan.",
+      "auth/cancelled-popup-request": "Proses masuk Google sebelumnya masih berjalan. Coba lagi sebentar."
+    };
+    accountStatus(messages[err.code] || "Masuk Google gagal. Periksa koneksi dan konfigurasi Firebase.");
+  }
+};
+acct("accountAuthForm").onsubmit = async e => {
+  e.preventDefault(); accountStatus("Memproses…");
+  const email = acct("accountEmail").value.trim().toLowerCase(), password = acct("accountPassword").value;
+  try {
+    if (accountRegister) {
+      const name = acct("accountName").value.trim();
+      if (!name) throw new Error("Isi nama lengkap terlebih dahulu.");
+      const credential = await createUserWithEmailAndPassword(auth, email, password);
+      await updateProfile(credential.user, { displayName: name });
+      customerProfile = { name, phone: "", address: "" }; renderAccount();
+      accountStatus("Akun berhasil dibuat. Lengkapi nomor WhatsApp dan alamat, lalu simpan.", "profileStatus");
+    } else { await signInWithEmailAndPassword(auth, email, password); customerProfile = null; renderAccount(); }
+  } catch (err) {
+    const messages = { "auth/email-already-in-use":"Email sudah terdaftar. Silakan masuk.", "auth/invalid-credential":"Email atau kata sandi salah.", "auth/weak-password":"Kata sandi minimal 8 karakter.", "auth/invalid-email":"Format email belum benar.", "auth/too-many-requests":"Terlalu banyak percobaan. Coba lagi nanti.", "auth/operation-not-allowed":"Login email belum diaktifkan di Firebase Authentication." };
+    accountStatus(messages[err.code] || err.message || "Tidak bisa memproses akun. Coba lagi.");
+  }
+};
+acct("forgotPassword").onclick = async () => {
+  const email = acct("accountEmail").value.trim().toLowerCase();
+  if (!email) return accountStatus("Masukkan email terlebih dahulu.");
+  try { await sendPasswordResetEmail(auth, email); accountStatus("Tautan untuk mengganti kata sandi dikirim ke email."); }
+  catch (err) { accountStatus(err.code === "auth/user-not-found" ? "Email belum terdaftar." : "Email pemulihan belum dapat dikirim."); }
+};
+acct("profileForm").onsubmit = async e => {
+  e.preventDefault(); const user = auth.currentUser; if (!user || user.isAnonymous) return accountOpen();
+  const profile = { name: acct("profileName").value.trim(), phone: acct("profilePhone").value.trim(), address: acct("profileAddress").value.trim() };
+  if (!profile.name || !profile.phone || !profile.address) return accountStatus("Lengkapi nama, nomor WhatsApp, dan alamat.", "profileStatus");
+  if (!/^[0-9+() .-]{8,24}$/.test(profile.phone)) return accountStatus("Nomor WhatsApp belum valid.", "profileStatus");
+  accountStatus("Menyimpan alamat…", "profileStatus");
+  try {
+    await setDoc(doc(db, "users", user.uid), { ...profile, email: user.email || "", updatedAt: serverTimestamp() }, { merge: true });
+    customerProfile = profile; accountStatus("Alamat pengiriman tersimpan.", "profileStatus");
+  } catch (err) { accountStatus("Alamat belum tersimpan. Pastikan aturan Firebase terbaru sudah diterapkan.", "profileStatus"); }
+};
+acct("accountSignOut").onclick = async () => { if (accountOrdersStop) accountOrdersStop(); accountOrdersStop = null; customerProfile = null; await signOut(auth); setAccountMode(false); renderAccount(); };
+onAuthStateChanged(auth, async user => {
+  customerProfile = null;
+  if (user && !user.isAnonymous) {
+    try { const s = await getDoc(doc(db, "users", user.uid)); if (auth.currentUser?.uid === user.uid && s.exists()) customerProfile = s.data(); } catch (_) {}
+  }
+  renderAccount();
+});
+
 $c("chatBtn").onclick = cOpenChat;
 $c("chatClose").onclick = cCloseChat;
 $c("chatWho").onchange = e => { cProd = null; cRenderProd(); cSetTarget(e.target.value); };
@@ -891,6 +1053,30 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && cOpen) cCl
 $c("chatText").addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); $c("chatForm").requestSubmit(); } });
 $c("chatNameForm").onsubmit = e => { e.preventDefault(); const n = $c("chatName").value.trim().slice(0, 40); if (!n) return; cLS.set("tk_chat_name", n); cPrepare(); };
 
+async function placeTrackedOrder(pid, productName){
+  if (!pid) { alert("Produk ini belum tersedia untuk dipesan online."); return; }
+  const user = auth.currentUser;
+  if (!user || user.isAnonymous) { accountOpen(); accountStatus("Masuk atau daftar untuk melanjutkan pemesanan."); return; }
+  try {
+    const saved = await getDoc(doc(db, "users", user.uid));
+    customerProfile = saved.exists() ? saved.data() : null;
+  } catch (_) { alert("Profil pelanggan belum dapat dimuat. Coba lagi."); return; }
+  if (!customerProfile?.name || !customerProfile?.phone || !customerProfile?.address) {
+    accountOpen(); accountStatus("Lengkapi alamat pengiriman lalu simpan sebelum memesan.", "profileStatus"); return;
+  }
+  const qtyText = prompt("Jumlah produk (maksimal 20):", "1"); if (qtyText == null) return;
+  const qty = Number(qtyText); if (!Number.isInteger(qty) || qty < 1 || qty > 20) { alert("Jumlah harus 1 sampai 20."); return; }
+  try {
+    const slugMatch = location.hash.match(/^#agen\/([a-z0-9-]+)/i);
+    const product = RAW.find(p => p.id === pid);
+    const promoCode = product && !product.agentId && PROMO ? PROMO.code : "";
+    const createOrder = httpsCallable(getFunctions(app, "asia-southeast1"), "createStoreOrder");
+    const result = await createOrder({ pid, qty, referralSlug: slugMatch ? slugMatch[1].toLowerCase() : "", promoCode });
+    const data = result.data || {};
+    alert("Pesanan #" + (data.orderCode || "") + " tercatat di Tokoku. Total: " + rp(data.total) + ". Admin Tokoku akan menghubungi Anda untuk pembayaran dan pengiriman.");
+  } catch (err) { alert("Pesanan gagal dicatat. " + (err.message || "Periksa koneksi lalu coba lagi.")); }
+}
+document.addEventListener("click", e => { const b = e.target.closest("[data-buy]"); if (b) placeTrackedOrder(b.dataset.pid, b.dataset.pn); });
 /* Tombol "Tanya admin" / "Chat penjual": buka chat ke pemilik produk (agen) atau admin, produk terlampir */
 document.addEventListener("click", e => {
   const b = e.target.closest("[data-ask]"); if (!b) return;
@@ -942,8 +1128,8 @@ $c("chatWa").onclick = () => {
   const pr = lastProd ? "Produk: " + (lastProd.name || lastProd.prodName) + ((lastProd.price || lastProd.prodPrice) ? " (" + rp(lastProd.price || lastProd.prodPrice) + ")" : "") + "\n" : "";
   const rec = cLast.slice(-6).map(m => (m.from === "user" ? "Saya: " : (toAg ? cAgName(cTarget) : "Admin") + ": ") + String(m.text || "[Gambar]").replace(/\s+/g, " ").slice(0, 160)).join("\n");
   const txt = ("Halo " + (toAg ? cAgName(cTarget) : "Admin Tokoku") + ", saya " + nm + ". Saya lanjutkan chat dari website.\n" + pr + (rec ? "\nRiwayat chat:\n" + rec : "")).slice(0, 1200);
-  if (toAg) { const n = String((AG[cTarget] || {}).wa || "").replace(/\D/g, ""); window.open("https://wa.me/" + n + "?text=" + encodeURIComponent(txt), "_blank", "noopener"); }
-  else window.open(wa(txt), "_blank", "noopener");
+  if (toAg) return;
+  window.open(wa(txt), "_blank", "noopener");
 };
 
 function toChatImg(file, cap = 260000){
@@ -981,6 +1167,7 @@ $c("chatFile").onchange = async e => {
   try { cImg = await toChatImg(f); cRenderImg(); $c("chatText").focus(); }
   catch (err) { const m = document.createElement("div"); m.className = "cempty"; m.textContent = err.message + ". Pilih gambar JPG, PNG, atau WebP."; $c("chatMsgs").append(m); $c("chatMsgs").scrollTop = $c("chatMsgs").scrollHeight; }
 };
+document.querySelectorAll("[data-android-app]").forEach(a => { a.hidden = !/Android/i.test(navigator.userAgent); });
 </script>
 </body>
 </html>
