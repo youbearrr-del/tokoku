@@ -823,7 +823,6 @@ route();
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, doc, getDoc, setDoc, addDoc, updateDoc, onSnapshot, query, where, orderBy, serverTimestamp, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js";
 import { getAuth, onAuthStateChanged, signInAnonymously, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail, updateProfile, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 /* ====== KONFIGURASI FIREBASE (harus sama dengan di admin.html) ====== */
@@ -1042,7 +1041,10 @@ async function saveAddressList(addresses) {
   const profile={...(customerProfile||{}),name:acct("profileName").value.trim() || primary?.name || user.displayName || "",phone:acct("profilePhone").value.trim() || primary?.phone || "",addresses,
     address:primary?.address || "",email:user.email || "",updatedAt:serverTimestamp()};
   try { await setDoc(doc(db,"users",user.uid),profile,{merge:true}); customerProfile=profile; acct("addressForm").hidden=true; accountStatus("Alamat berhasil disimpan.","addressStatus"); renderAddresses(); }
-  catch(e){ accountStatus("Alamat belum tersimpan. Pastikan aturan Firebase sudah diperbarui.","addressStatus"); }
+  catch(e){
+    console.warn("Gagal menyimpan alamat pelanggan:",e);
+    accountStatus(e?.code==="permission-denied" ? "Firebase menolak perubahan profil. Terapkan aturan Firestore terbaru lalu coba lagi." : "Alamat belum tersimpan ("+(e?.code||"koneksi")+"). Periksa koneksi dan coba lagi.","addressStatus");
+  }
 }
 function renderAccount() {
   const user = auth.currentUser;
@@ -1158,7 +1160,7 @@ acct("addressForm").onsubmit=async e=>{
   if(!value.label || !value.name || !value.phone || !value.province || !value.city || !value.district || !value.village || !value.street || !value.postalCode) return accountStatus("Lengkapi penerima dan semua bagian alamat, termasuk provinsi dan kode pos.","addressStatus");
   if(!/^[0-9+() .-]{8,24}$/.test(value.phone)) return accountStatus("Nomor WhatsApp alamat belum valid.","addressStatus");
   if(!/^\d{5}$/.test(value.postalCode)) return accountStatus("Kode pos harus terdiri dari 5 angka.","addressStatus");
-  value.address=[value.street,value.rtRw?"RT/RW "+value.rtRw:"",value.village,value.district,value.city,value.province,value.postalCode,value.note?"Catatan: "+value.note:""].filter(Boolean).join(", ");
+  value.address=[value.street,value.rtRw?"RT/RW "+value.rtRw:"",value.village,value.district,value.city,value.province,value.postalCode,value.note?"Catatan: "+value.note:""].filter(Boolean).join(", ").slice(0,500);
   let addresses=customerAddresses().filter(a=>a.id!==id).map(a=>({...a}));
   if(value.isDefault || !addresses.length) addresses=addresses.map(a=>({...a,isDefault:false}));
   value.isDefault=value.isDefault || !addresses.length; addresses.push(value);
@@ -1236,13 +1238,28 @@ async function checkoutCart(){
   const oldText=acct("checkoutBtn").textContent; acct("checkoutBtn").disabled=true;acct("checkoutBtn").textContent="Mencatat pesanan…";
   try {
     const slugMatch=location.hash.match(/^#agen\/([a-z0-9-]+)/i);
-    const createOrder=httpsCallable(getFunctions(app,"asia-southeast1"),"createStoreOrder");
-    const result=await createOrder({items:cartItems.map(x=>({pid:x.id,qty:x.qty})),addressId:address.id,referralSlug:slugMatch?slugMatch[1].toLowerCase():"",promoCode:PROMO?.code||""});
-    const data=result.data||{}, rows=data.orders||[];
+    const idToken=await user.getIdToken();
+    const response=await fetch("/api/create-order",{method:"POST",headers:{"content-type":"application/json","authorization":"Bearer "+idToken},body:JSON.stringify({items:cartItems.map(x=>({pid:x.id,qty:x.qty})),addressId:address.id,referralSlug:slugMatch?slugMatch[1].toLowerCase():"",promoCode:PROMO?.code||""})});
+    const data=await response.json().catch(()=>({}));
+    if(!response.ok){const error=new Error(data.message||"Checkout gagal.");error.code=data.error||"checkout-failed";throw error;}
+    const rows=data.orders||[];
     cartItems=[];persistCart();renderCart();acct("cartWin").hidden=true;
     alert("Pesanan berhasil dibuat. "+rows.map(x=>"#"+(x.orderCode||"")+" "+rp(x.total||0)).join(" · ")+". Ongkir dan pembayaran akan dikonfirmasi admin Tokoku.");
     accountOpen();
-  } catch(err){acct("cartStatus").textContent=err.message||"Pesanan gagal dicatat. Periksa koneksi lalu coba lagi.";}
+  } catch(err){
+    console.warn("Checkout Tokoku gagal:",err);
+    const code=String(err?.code||"").replace(/^functions\//,"");
+    const hints={
+      unauthenticated:"Sesi login tidak aktif. Keluar lalu masuk kembali ke akun pelanggan.",
+      "failed-precondition":"Alamat atau produk belum terbaca oleh server. Simpan ulang alamat dan pastikan API checkout Vercel sudah dipasang.",
+      "permission-denied":"Akses checkout ditolak. Periksa Firestore Rules yang sudah dipublikasikan.",
+      "not-found":"Salah satu produk sudah tidak tersedia.",
+      "resource-exhausted":"Layanan pesanan sedang sibuk. Coba lagi sebentar.",
+      internal:"Checkout gagal di server. Kode laporan: "+(err?.message||code),
+      unavailable:"Layanan pesanan tidak terhubung. Periksa internet dan coba lagi."
+    };
+    acct("cartStatus").textContent=hints[code] || (err?.message ? err.message+" ("+(code||"error")+")" : "Pesanan gagal dicatat. Kode: "+(code||"tidak diketahui"));
+  }
   finally{acct("checkoutBtn").disabled=!cartItems.length;acct("checkoutBtn").textContent=oldText;}
 }
 acct("cartBtn").onclick=()=>{acct("cartWin").hidden=false;renderCart();};
