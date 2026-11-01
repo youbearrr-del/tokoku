@@ -3,320 +3,829 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex,nofollow">
-<title>Portal Mitra – Tokoku</title>
+<title>Tokoku – Belanja Hemat, Promo Setiap Minggu</title>
+<meta name="description" content="Produk pilihan dengan harga terbaik, promo terbatas, dan pengiriman cepat ke seluruh Indonesia.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#F5F6FA;--surface:#fff;--ink:#15182E;--muted:#5B607A;--line:#E3E5EF;--brand:#4A3AFF;--brand-ink:#fff;--danger:#D92D4B;--gold:#C9A24B;
---fd:'Bricolage Grotesque',system-ui,sans-serif;--fb:'Geist',system-ui,sans-serif}
-@media (prefers-color-scheme:dark){:root{--bg:#0F1120;--surface:#181B30;--ink:#F1F2FA;--muted:#A2A7C4;--line:#2A2E4A;--brand:#7C70FF;--brand-ink:#0F1120}}
+:root{
+  --bg:#F5F6FA; --surface:#FFFFFF; --ink:#15182E; --muted:#5B607A; --line:#E3E5EF;
+  --brand:#4A3AFF; --brand-ink:#FFFFFF; --sun:#FFD84D; --sun-ink:#3A2E00;
+  --radius:20px;
+  --font-display:'Bricolage Grotesque',system-ui,sans-serif;
+  --font-body:'Geist',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#0F1120; --surface:#181B30; --ink:#F1F2FA; --muted:#A2A7C4; --line:#2A2E4A; --brand:#7C70FF; --brand-ink:#0F1120}
+}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:var(--fb);background:var(--bg);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased}
-:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
-h1,h2,h3{font-family:var(--fd);letter-spacing:-.02em}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
 a{color:inherit;text-decoration:none}
-[hidden],.hidden{display:none!important}
-.wrap{max-width:980px;margin:0 auto;padding:0 18px}
-.btn{display:inline-flex;align-items:center;justify-content:center;padding:10px 18px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font:600 .92rem var(--fb);cursor:pointer;gap:8px}
-.btn.primary{background:var(--brand);border-color:var(--brand);color:var(--brand-ink)}
-.btn.danger{color:var(--danger)}
-.btn:disabled{opacity:.5;cursor:default}
-.panel{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:24px;margin-bottom:14px}
-.panel h2{font-size:1.2rem;margin-bottom:14px}
-.muted{color:var(--muted)}
-.linkbtn{background:none;border:0;padding:0;color:var(--muted);font:500 .92rem var(--fb);cursor:pointer;text-decoration:underline}
-.linkbtn:hover{color:var(--ink)}
+:focus-visible{outline:3px solid var(--brand);outline-offset:3px;border-radius:8px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+h1,h2,h3{font-family:var(--font-display);line-height:1.08;letter-spacing:-.02em}
+h1{font-size:clamp(2.4rem,6.5vw,4.6rem);font-weight:800}
+h2{font-size:clamp(1.7rem,4vw,2.5rem);font-weight:700}
+h3{font-size:1.15rem;font-weight:700;letter-spacing:-.01em}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 26px;border-radius:999px;font-weight:600;border:0;cursor:pointer;font:600 1rem var(--font-body);transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translateY(-2px)}
+.btn-primary{background:var(--brand);color:var(--brand-ink);box-shadow:0 10px 24px -10px var(--brand)}
+.btn-ghost{background:transparent;border:1.5px solid var(--line);color:var(--ink)}
 
-/* Masuk / daftar */
-.gate{min-height:100vh;display:grid;grid-template-columns:1fr 1.1fr}
-.brand{background:#4A3AFF;color:#fff;padding:44px 52px;display:flex;flex-direction:column;justify-content:space-between;gap:40px;position:relative;overflow:hidden}
-.logo{font:800 1.6rem var(--fd);letter-spacing:-.03em}
-.logo span{color:#FFD84D}
-.brand .logo,.brand-body{position:relative;z-index:1}
-.brand-body{max-width:28em}
-.brand h1{font-size:clamp(2rem,4.2vw,3.2rem);font-weight:800;line-height:1.05}
-.brand p{margin:16px 0 22px;opacity:.88}
-.brand ul{list-style:none;display:grid;gap:10px}
-.brand li{display:flex;gap:12px;align-items:center;font-weight:500}
-.brand li::before{content:"";width:9px;height:9px;border-radius:50%;background:#FFD84D;flex:none}
-.blob{position:absolute;right:-90px;bottom:-90px;width:300px;height:300px;border-radius:50%;background:#FFD84D}
-.side{display:grid;place-items:center;padding:32px}
-.card{width:100%;max-width:430px}
-.card h2{font-size:1.8rem;font-weight:800;line-height:1.1}
-.card>p{color:var(--muted);margin:10px 0 22px}
-.seg{display:inline-flex;gap:4px;padding:4px;background:var(--surface);border:1px solid var(--line);border-radius:999px;margin-bottom:22px}
-.seg button{padding:8px 18px;border-radius:999px;border:0;background:transparent;color:var(--muted);font:600 .92rem var(--fb);cursor:pointer}
-.seg button.on{background:var(--ink);color:var(--bg)}
-.msg{color:var(--danger);margin-top:14px;font-size:.92rem;min-height:1.2em}
-.msg.ok{color:#16A34A}
-@media (max-width:820px){.gate{grid-template-columns:1fr}.brand{padding:28px 24px;gap:20px}.brand ul{display:none}.blob{width:160px;height:160px}.side{padding:28px 20px 48px}}
+/* Top promo strip */
+.strip{background:var(--sun);color:var(--sun-ink);text-align:center;font-size:.9rem;font-weight:500;padding:9px 16px}
 
-/* Form */
-form{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
-form.one{grid-template-columns:1fr}
-label{display:flex;flex-direction:column;gap:5px;font-size:.88rem;font-weight:600}
-label small{font-weight:400;color:var(--muted)}
-input,textarea,select{font:400 1rem var(--fb);padding:11px 13px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);width:100%}
-input[type=color]{padding:3px;height:44px}
-.check{flex-direction:row;align-items:center;gap:10px;font-weight:500}
-.check input{width:auto}
-.full{grid-column:1/-1}
-.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-@media (max-width:640px){form{grid-template-columns:1fr}}
-
-/* App */
+/* Nav */
 header{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
-header .wrap{display:flex;justify-content:space-between;align-items:center;height:68px;gap:12px}
-.chip{background:var(--ink);color:var(--bg);font-size:.78rem;font-weight:600;padding:3px 11px;border-radius:999px}
-.user{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:.88rem}
-.user i{width:34px;height:34px;border-radius:50%;background:var(--brand);color:var(--brand-ink);display:grid;place-items:center;font:700 .95rem var(--fb);font-style:normal;background-size:cover;background-position:center}
-main{padding-bottom:60px}
-.hello{margin-top:28px}
-.hello h2{font-size:1.9rem;font-weight:800;line-height:1.1}
-.hello p{color:var(--muted);margin:6px 0 20px}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
-.stat{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:18px 20px 18px 24px;position:relative}
-.stat::before{content:"";position:absolute;left:0;top:18px;bottom:18px;width:4px;border-radius:0 4px 4px 0;background:var(--brand)}
-.stat.ok::before{background:#16A34A}.stat.warn::before{background:#F59E0B}
-.stat b{font:800 1.6rem/1.1 var(--fd);display:block;word-break:break-word}
-.stat span{color:var(--muted);font-size:.88rem}
-@media (max-width:640px){.stats{grid-template-columns:repeat(2,1fr);gap:10px}.user span{display:none}}
-.tabs{max-width:100%;overflow-x:auto;display:inline-flex;gap:4px;margin:0 0 18px;padding:5px;background:var(--surface);border:1px solid var(--line);border-radius:999px}
-.tabs button{white-space:nowrap;padding:9px 18px;border-radius:999px;border:0;background:transparent;color:var(--muted);font:600 .95rem var(--fb);cursor:pointer}
-.tabs button.on{background:var(--ink);color:var(--bg)}
-.list{display:grid;gap:10px;margin-top:18px}
-.item{display:grid;grid-template-columns:56px 1fr auto;gap:14px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px 14px}
-.sw{width:56px;height:56px;border-radius:12px;background-size:cover;background-position:center;display:grid;place-items:center;font:800 1.2rem var(--fd);color:#fff}
-.item h3{font-size:1rem}
-.item p{color:var(--muted);font-size:.88rem}
-.badge{display:inline-block;font-size:.75rem;font-weight:600;padding:2px 9px;border-radius:999px;background:var(--danger);color:#fff;margin-left:8px}
-.badge.ok{background:#16A34A}.badge.wait{background:#F59E0B}
-.empty{text-align:center;color:var(--muted)}
-.bprev{width:150px;aspect-ratio:1;border-radius:14px;border:1.5px dashed var(--line);background:var(--bg) center/cover no-repeat}
-.bprev.lg{width:96px;border-radius:20px}
-.tools{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0 10px;align-items:center}
-.tools select,.tools input{width:auto}
-.linkbox{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.linkbox code{flex:1;min-width:200px;background:var(--bg);border:1.5px solid var(--line);padding:10px 12px;border-radius:12px;font-size:.88rem;word-break:break-all}
-ol.how{margin-left:20px;display:grid;gap:6px;color:var(--muted)}
-#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:11px 20px;border-radius:999px;font-weight:600;font-size:.92rem;opacity:0;pointer-events:none;transition:opacity .2s;z-index:99}
-#toast.show{opacity:1}
-@media (max-width:640px){.item{grid-template-columns:48px 1fr}.item .row{grid-column:1/-1}.sw{width:48px;height:48px}}
-/* Chat pelanggan */
-.chatbox{display:grid;grid-template-columns:300px 1fr;gap:14px;height:min(620px,calc(100vh - 260px));min-height:420px}
-.clist{overflow:auto;display:grid;gap:8px;align-content:start}
-.ci{display:flex;gap:10px;align-items:center;text-align:left;width:100%;background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:10px 12px;cursor:pointer;color:var(--ink);font:inherit}
-.ci.on{border-color:var(--brand)}
-.ci b{display:block}
-.ci small{display:block;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px}
-.cth{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:20px;overflow:hidden;min-height:0}
-.cthh{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line)}
-.cmsgs{flex:1;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:8px}
-.cm{max-width:78%;padding:9px 13px;border-radius:16px;white-space:pre-wrap;word-break:break-word}
-.cm.usr{align-self:flex-start;background:var(--bg);border:1px solid var(--line)}
-.cm.adm{align-self:flex-end;background:var(--brand);color:var(--brand-ink)}
-.cm small{display:block;opacity:.7;font-size:.72rem;margin-top:3px}
+header nav{display:flex;align-items:center;justify-content:space-between;height:68px}
+.logo{font:800 1.5rem var(--font-display);letter-spacing:-.03em}
+.logo span{color:var(--brand)}
+.links{display:flex;gap:28px;font-weight:500;color:var(--muted)}
+.links a:hover{color:var(--ink)}
+.nav-cta{padding:10px 20px}
+
+/* Hero */
+.hero{padding:72px 0 56px;display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:center}
+.hero p.lead{font-size:1.15rem;color:var(--muted);max-width:30em;margin:22px 0 32px}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap}
+.app-hint{color:var(--muted);font-size:.84rem;margin-top:8px}
+.trust{display:flex;gap:24px;margin-top:36px;color:var(--muted);font-size:.92rem;flex-wrap:wrap}
+.trust b{color:var(--ink);font-family:var(--font-display);font-size:1.35rem;display:block}
+
+/* Promo card = satu momen utama */
+.promo{background:var(--brand);color:#fff;border-radius:28px;padding:32px;position:relative;overflow:hidden}
+.promo::after{content:"";position:absolute;right:-60px;top:-60px;width:200px;height:200px;border-radius:50%;background:var(--sun);opacity:.95}
+.promo .off{position:absolute;right:26px;top:30px;z-index:1;color:var(--sun-ink);font:800 2.1rem/1 var(--font-display);text-align:center}
+.promo .off small{display:block;font:600 .8rem var(--font-body)}
+.promo h3{font-size:1.6rem;max-width:9em;position:relative;z-index:1;margin-top:64px}
+.promo p{opacity:.85;margin:10px 0 22px;position:relative;z-index:1}
+.timer{display:flex;gap:10px;position:relative;z-index:1}
+.timer div{background:rgba(255,255,255,.16);border-radius:14px;padding:10px 0;width:68px;text-align:center}
+.timer b{display:block;font:800 1.7rem/1.1 var(--font-display);font-variant-numeric:tabular-nums}
+.timer span{font-size:.75rem;opacity:.8}
+.promo .btn{margin-top:22px;background:#fff;color:var(--brand);position:relative;z-index:1}
+
+/* Sections */
+section{padding:64px 0}
+.head{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:32px;flex-wrap:wrap}
+.head p{color:var(--muted);max-width:28em}
+
+/* Produk */
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column}
+.thumb{aspect-ratio:1/1;display:grid;place-items:center;position:relative}
+.thumb i{width:46%;aspect-ratio:1;border-radius:34% 66% 58% 42%/42% 44% 56% 58%;background:rgba(255,255,255,.55)}
+.thumb.has-img i{display:none}
+.tag{position:absolute;left:12px;top:12px;background:var(--ink);color:var(--bg);font-size:.78rem;font-weight:600;padding:4px 10px;border-radius:999px}
+.info{padding:16px 18px 20px;display:flex;flex-direction:column;gap:6px;flex:1}
+.info p{color:var(--muted);font-size:.92rem}
+.price{margin-top:auto;padding-top:10px;display:flex;align-items:baseline;gap:8px}
+.price b{font:700 1.2rem var(--font-display)}
+.price s{color:var(--muted);font-size:.88rem}
+.card .btn{margin:0 18px 18px;padding:11px 18px;font-size:.93rem}
+
+/* Keunggulan */
+.perks{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.perk{padding:28px;border-radius:var(--radius);background:var(--surface);border:1px solid var(--line)}
+.perk svg{width:28px;height:28px;stroke:var(--brand);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;margin-bottom:16px}
+.perk p{color:var(--muted);margin-top:6px}
+
+/* Testimoni */
+.quotes{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+blockquote{padding:26px;border-radius:var(--radius);background:var(--surface);border:1px solid var(--line);display:flex;flex-direction:column;gap:18px}
+blockquote p{font-size:1.02rem}
+blockquote cite{font-style:normal;color:var(--muted);font-size:.9rem}
+blockquote cite b{color:var(--ink);display:block}
+
+/* FAQ */
+.faq{max-width:760px}
+details{border-bottom:1px solid var(--line);padding:18px 0}
+summary{cursor:pointer;font:600 1.05rem var(--font-body);list-style:none;display:flex;justify-content:space-between;gap:16px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font-size:1.4rem;line-height:1;color:var(--brand);transition:transform .2s}
+details[open] summary::after{transform:rotate(45deg)}
+details p{color:var(--muted);margin-top:10px}
+
+/* CTA akhir */
+.final{background:var(--ink);color:var(--bg);border-radius:32px;padding:56px 32px;text-align:center}
+.final p{opacity:.75;margin:14px auto 28px;max-width:30em}
+.final .btn{background:var(--sun);color:var(--sun-ink)}
+
+footer{padding:36px 0 48px;color:var(--muted);font-size:.9rem}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+
+/* WhatsApp mengambang */
+.wa{position:fixed;right:18px;bottom:18px;z-index:30;width:56px;height:56px;border-radius:50%;background:#25D366;display:grid;place-items:center;box-shadow:0 10px 24px -8px rgba(0,0,0,.4)}
+.wa svg{width:28px;height:28px;fill:#fff}
+
+/* Satu animasi saat halaman dibuka */
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.hero>*{animation:rise .7s cubic-bezier(.2,.7,.2,1) both}
+.hero>*:nth-child(2){animation-delay:.12s}
+@media (prefers-reduced-motion:reduce){.hero>*{animation:none}html{scroll-behavior:auto}.btn{transition:none}}
+
+@media (max-width:900px){
+  .hero{grid-template-columns:1fr;padding-top:44px}
+  .grid{grid-template-columns:repeat(2,1fr)}
+  .perks,.quotes{grid-template-columns:1fr}
+  .links{display:none}
+}
+@media (max-width:480px){.grid{gap:12px}.info{padding:12px 12px 16px}.card .btn{margin:0 12px 14px}.timer div{width:60px}}
+[hidden]{display:none!important}
+.bn{position:relative;overflow:hidden;border-radius:28px;margin-top:20px;aspect-ratio:21/8;min-height:210px;background:var(--ink)}
+.sl{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity .6s;display:flex;align-items:flex-end;pointer-events:none}
+.sl.on{opacity:1;pointer-events:auto}
+.sl::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.55),rgba(0,0,0,0) 70%)}
+.sl-t{position:relative;color:#fff;padding:clamp(20px,4vw,44px);max-width:34em}
+.sl-t h2{font-size:clamp(1.5rem,4vw,2.6rem)}
+.sl-t p{margin:8px 0 16px;opacity:.9}
+.sl-t .btn{background:var(--sun);color:var(--sun-ink);padding:11px 22px}
+.dots{position:absolute;right:18px;bottom:16px;display:flex;gap:8px}
+.dots button{width:10px;height:10px;border-radius:50%;border:0;background:rgba(255,255,255,.5);cursor:pointer;padding:0}
+.dots button.on{background:#fff;width:24px;border-radius:99px}
+.loc{display:grid;grid-template-columns:1.4fr 1fr;gap:18px}
+.loc iframe{width:100%;min-height:340px;height:100%;border:0;border-radius:var(--radius);background:var(--line)}
+.loc-i{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:28px;display:flex;flex-direction:column;gap:12px;justify-content:center}
+.loc-i p{color:var(--muted)}
+.loc-i .btn{align-self:flex-start;margin-top:8px}
+@media (max-width:900px){.loc{grid-template-columns:1fr}.bn{aspect-ratio:16/9}}
+@media (prefers-reduced-motion:reduce){.sl{transition:none}}
+.pin{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:22px}
+.pin input{font:400 1rem var(--font-body);padding:12px 16px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);text-transform:uppercase;width:min(260px,100%)}
+.pin .btn{padding:12px 22px}
+#promoMsg{font-size:.92rem;color:var(--muted)}
+#promoMsg.ok{color:#16A34A;font-weight:600}#promoMsg.bad{color:#D92D4B}
+
+/* ===== Sentuhan batik emas-cokelat (hanya detail kecil) ===== */
+:root{--gold:#C9A24B;--gold-d:#B58A2E;--brown:#2B1A0C;--cream:#F3E4BC;--goldgrad:linear-gradient(135deg,#F0D27A,#B58A2E 55%,#E3C063)}
+/* Strip atas: pita parang */
+.strip{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='14'%3E%3Crect width='28' height='14' fill='%232B1A0C'/%3E%3Cg fill='none' stroke='%23C9A24B' stroke-width='1.5'%3E%3Cpath d='M0 14C7 14 7 7 14 7S21 0 28 0'/%3E%3Cpath d='M-14 7C-7 7 -7 0 0 0M14 14C21 14 21 7 28 7'/%3E%3C/g%3E%3Ccircle cx='21' cy='11' r='1.2' fill='%23C9A24B'/%3E%3Ccircle cx='7' cy='4' r='1.2' fill='%23C9A24B'/%3E%3C/svg%3E") 0 100%/28px 14px repeat-x,var(--brown);color:var(--cream);padding:9px 16px 26px}
+header{border-bottom-color:var(--gold)}
+/* Pemisah ornamen di bawah judul bagian */
+.head h2::after,.final h2::after{content:"";display:block;width:140px;height:14px;margin-top:12px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='14'%3E%3Cg fill='none' stroke='%23B58A2E' stroke-width='1.2'%3E%3Cpath d='M0 7H56M84 7H140'/%3E%3Cpolygon points='70,1 77,7 70,13 63,7'/%3E%3C/g%3E%3Ccircle cx='58' cy='7' r='1.6' fill='%23B58A2E'/%3E%3Ccircle cx='82' cy='7' r='1.6' fill='%23B58A2E'/%3E%3Ccircle cx='70' cy='7' r='1.6' fill='%23B58A2E'/%3E%3C/svg%3E") no-repeat}
+.final h2::after{margin:14px auto 0}
+/* Kartu promo: bingkai emas + gunungan */
+.promo{background-color:var(--brown);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Cg fill='none' stroke='%23C9A24B' stroke-opacity='.22'%3E%3Cellipse cx='20' cy='10' rx='6' ry='10'/%3E%3Cellipse cx='20' cy='30' rx='6' ry='10'/%3E%3Cellipse cx='10' cy='20' rx='10' ry='6'/%3E%3Cellipse cx='30' cy='20' rx='10' ry='6'/%3E%3C/g%3E%3C/svg%3E");border:2px solid var(--gold);color:var(--cream);box-shadow:inset 0 0 0 7px var(--brown),inset 0 0 0 8px rgba(201,162,75,.85)}
+.promo::before{content:"";position:absolute;left:30px;top:28px;width:40px;height:60px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='60' viewBox='0 0 40 60'%3E%3Cg fill='none' stroke='%23E3C063' stroke-width='1.6'%3E%3Cpath d='M20 2C26 14 38 20 38 36C38 52 30 58 20 58C10 58 2 52 2 36C2 20 14 14 20 2Z'/%3E%3Cpath d='M20 18C25 26 30 30 30 38C30 46 25 50 20 50C15 50 10 46 10 38C10 30 15 26 20 18Z'/%3E%3Cpath d='M20 30L25 38L20 46L15 38Z'/%3E%3C/g%3E%3Ccircle cx='20' cy='38' r='1.8' fill='%23E3C063'/%3E%3C/svg%3E") no-repeat center/contain}
+.promo::after{background:var(--goldgrad)}
+.promo .off{color:var(--brown)}
+.promo h3{background:var(--goldgrad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.timer div{background:rgba(0,0,0,.35);border:1px solid rgba(201,162,75,.6)}
+.promo .btn{background:var(--goldgrad);color:var(--brown)}
+/* Produk */
+.card{border-top:3px solid var(--gold-d)}
+.tag{background:var(--brown);color:var(--gold)}
+.perk svg{stroke:#9A6B1C}
+summary::after{color:var(--gold-d)}
+/* Banner: bingkai tipis seperti kartu */
+.bn{outline:1.5px solid rgba(232,199,112,.85);outline-offset:-10px}
+/* CTA akhir */
+.final{background-color:var(--brown);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Cg fill='none' stroke='%23C9A24B' stroke-opacity='.22'%3E%3Cellipse cx='20' cy='10' rx='6' ry='10'/%3E%3Cellipse cx='20' cy='30' rx='6' ry='10'/%3E%3Cellipse cx='10' cy='20' rx='10' ry='6'/%3E%3Cellipse cx='30' cy='20' rx='10' ry='6'/%3E%3C/g%3E%3C/svg%3E");color:var(--cream);border:2px solid var(--gold);box-shadow:inset 0 0 0 7px var(--brown),inset 0 0 0 8px rgba(201,162,75,.85)}
+.final h2{color:#E8C770}
+.final .btn{background:var(--goldgrad);color:var(--brown)}
+/* Footer: pita parang */
+footer{padding-top:0}
+footer::before{content:"";display:block;height:14px;margin-bottom:30px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='14'%3E%3Crect width='28' height='14' fill='%232B1A0C'/%3E%3Cg fill='none' stroke='%23C9A24B' stroke-width='1.5'%3E%3Cpath d='M0 14C7 14 7 7 14 7S21 0 28 0'/%3E%3Cpath d='M-14 7C-7 7 -7 0 0 0M14 14C21 14 21 7 28 7'/%3E%3C/g%3E%3Ccircle cx='21' cy='11' r='1.2' fill='%23C9A24B'/%3E%3Ccircle cx='7' cy='4' r='1.2' fill='%23C9A24B'/%3E%3C/svg%3E") 0 0/28px 14px}
+
+/* ===== Menu layar penuh & halaman kategori ===== */
+header nav{display:grid;grid-template-columns:1fr auto 1fr}
+.mbtn{justify-self:start;display:flex;align-items:center;gap:12px;background:none;border:0;color:var(--ink);font:500 .98rem var(--font-body);cursor:pointer;padding:8px 4px}
+.mbtn svg,.mclose svg{width:26px;height:26px;stroke:currentColor;stroke-width:1.5;fill:none;stroke-linecap:round}
+.nav-r{justify-self:end;display:flex;align-items:center;gap:24px;color:var(--muted);font-weight:500}
+.nav-r a.lk:hover{color:var(--ink)}
+.account-btn{padding:10px 16px;white-space:nowrap}
+.account-win{position:fixed;inset:0;z-index:90;background:rgba(20,15,8,.62);display:grid;place-items:center;padding:16px}
+.account-card{width:min(520px,100%);max-height:min(90vh,760px);overflow:auto;background:var(--surface);color:var(--ink);border:2px solid var(--gold);border-radius:24px;padding:24px;box-shadow:0 24px 70px #0007}
+.account-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.account-head h2{font-size:1.6rem}
+.account-close{background:transparent;border:0;color:var(--ink);font-size:1.8rem;cursor:pointer}
+.account-tabs{display:flex;gap:8px;margin-bottom:16px}
+.account-tabs button{flex:1;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);font:inherit;cursor:pointer}
+.account-tabs button[aria-selected=true]{background:var(--brown);color:var(--cream);border-color:var(--gold)}
+.account-form{display:grid;gap:12px}
+.account-form .row{display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap}
+.account-form .row label{min-width:130px}
+.account-form label{display:grid;gap:5px;font-weight:600;font-size:.92rem}
+.account-form input,.account-form textarea,.account-form select{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);font:400 1rem var(--font-body)}
+.account-form textarea{min-height:88px;resize:vertical}
+.account-note{color:var(--muted);font-size:.9rem;margin:0 0 14px}
+.account-status{min-height:1.4em;color:var(--muted);font-size:.9rem}
+.account-orders{display:grid;gap:10px;margin:12px 0}
+.account-order{padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--bg)}
+.account-address{padding:12px;border:1px solid var(--line);border-radius:14px;margin:10px 0;background:var(--bg)}
+.account-address .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.cart-btn{position:fixed;right:18px;bottom:158px;z-index:31;display:flex;align-items:center;gap:8px;padding:13px 18px;border-radius:999px;border:1px solid var(--gold);background:var(--brown);color:var(--cream);font:600 .95rem var(--font-body);cursor:pointer;box-shadow:0 10px 24px -8px rgba(0,0,0,.45)}
+.cart-win{position:fixed;inset:0;z-index:89;background:rgba(20,15,8,.62);display:grid;place-items:center;padding:16px}
+.cart-card{width:min(620px,100%);max-height:min(90vh,800px);overflow:auto;background:var(--surface);color:var(--ink);border:2px solid var(--gold);border-radius:24px;padding:24px;box-shadow:0 24px 70px #0007}
+.cart-lines{display:grid;gap:10px;margin:14px 0}
+.cart-line{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--bg)}
+.cart-line small{display:block;color:var(--muted)}
+.cart-qty{display:flex;align-items:center;gap:8px}
+.cart-qty button{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:700 1rem var(--font-body);cursor:pointer}
+.cart-total{display:flex;justify-content:space-between;padding:14px 0;border-top:1px solid var(--line);font-weight:700}
+.card-actions{display:grid;gap:8px;padding:0 18px 18px}
+.card-actions .btn{margin:0!important;width:100%;padding:10px 12px;font-size:.9rem}
+.lock{overflow:hidden}
+.menu{position:fixed;inset:0;z-index:60;background:var(--bg);overflow:auto;padding:22px clamp(20px,6vw,64px) 48px;animation:menuIn .25s ease}
+@keyframes menuIn{from{opacity:0;transform:translateY(-10px)}}
+.mclose{display:flex;align-items:center;gap:10px;background:none;border:0;color:var(--ink);font:500 .95rem var(--font-body);cursor:pointer;padding:8px 0}
+.mlist{display:flex;flex-direction:column;gap:4px;margin:min(9vh,72px) 0 0 clamp(0px,12vw,180px)}
+.mlist a{width:fit-content;padding:6px 0;font:700 clamp(1.7rem,5vw,2.9rem)/1.2 var(--font-display);letter-spacing:-.02em}
+.mlist a:hover{color:var(--brand)}
+.mlist a[aria-current]{color:var(--brand);text-decoration:underline 3px var(--gold);text-underline-offset:8px}
+.msub{display:flex;gap:26px;flex-wrap:wrap;margin:36px 0 0 clamp(0px,12vw,180px);color:var(--muted)}
+.msub a:hover{color:var(--ink)}
+.cats{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.cat{--c:#B8B2FF;display:flex;flex-direction:column;gap:6px;min-height:150px;padding:22px;border-radius:var(--radius);border:1px solid var(--line);background:color-mix(in srgb,var(--c) 30%,var(--surface))}
+.cat i{font:normal 2rem/1 var(--font-body)}
+.cat b{margin-top:auto;font:700 1.15rem var(--font-display)}
+.cat span,.cat small{color:var(--muted);font-size:.9rem}
+.crumb{padding:24px 0 14px;color:var(--muted);font-size:.92rem}
+.crumb a:hover{color:var(--ink)}
+.khero{--c:#B8B2FF;display:flex;gap:22px;align-items:center;padding:30px 32px;border-radius:28px;border:2px solid var(--gold);background:color-mix(in srgb,var(--c) 26%,var(--surface))}
+.khero i{font:normal 3.2rem/1 var(--font-body)}
+.khero h1{font-size:clamp(1.9rem,5vw,3.1rem)}
+.khero p{margin-top:8px;max-width:36em;color:var(--muted)}
+.chips{display:flex;gap:10px;overflow-x:auto;padding:18px 0 6px}
+.chips a{flex:none;padding:9px 18px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);font-weight:500}
+.chips a[aria-current]{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.bar{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:22px}
+.bar .pin{margin:0}
+.sort{display:flex;gap:8px;align-items:center;color:var(--muted);font-size:.92rem}
+.sort select{font:400 1rem var(--font-body);padding:10px 14px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink)}
+.none{padding:48px 20px;text-align:center;color:var(--muted);border:1.5px dashed var(--line);border-radius:var(--radius)}
+.none a{color:var(--brand);font-weight:600;text-decoration:underline}
+@media (max-width:900px){.cats{grid-template-columns:repeat(2,1fr)}.nav-r a.lk{display:none}.khero{padding:22px}}
+@media (max-width:480px){.mbtn{font-size:.92rem}.nav-cta{padding:9px 14px;font-size:.88rem}.khero i{font-size:2.4rem}}
+@media (max-width:900px){.nav-r{gap:10px}.account-btn{padding:9px 12px;font-size:.85rem}}
+@media (prefers-reduced-motion:reduce){.menu{animation:none}}
+.cat i:empty,.khero i:empty{display:none}
+.cat b{margin-top:auto}
+
+/* ===== Chat langsung dengan admin ===== */
+.cbtn{position:fixed;right:18px;bottom:88px;z-index:31;display:flex;align-items:center;gap:8px;padding:13px 20px;border-radius:999px;border:0;background:var(--goldgrad);color:var(--brown);font:600 .95rem var(--font-body);cursor:pointer;box-shadow:0 10px 24px -8px rgba(0,0,0,.45)}
+.cbtn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.cbadge{min-width:20px;height:20px;padding:0 6px;border-radius:99px;background:#D92D4B;color:#fff;font-size:.75rem;font-weight:700;display:grid;place-items:center}
+.cwin{padding:0;position:fixed;right:18px;bottom:18px;z-index:70;width:min(380px,calc(100vw - 24px));height:min(560px,calc(100vh - 36px));background:var(--surface);border:2px solid var(--gold);border-radius:22px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 24px 60px -16px rgba(0,0,0,.5)}
+.ch{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 16px;background:var(--brown);color:var(--cream)}
+.ch b{font:700 1.05rem var(--font-display);display:block}
+.ch small{opacity:.8;font-size:.8rem}
+.ch button{background:none;border:0;color:inherit;font-size:1.6rem;line-height:1;cursor:pointer;padding:2px 8px}
+.cmsgs{flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:8px;background:var(--bg)}
+.cempty{color:var(--muted);text-align:center;font-size:.92rem;margin:auto 10px}
+.cm{max-width:82%;padding:9px 13px;border-radius:16px;white-space:pre-wrap;word-break:break-word;font-size:.95rem;line-height:1.45}
+.cm.usr{align-self:flex-end;background:var(--brand);color:var(--brand-ink);border-bottom-right-radius:4px}
+.cm.adm{align-self:flex-start;background:var(--surface);border:1px solid var(--line);border-bottom-left-radius:4px}
+.cm small{display:block;opacity:.65;font-size:.72rem;margin-top:3px}
 .cm .cp{font-size:.78rem;font-weight:600;opacity:.9;margin-bottom:5px;padding-bottom:5px;border-bottom:1px solid currentColor}
-.cform{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line);align-items:flex-end}
-.cform textarea{resize:none}
-.cimg{max-width:100%;max-height:240px;border-radius:12px;display:block;margin-bottom:4px;cursor:zoom-in}
+.cname{padding:22px 18px;display:flex;flex-direction:column;gap:12px;flex:1;justify-content:center}
+.cname p{color:var(--muted)}
+.cname input,.cform textarea{font:400 1rem var(--font-body);padding:11px 14px;border-radius:14px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);width:100%}
+.cprod{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 14px;background:color-mix(in srgb,var(--gold) 18%,var(--surface));font-size:.85rem;border-top:1px solid var(--line)}
+.cprod button{background:none;border:0;color:inherit;font-size:1.2rem;cursor:pointer}
+.cform{display:flex;gap:8px;padding:10px;border-top:1px solid var(--line);align-items:flex-end}
+.cform textarea{resize:none;max-height:110px}
+.cform .btn{padding:11px 18px}
+.vb{display:inline-flex;width:17px;height:17px;flex:none}
+.vb svg{width:100%;height:100%}
+.cn{display:flex;align-items:center;gap:5px;font:700 .76rem var(--font-body);letter-spacing:.05em;margin-bottom:4px}
+.ch b.ct{display:flex;align-items:center;gap:6px;letter-spacing:.03em}
+.ch b.ct .vb{width:20px;height:20px}
+.cmsgs{background-color:#E6D2A8;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='120' viewBox='0 0 260 120'%3E%3Cg fill='none' stroke='%237A4B1E' stroke-width='1.6' opacity='.8'%3E%3Cpath d='M10 26H100M160 26H250'/%3E%3Cpath d='M130 12l14 14-14 14-14-14z'/%3E%3Cpath d='M10 96H100M160 96H250'/%3E%3Cpath d='M130 82l14 14-14 14-14-14z'/%3E%3C/g%3E%3Ctext x='130' y='74' text-anchor='middle' font-family='Georgia%2Cserif' font-weight='800' font-size='50' letter-spacing='-1'%3E%3Ctspan fill='%233A2410'%3Etoko%3C/tspan%3E%3Ctspan fill='%236B3A12'%3Eku%3C/tspan%3E%3C/text%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%235A3516' stroke-opacity='.55' stroke-width='1.5'%3E%3Cellipse cx='32' cy='16' rx='8' ry='16'/%3E%3Cellipse cx='32' cy='48' rx='8' ry='16'/%3E%3Cellipse cx='16' cy='32' rx='16' ry='8'/%3E%3Cellipse cx='48' cy='32' rx='16' ry='8'/%3E%3Cpath d='M32 22l10 10-10 10-10-10z'/%3E%3Cpath d='M0 0l8 8M56 56l8 8M64 0l-8 8M0 64l8-8' stroke-width='1'/%3E%3C/g%3E%3Cg fill='%235A3516' fill-opacity='.22'%3E%3Cpath d='M32 22l10 10-10 10-10-10z'/%3E%3Ccircle cx='32' cy='32' r='3'/%3E%3Ccircle cx='0' cy='0' r='3'/%3E%3Ccircle cx='64' cy='0' r='3'/%3E%3Ccircle cx='0' cy='64' r='3'/%3E%3Ccircle cx='64' cy='64' r='3'/%3E%3Ccircle cx='32' cy='3' r='1.6'/%3E%3Ccircle cx='32' cy='61' r='1.6'/%3E%3Ccircle cx='3' cy='32' r='1.6'/%3E%3Ccircle cx='61' cy='32' r='1.6'/%3E%3C/g%3E%3C/svg%3E");background-position:center 92%,0 0;background-repeat:no-repeat,repeat;background-size:200px auto,64px 64px}
+.cmsgs .cempty{background:rgba(43,26,12,.82);color:var(--cream);padding:10px 14px;border-radius:14px}
+.cm.usr{background:var(--brown);color:var(--cream);border:1px solid var(--gold)}
+.cm.adm{background:#FFFBF2;color:#2B1A0C;border:1px solid #B58A2E}
+.ch{border-bottom:3px solid var(--gold)}
+.ch .chwa{display:inline-flex;align-items:center;gap:6px;background:#25D366;color:#fff;border:0;border-radius:999px;padding:7px 12px;font:600 .8rem var(--font-body);cursor:pointer;white-space:nowrap}
+.ch .chwa svg{width:16px;height:16px;fill:#fff}
+.ch .chr{display:flex;align-items:center;gap:6px}
+@media (prefers-color-scheme:dark){.cmsgs{background-color:#1F1309;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='120' viewBox='0 0 260 120'%3E%3Cg fill='none' stroke='%23C9A24B' stroke-width='1.6' opacity='.8'%3E%3Cpath d='M10 26H100M160 26H250'/%3E%3Cpath d='M130 12l14 14-14 14-14-14z'/%3E%3Cpath d='M10 96H100M160 96H250'/%3E%3Cpath d='M130 82l14 14-14 14-14-14z'/%3E%3C/g%3E%3Ctext x='130' y='74' text-anchor='middle' font-family='Georgia%2Cserif' font-weight='800' font-size='50' letter-spacing='-1'%3E%3Ctspan fill='%23F3E4BC'%3Etoko%3C/tspan%3E%3Ctspan fill='%23E3C063'%3Eku%3C/tspan%3E%3C/text%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%23C9A24B' stroke-opacity='.5' stroke-width='1.5'%3E%3Cellipse cx='32' cy='16' rx='8' ry='16'/%3E%3Cellipse cx='32' cy='48' rx='8' ry='16'/%3E%3Cellipse cx='16' cy='32' rx='16' ry='8'/%3E%3Cellipse cx='48' cy='32' rx='16' ry='8'/%3E%3Cpath d='M32 22l10 10-10 10-10-10z'/%3E%3Cpath d='M0 0l8 8M56 56l8 8M64 0l-8 8M0 64l8-8' stroke-width='1'/%3E%3C/g%3E%3Cg fill='%23C9A24B' fill-opacity='.2'%3E%3Cpath d='M32 22l10 10-10 10-10-10z'/%3E%3Ccircle cx='32' cy='32' r='3'/%3E%3Ccircle cx='0' cy='0' r='3'/%3E%3Ccircle cx='64' cy='0' r='3'/%3E%3Ccircle cx='0' cy='64' r='3'/%3E%3Ccircle cx='64' cy='64' r='3'/%3E%3Ccircle cx='32' cy='3' r='1.6'/%3E%3Ccircle cx='32' cy='61' r='1.6'/%3E%3Ccircle cx='3' cy='32' r='1.6'/%3E%3Ccircle cx='61' cy='32' r='1.6'/%3E%3C/g%3E%3C/svg%3E")}.cm.adm{background:#33220F;color:var(--cream);border-color:#7A5A22}}
 .clb{position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.85);display:grid;place-items:center;cursor:zoom-out;padding:12px}
 .clb img{max-width:94vw;max-height:90vh;border-radius:12px}
-@media (max-width:760px){.chatbox{grid-template-columns:1fr;height:auto}.clist{max-height:220px}.cth{height:480px}}
-.waitbox{min-height:100vh;display:grid;place-items:center;padding:24px}
-.waitbox .panel{max-width:460px;text-align:center}
-.waitbox p{color:var(--muted);margin:10px 0 20px}
+.cimg{max-width:100%;max-height:240px;border-radius:12px;display:block;margin-bottom:4px;cursor:zoom-in}
+.cattach{flex:none;width:44px;height:44px;border-radius:50%;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer;display:grid;place-items:center;padding:0}
+.cattach svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.cprod img{height:40px;border-radius:8px}
+/* ===== Mitra / agen ===== */
+.by{font-size:.82rem;color:var(--muted)}
+.by a{color:var(--brand);font-weight:600}
+.by a:hover{text-decoration:underline}
+.mitra{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.mt{display:flex;flex-direction:column;gap:6px;padding:22px;border-radius:var(--radius);border:1px solid var(--line);border-top:3px solid var(--gold-d);background:var(--surface)}
+.mt:hover{transform:translateY(-2px)}
+.mt b{font:700 1.1rem var(--font-display)}
+.mt span{color:var(--muted);font-size:.9rem}
+.mt small{color:var(--muted)}
+.lg{width:56px;height:56px;border-radius:16px;background-size:cover;background-position:center;display:grid;place-items:center;font:800 1.4rem var(--font-display);color:#fff;flex:none}
+.ahero{display:flex;gap:22px;align-items:center;padding:28px 32px;border-radius:28px;border:2px solid var(--gold);background:color-mix(in srgb,var(--c,#4A3AFF) 14%,var(--surface))}
+.ahero .lg{width:88px;height:88px;border-radius:24px;font-size:2.2rem}
+.ahero h1{font-size:clamp(1.8rem,5vw,2.8rem)}
+.ahero p{margin-top:8px;max-width:38em;color:var(--muted)}
+.ahero .btn{margin-top:14px}
+.anote{margin-top:16px;padding:12px 16px;border-radius:14px;border:1px dashed var(--line);color:var(--muted);font-size:.9rem}
+@media (max-width:900px){.mitra{grid-template-columns:repeat(2,1fr)}.ahero{padding:20px;flex-direction:column;align-items:flex-start}}
+@media (prefers-reduced-motion:reduce){.mt:hover{transform:none}}
 </style>
 </head>
 <body>
 
-<!-- ===== Masuk / daftar ===== -->
-<div id="vAuth" class="gate">
-  <section class="brand">
-    <div class="logo">toko<span>ku</span> <small style="font:600 .9rem var(--fb);opacity:.8">Mitra</small></div>
-    <div class="brand-body">
-      <h1>Jual brand kamu di Tokoku.</h1>
-      <p>Dapatkan halaman toko sendiri, kelola produk dan pesananmu, semuanya dari satu portal.</p>
-      <ul>
-        <li>Halaman toko dengan alamat sendiri</li>
-        <li>Kelola produk, stok, dan pesanan sendiri</li>
-        <li>Pendaftaran ditinjau dan disetujui admin</li>
-      </ul>
-    </div>
-    <i class="blob"></i>
-  </section>
-  <section class="side">
-    <div class="card">
-      <div class="seg" role="tablist"><button type="button" id="segIn" class="on">Masuk</button><button type="button" id="segUp">Daftar mitra</button></div>
+<div class="strip" id="strip">Gratis ongkir untuk pembelian pertama. Kode: HEMAT10</div>
 
-      <div id="paneIn">
-        <h2>Masuk ke portal mitra</h2>
-        <p>Pakai email dan password yang kamu buat saat mendaftar.</p>
-        <form id="loginForm" class="one">
-          <label>Email<input id="lEmail" type="email" autocomplete="username" required></label>
-          <label>Password<input id="lPass" type="password" autocomplete="current-password" required minlength="6"></label>
-          <button class="btn primary" id="btnLogin" type="submit">Masuk</button>
-        </form>
-        <div class="msg" id="loginMsg" role="alert"></div>
-        <div class="row" style="justify-content:space-between;margin-top:18px"><button class="linkbtn" id="btnReset" type="button">Lupa password?</button><a class="linkbtn" href="tokoku.html">Kembali ke toko</a></div>
+<header>
+  <div class="wrap">
+    <nav aria-label="Navigasi utama">
+      <button class="mbtn" id="menuBtn" type="button" aria-expanded="false" aria-controls="menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h18M3 12h18M3 17h18"/></svg>Menu</button>
+      <a href="#beranda" class="logo">toko<span>ku</span></a>
+      <div class="nav-r">
+        <a class="lk" href="#lokasi">Lokasi</a>
+        <a class="lk" href="#faq">Bantuan</a>
+        <button class="btn btn-ghost account-btn" id="accountBtn" type="button">Akun saya</button>
+        <a class="btn btn-primary nav-cta" data-wa="Halo, saya mau tanya produk Tokoku" href="#">Chat WhatsApp</a>
       </div>
-
-      <div id="paneUp" hidden>
-        <h2 id="upTitle">Daftar sebagai mitra</h2>
-        <p id="upSub">Isi data brand kamu. Admin Tokoku akan meninjau pendaftaran, dan tokomu aktif setelah disetujui.</p>
-        <form id="regForm">
-          <label class="full">Nama brand<input id="rName" maxlength="40" required></label>
-          <label class="full">Alamat toko<small id="rSlugHint">Dipakai di link tokomu. Huruf kecil, angka, strip.</small><input id="rSlug" maxlength="30" required pattern="[a-z0-9\-]{3,30}"></label>
-          <label>Nama pemilik<input id="rOwner" maxlength="60" required></label>
-          <label>No. WhatsApp<small>Pembeli menghubungi nomor ini</small><input id="rWa" type="tel" placeholder="08123456789" required></label>
-          <label class="full">Deskripsi singkat brand<textarea id="rDesc" rows="2" maxlength="160"></textarea></label>
-          <label class="full" id="rEmailL">Email<input id="rEmail" type="email" autocomplete="username"></label>
-          <label class="full" id="rPassL">Password<small>Minimal 6 karakter</small><input id="rPass" type="password" autocomplete="new-password" minlength="6"></label>
-          <button class="btn primary full" id="btnReg" type="submit">Kirim pendaftaran</button>
-        </form>
-        <div class="msg" id="regMsg" role="alert"></div>
-        <div class="row" style="margin-top:14px"><button class="linkbtn hidden" id="btnOutReg" type="button">Keluar</button></div>
-      </div>
-    </div>
-  </section>
-</div>
-
-<!-- ===== Menunggu / ditangguhkan ===== -->
-<div id="vWait" class="waitbox" hidden>
-  <div class="panel">
-    <div class="logo" style="color:var(--ink)">toko<span style="color:var(--brand)">ku</span></div>
-    <h2 id="wTitle" style="margin-top:16px">Pendaftaran sedang ditinjau</h2>
-    <p id="wText">Admin akan memeriksa data brand kamu. Setelah disetujui, portal ini langsung terbuka dan tokomu tampil di website.</p>
-    <div class="row" style="justify-content:center"><a class="btn primary" id="wWa" target="_blank" rel="noopener" hidden>Hubungi admin</a><button class="btn" id="wOut" type="button">Keluar</button></div>
+    </nav>
   </div>
+</header>
+<section class="account-win" id="accountWin" role="dialog" aria-modal="true" aria-labelledby="accountTitle" hidden>
+  <div class="account-card">
+    <div class="account-head"><h2 id="accountTitle">Akun pelanggan</h2><button class="account-close" id="accountClose" type="button" aria-label="Tutup">&times;</button></div>
+    <div id="accountGuest">
+      <p class="account-note">Masuk atau daftar supaya alamat tersimpan dan pesanan bisa dilihat kembali.</p>
+      <div class="account-tabs" role="tablist"><button type="button" id="loginTab" aria-selected="true">Masuk</button><button type="button" id="registerTab" aria-selected="false">Daftar</button></div>
+      <form class="account-form" id="accountAuthForm">
+        <label id="accountNameWrap" hidden>Nama lengkap<input id="accountName" autocomplete="name" maxlength="60"></label>
+        <label>Email<input id="accountEmail" type="email" autocomplete="email" required maxlength="160"></label>
+        <label>Kata sandi<input id="accountPassword" type="password" autocomplete="current-password" required minlength="8"></label>
+        <button class="btn btn-primary" id="accountSubmit" type="submit">Masuk</button>
+        <button class="btn btn-ghost" id="googleLogin" type="button"><svg aria-hidden="true" viewBox="0 0 48 48" width="20" height="20"><path fill="#4285F4" d="M43.6 24.5c0-1.4-.1-2.8-.4-4.1H24v7.8h11a9.4 9.4 0 0 1-4.1 6.2v5.1h6.7c3.9-3.6 6-8.8 6-15z"/><path fill="#34A853" d="M24 44c5.5 0 10.1-1.8 13.5-4.9l-6.7-5.1c-1.8 1.2-4 1.9-6.8 1.9-5.2 0-9.7-3.5-11.3-8.2H5.8v5.2A20 20 0 0 0 24 44z"/><path fill="#FBBC05" d="M12.7 27.7a12 12 0 0 1 0-7.4v-5.2H5.8a20 20 0 0 0 0 17.8z"/><path fill="#EA4335" d="M24 12.1c3 0 5.7 1 7.8 3.1l5.8-5.8A19.4 19.4 0 0 0 24 4 20 20 0 0 0 5.8 15.1l6.9 5.2C14.3 15.6 18.8 12.1 24 12.1z"/></svg>Masuk dengan Google</button>
+        <button class="btn btn-ghost" id="forgotPassword" type="button">Lupa kata sandi?</button>
+        <p class="account-status" id="accountStatus" role="status"></p>
+      </form>
+    </div>
+    <div id="accountMember" hidden>
+      <p class="account-note" id="accountEmailText"></p>
+      <h3>Data pelanggan</h3>
+      <form class="account-form" id="profileForm">
+        <label>Nama akun<input id="profileName" autocomplete="name" maxlength="60" required></label>
+        <label>Nomor WhatsApp utama<input id="profilePhone" type="tel" autocomplete="tel" maxlength="24" required></label>
+        <button class="btn btn-ghost" type="submit">Simpan data akun</button>
+        <p class="account-status" id="profileStatus" role="status"></p>
+      </form>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:22px"><h3>Alamat pengiriman</h3><button class="btn btn-ghost" id="addAddress" type="button">Tambah alamat</button></div>
+      <div id="addressList"></div>
+      <form class="account-form" id="addressForm" hidden style="padding:14px;border:1px solid var(--line);border-radius:16px;margin-top:12px">
+        <input id="addressId" type="hidden">
+        <label>Label alamat<input id="addressLabel" maxlength="30" placeholder="Rumah, Kantor" required></label>
+        <label>Nama penerima<input id="addressName" autocomplete="name" maxlength="60" required></label>
+        <label>Nomor WhatsApp<input id="addressPhone" type="tel" autocomplete="tel" maxlength="24" required></label>
+        <label>Provinsi<select id="addressProvince" autocomplete="address-level1" required><option value="">Pilih provinsi</option><option>Aceh</option><option>Sumatera Utara</option><option>Sumatera Barat</option><option>Riau</option><option>Jambi</option><option>Sumatera Selatan</option><option>Bengkulu</option><option>Lampung</option><option>Kepulauan Bangka Belitung</option><option>Kepulauan Riau</option><option>DKI Jakarta</option><option>Jawa Barat</option><option>Jawa Tengah</option><option>DI Yogyakarta</option><option>Jawa Timur</option><option>Banten</option><option>Bali</option><option>Nusa Tenggara Barat</option><option>Nusa Tenggara Timur</option><option>Kalimantan Barat</option><option>Kalimantan Tengah</option><option>Kalimantan Selatan</option><option>Kalimantan Timur</option><option>Kalimantan Utara</option><option>Sulawesi Utara</option><option>Sulawesi Tengah</option><option>Sulawesi Selatan</option><option>Sulawesi Tenggara</option><option>Gorontalo</option><option>Sulawesi Barat</option><option>Maluku</option><option>Maluku Utara</option><option>Papua Barat</option><option>Papua Barat Daya</option><option>Papua</option><option>Papua Selatan</option><option>Papua Tengah</option><option>Papua Pegunungan</option></select></label>
+        <label>Kabupaten / Kota<input id="addressCity" autocomplete="address-level2" maxlength="80" required placeholder="Contoh: Kota Bandung"></label>
+        <label>Kecamatan<input id="addressDistrict" maxlength="80" required></label>
+        <label>Kelurahan / Desa<input id="addressVillage" maxlength="80" required></label>
+        <label>Jalan, nomor rumah, dan patokan<textarea id="addressStreet" autocomplete="street-address" maxlength="300" required placeholder="Nama jalan, nomor rumah, blok, patokan terdekat"></textarea></label>
+        <div class="row"><label style="flex:1;min-width:130px">RT/RW<input id="addressRtRw" maxlength="15" placeholder="001/002"></label><label style="flex:1;min-width:130px">Kode pos<input id="addressPostal" inputmode="numeric" autocomplete="postal-code" maxlength="5" pattern="[0-9]{5}" required placeholder="5 digit"></label></div>
+        <label>Catatan kurir (opsional)<input id="addressNote" maxlength="120" placeholder="Warna pagar, patokan, jam penerimaan"></label>
+        <label style="display:flex;align-items:center;gap:8px"><input id="addressDefault" type="checkbox" style="width:auto">Jadikan alamat utama</label>
+        <div class="row"><button class="btn btn-primary" type="submit">Simpan alamat</button><button class="btn btn-ghost" id="cancelAddress" type="button">Batal</button></div>
+        <p class="account-status" id="addressStatus" role="status"></p>
+      </form>
+      <h3 style="margin-top:22px">Riwayat pesanan</h3><p class="account-note">Pesanan baru dikirim lewat WhatsApp admin. Simpan chat sebagai bukti; riwayat WhatsApp tidak otomatis tampil di sini.</p><div class="account-orders" id="accountOrders"><p class="account-note">Memuat pesanan…</p></div>
+      <button class="btn btn-ghost" id="accountSignOut" type="button">Keluar dari akun</button>
+    </div>
+  </div>
+</section>
+<button class="cart-btn" id="cartBtn" type="button" aria-label="Buka keranjang">Keranjang <b class="cbadge" id="cartBadge">0</b></button>
+<section class="cart-win" id="cartWin" role="dialog" aria-modal="true" aria-labelledby="cartTitle" hidden>
+  <div class="cart-card">
+    <div class="account-head"><h2 id="cartTitle">Keranjang belanja</h2><button class="account-close" id="cartClose" type="button" aria-label="Tutup keranjang">&times;</button></div>
+    <div class="cart-lines" id="cartLines"></div>
+    <div class="cart-total"><span>Subtotal produk</span><span id="cartSubtotal">Rp0</span></div>
+    <p class="account-note">Pesanan dikirim ke WhatsApp admin. Admin mengonfirmasi stok, ongkir, dan pembayaran.</p>
+    <label class="account-form" style="margin:10px 0">Alamat tujuan<select id="cartAddress" style="width:100%;padding:12px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);font:inherit"></select></label>
+    <button class="btn btn-primary" id="checkoutBtn" type="button" style="width:100%">Pesan lewat WhatsApp admin</button>
+    <p class="account-status" id="cartStatus" role="status"></p>
+  </div>
+</section>
+<div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Menu kategori" hidden>
+  <button class="mclose" id="mClose" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4l16 16M20 4L4 20"/></svg>Tutup</button>
+  <nav class="mlist" id="mList" aria-label="Kategori"></nav>
+  <div class="msub"><a href="#lokasi">Lokasi toko</a><a href="#faq">Bantuan</a><a data-wa="Halo, saya mau tanya produk Tokoku" href="#">Chat WhatsApp</a><a href="https://admintokoku.vercel.app/">Admin Tokoku</a><a href="https://agentokoku.vercel.app/">Portal mitra</a><a href="/Tokoku.apk" download="Tokoku.apk" data-android-app>Unduh aplikasi Android</a></div>
 </div>
 
-<!-- ===== Dashboard mitra ===== -->
-<div id="vApp" hidden>
-  <header>
+<main>
+<div id="viewHome">
+  <div class="wrap" id="bannerWrap" hidden><div class="bn" id="bn" role="region" aria-roledescription="carousel" aria-label="Banner promo"></div></div>
+  <div class="wrap hero">
+    <div>
+      <h1>Belanja hemat, barang langsung sampai.</h1>
+      <p class="lead">Produk pilihan dengan harga yang jujur, promo baru setiap minggu, dan pengiriman cepat ke seluruh Indonesia.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#belanja">Lihat kategori</a>
+        <a class="btn btn-ghost" data-wa="Halo, saya mau tanya promo yang sedang berjalan" href="#">Tanya promo</a>
+        <a class="btn btn-ghost" href="/Tokoku.apk" download="Tokoku.apk" data-android-app aria-label="Unduh aplikasi Tokoku untuk Android">Unduh aplikasi Android</a>
+      </div>
+      <p class="app-hint" data-android-app>Setelah diunduh, buka Tokoku.apk dari folder Unduhan lalu pilih Instal.</p>
+      <div class="trust">
+        <div><b>5.000+</b>pesanan terkirim</div>
+        <div><b>4,9/5</b>rating pelanggan</div>
+        <div><b>1 hari</b>proses kirim</div>
+      </div>
+    </div>
+
+    <aside class="promo" aria-label="Promo terbatas">
+      <div class="off">30%<small>diskon</small></div>
+      <h3>Promo akhir bulan, stok terbatas</h3>
+      <p>Berlaku untuk semua produk pilihan sampai waktu habis.</p>
+      <div class="timer" role="timer" aria-live="off">
+        <div><b id="d">00</b><span>hari</span></div>
+        <div><b id="h">00</b><span>jam</span></div>
+        <div><b id="m">00</b><span>menit</span></div>
+        <div><b id="s">00</b><span>detik</span></div>
+      </div>
+      <a class="btn" href="#produk">Ambil promonya</a>
+    </aside>
+  </div>
+
+  <section id="belanja">
     <div class="wrap">
-      <div class="row"><div class="logo">toko<span style="color:var(--brand)">ku</span></div><span class="chip">Mitra</span></div>
-      <div class="row">
-        <a class="btn" id="hView" target="_blank" rel="noopener">Lihat toko saya</a>
-        <div class="user"><i id="avatar">M</i><span id="who"></span></div>
-        <button class="btn" id="btnOut" type="button">Keluar</button>
-      </div>
+      <div class="head"><h2>Belanja per kategori</h2><p>Pilih kategori untuk membuka halaman khusus berisi semua produknya.</p></div>
+      <div class="cats" id="catGrid"></div>
     </div>
-  </header>
-  <main class="wrap">
-    <div class="hello"><h2 id="hello">Halo!</h2><p>Ringkasan penjualan brand kamu.</p></div>
-    <div class="tabs" role="tablist">
-      <button class="on" data-tab="ringkasan">Ringkasan</button>
-      <button data-tab="produk">Produk</button>
-      <button data-tab="pesanan">Pesanan</button>
-      <button data-tab="chat">Chat pelanggan <span class="badge" id="chBadge" hidden>0</span></button>
-      <button data-tab="profil">Profil toko</button>
-    </div>
+  </section>
 
-    <div id="tab-ringkasan">
-      <div class="stats" id="stats"></div>
-      <div class="panel">
-        <h2>Link tokomu</h2>
-        <div class="linkbox"><code id="myLink"></code><button class="btn primary" id="copyLink" type="button">Salin link</button></div>
-        <p class="muted" style="margin-top:10px;font-size:.9rem">Bagikan link ini ke pelanggan, sosial media, atau bio Instagram-mu.</p>
-        <div id="altLinks" style="margin-top:18px;display:grid;gap:12px"></div>
-        <p class="msg" id="linkHint" hidden style="margin-top:8px">Peringatan: link ini hanya berfungsi di komputer ini karena portal dibuka dari file lokal. Minta admin mengisi PUBLIC_URL (alamat website) di file portal.</p>
+  <section id="produk">
+    <div class="wrap">
+      <div class="head">
+        <h2>Produk terbaru</h2>
+        <a class="btn btn-ghost" href="#kategori/semua">Lihat semua produk</a>
       </div>
-      <div class="panel">
-        <h2>Cara kerja komisi</h2>
-        <ol class="how">
-          <li>Pelanggan membuat pesanan melalui checkout toko Tokoku.</li>
-          <li>Pesanan dan nilai komisi tercatat otomatis. Admin Tokoku mengonfirmasi pembayaran.</li>
-          <li id="howPct">Komisi toko dihitung dari penjualan lunas.</li>
-          <li>Setor komisi ke Tokoku. Admin menandai “Komisi diterima” dan angka di atas berkurang.</li>
-        </ol>
-        <div class="row" style="margin-top:14px"><a class="btn" id="adminWa" target="_blank" rel="noopener" hidden>Hubungi admin Tokoku</a></div>
-      </div>
+      <div class="grid" id="grid"></div>
     </div>
+  </section>
 
-    <div id="tab-produk" class="hidden">
-      <div class="panel">
-        <h2 id="pTitle">Tambah produk</h2>
-        <form id="pForm">
-          <label class="full">Nama produk<input id="pName" required maxlength="80"></label>
-          <label class="full">Deskripsi singkat<textarea id="pDesc" rows="2" maxlength="160"></textarea></label>
-          <label>Harga jual (Rp)<input id="pPrice" type="number" min="0" required></label>
-          <label>Harga coret (Rp)<small>Kosongkan jika tidak ada diskon</small><input id="pOld" type="number" min="0"></label>
-          <label>Label<small>Contoh: Baru, Terlaris</small><input id="pTag" maxlength="20"></label>
-          <label>Stok<small>Kosongkan jika tidak dibatasi</small><input id="pStock" type="number" min="0"></label>
-          <label>Kategori<select id="pCat"><option value="">Tanpa kategori</option></select></label>
-          <label>Warna latar<input id="pColor" type="color" value="#B8B2FF"></label>
-          <label class="full">Foto produk<small>JPG/PNG/WebP, otomatis dipotong persegi dan dikompres.</small><input id="pFile" type="file" accept="image/*"></label>
-          <div class="full row"><div class="bprev" id="pPrev"></div><button class="btn danger" id="pClr" type="button">Hapus foto</button></div>
-          <label class="check full"><input id="pActive" type="checkbox" checked>Tampilkan di toko</label>
-          <div class="row full"><button class="btn primary" id="pSave" type="submit">Simpan produk</button><button class="btn" id="pCancel" type="button">Batal</button></div>
-        </form>
-      </div>
-      <div class="list" id="pList"></div>
+  <section id="mitra" hidden>
+    <div class="wrap">
+      <div class="head"><h2>Brand mitra kami</h2><p>Brand pilihan dari mitra Tokoku. Tiap brand punya halaman tokonya sendiri.</p></div>
+      <div class="mitra" id="mitraGrid"></div>
     </div>
+  </section>
 
-    <div id="tab-pesanan" class="hidden">
-      <div class="panel">
-        <h2>Pesanan Tokoku</h2><p class="muted">Pesanan dari checkout toko utama tercatat otomatis. Pembayaran dan komisi dikonfirmasi admin Tokoku.</p>
-        <form id="oForm" hidden>
-          <label>Nama pelanggan<input id="oName" required maxlength="60"></label>
-          <label>No. WhatsApp<input id="oPhone" type="tel" placeholder="08123456789"></label>
-          <label>Produk<select id="oProd"></select></label>
-          <label>Jumlah<input id="oQty" type="number" min="1" value="1" required></label>
-          <label>Total bayar (Rp)<small>Terisi otomatis dari harga, bisa diubah</small><input id="oTotal" type="number" min="0" required></label>
-          <label>Catatan<input id="oNote" maxlength="150" placeholder="Alamat kirim, dll."></label>
-          <div class="row full"><button class="btn primary" type="submit">Simpan pesanan</button></div>
-        </form>
-      </div>
-      <div class="tools">
-        <select id="oFilter"><option value="">Semua status</option><option>Menunggu Pembayaran</option><option>Diproses</option><option>Dikirim</option><option>Selesai</option><option>Batal</option></select>
-        <input id="oMonth" type="month" title="Filter bulan">
-        <span class="muted" id="oCount"></span>
-      </div>
-      <div class="list" id="oList" style="margin-top:0"></div>
-    </div>
-
-    <div id="tab-chat" class="hidden">
-      <p class="muted" style="margin-bottom:12px">Pelanggan yang menekan <b>Chat penjual</b> di produkmu masuk ke sini. Balas langsung dari halaman ini.</p>
-      <div class="chatbox">
-        <div class="clist" id="chList"></div>
-        <div class="cth">
-          <div class="cthh"><b id="chWho">Pilih percakapan</b><span class="muted" id="chProd"></span></div>
-          <div class="cmsgs" id="chMsgs"></div>
-          <form class="cform" id="chForm"><textarea id="chText" rows="1" maxlength="1000" placeholder="Tulis balasan..." aria-label="Balasan" disabled></textarea><button class="btn primary" id="chSend" type="submit" disabled>Kirim</button></form>
+  <section id="kenapa">
+    <div class="wrap">
+      <div class="head"><h2>Kenapa belanja di sini</h2></div>
+      <div class="perks">
+        <div class="perk">
+          <svg viewBox="0 0 24 24"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="18" r="1.6"/><circle cx="17" cy="18" r="1.6"/></svg>
+          <h3>Kirim cepat</h3><p>Pesanan sebelum jam 3 sore diproses di hari yang sama.</p>
+        </div>
+        <div class="perk">
+          <svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5L15.5 10"/></svg>
+          <h3>Garansi uang kembali</h3><p>Barang rusak atau tidak sesuai, kami ganti atau kembalikan dana.</p>
+        </div>
+        <div class="perk">
+          <svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></svg>
+          <h3>Admin yang membalas</h3><p>Tanya apa saja sebelum beli, dibalas orang sungguhan, bukan bot.</p>
         </div>
       </div>
     </div>
+  </section>
 
-    <div id="tab-profil" class="hidden">
-      <div class="panel">
-        <h2>Profil toko</h2>
-        <form id="sForm">
-          <label>Nama brand<input id="sName" required maxlength="40"></label>
-          <label>Nama pemilik<input id="sOwner" required maxlength="60"></label>
-          <label>No. WhatsApp<input id="sWa" type="tel" required></label>
-          <label>Warna brand<input id="sColor" type="color" value="#4A3AFF"></label>
-          <label class="full">Deskripsi singkat<textarea id="sDesc" rows="2" maxlength="160"></textarea></label>
-          <label class="full">Logo<small>Opsional. Otomatis dipotong persegi.</small><input id="sFile" type="file" accept="image/*"></label>
-          <div class="full row"><div class="bprev lg" id="sPrev"></div><button class="btn danger" id="sClr" type="button">Hapus logo</button></div>
-          <label class="full">Rekening untuk komisi / pencairan<small>Hanya dilihat admin. Contoh: BCA 1234567890 a.n. Nama</small><input id="sBank" maxlength="120"></label>
-          <label class="full">Alamat toko<small>Tidak bisa diubah, hubungi admin jika perlu ganti.</small><input id="sSlug" disabled></label>
-          <div class="row full"><button class="btn primary" type="submit">Simpan profil</button></div>
-        </form>
+  <section id="testimoni">
+    <div class="wrap">
+      <div class="head"><h2>Kata mereka yang sudah beli</h2></div>
+      <div class="quotes">
+        <blockquote><p>Barang sampai dua hari, packing rapi, dan sesuai foto. Sudah order tiga kali.</p><cite><b>Rina A.</b>Bandung</cite></blockquote>
+        <blockquote><p>Adminnya sabar menjawab semua pertanyaan. Harganya juga paling masuk akal.</p><cite><b>Dimas P.</b>Surabaya</cite></blockquote>
+        <blockquote><p>Sempat salah ukuran, langsung ditukar tanpa ribet. Recommended.</p><cite><b>Sari W.</b>Medan</cite></blockquote>
       </div>
     </div>
-  </main>
-</div>
-<div id="toast" role="status"></div>
+  </section>
 
+  <section id="lokasi" hidden>
+    <div class="wrap">
+      <div class="head"><h2>Kunjungi toko kami</h2><p>Mampir langsung untuk lihat produk dan ambil pesananmu.</p></div>
+      <div class="loc">
+        <iframe id="map" title="Peta lokasi toko Tokoku" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        <div class="loc-i">
+          <h3>Tokoku</h3>
+          <p id="lAddr"></p>
+          <p id="lHours"></p>
+          <a class="btn btn-primary" id="lDir" target="_blank" rel="noopener">Petunjuk arah</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="wrap">
+      <div class="head"><h2>Pertanyaan yang sering muncul</h2></div>
+      <div class="faq">
+        <details><summary>Bagaimana cara memesan?</summary><p>Masukkan produk ke keranjang, pilih alamat, lalu tekan Pesan lewat WhatsApp admin. Admin akan mengecek stok dan ongkir, kemudian mengirim total akhir serta cara pembayaran lewat chat.</p></details>
+        <details><summary>Bagaimana pembayaran dan pengiriman dana ke brand?</summary><p>Transfer hanya dilakukan setelah admin mengirim total dan rekening/QRIS resmi. Kirim bukti transfer lewat WhatsApp. Admin memeriksa pembayaran, memproses pesanan, lalu menyelesaikan transfer hasil penjualan kepada brand/mitra sesuai kesepakatan.</p></details>
+        <details><summary>Berapa lama pengiriman?</summary><p>Pesanan diproses 1 hari kerja. Estimasi tiba 2 sampai 5 hari tergantung kota tujuan.</p></details>
+        <details><summary>Apakah bisa retur?</summary><p>Bisa dalam 7 hari setelah barang diterima, selama kondisi barang sesuai syarat retur kami.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="final">
+        <h2>Promo berakhir sebentar lagi</h2>
+        <p>Amankan produk favoritmu dengan harga spesial sebelum stok habis.</p>
+        <a class="btn" data-wa="Halo, saya mau pesan dengan harga promo" href="#">Pesan lewat WhatsApp</a>
+      </div>
+    </div>
+  </section>
+</div>
+<div id="viewKat" hidden>
+  <div class="wrap">
+    <div class="crumb"><a href="#beranda">Beranda</a> / <span id="kcrumb">Kategori</span></div>
+    <div class="khero" id="khero"><i id="kIcon" aria-hidden="true"></i><div><h1 id="kName">Memuat…</h1><p id="kDesc"></p></div></div>
+    <nav class="chips" id="kchips" aria-label="Pilih kategori"></nav>
+  </div>
+  <section id="kproduk" style="padding-top:28px">
+    <div class="wrap">
+      <div class="bar">
+        <form class="pin" id="promoForm"><input id="promoCode" placeholder="Punya kode promo?" maxlength="20" autocomplete="off" aria-label="Kode promo"><button class="btn btn-primary" type="submit">Pakai</button><span id="promoMsg" role="status"></span></form>
+        <label class="sort"><span id="kcount"></span><select id="ksort" aria-label="Urutkan produk"><option value="new">Terbaru</option><option value="low">Harga terendah</option><option value="high">Harga tertinggi</option></select></label>
+      </div>
+      <div class="grid" id="kgrid"></div>
+      <div class="none" id="knone" hidden></div>
+    </div>
+  </section>
+</div>
+<div id="viewAgen" hidden>
+  <div class="wrap">
+    <div class="crumb"><a href="#beranda">Beranda</a> / <a href="#mitra">Brand mitra</a> / <span id="aCrumb">Mitra</span></div>
+    <div class="ahero" id="aHero"><div class="lg" id="aLogo"></div><div><h1 id="aName">Memuat…</h1><p id="aDesc"></p><a class="btn btn-primary" id="aWa" target="_blank" rel="noopener" hidden>WhatsApp penjual</a> <button class="btn btn-ghost" id="aChat" type="button" data-ask data-pn="" data-pp="0" hidden>Chat di website</button></div></div>
+    <p class="anote">Brand ini dikelola oleh mitra Tokoku. Pesanan, pembayaran, dan pengiriman diproses langsung oleh penjual lewat WhatsApp.</p>
+  </div>
+  <section id="aproduk" style="padding-top:28px">
+    <div class="wrap">
+      <div class="bar"><span class="sort" id="acount"></span></div>
+      <div class="grid" id="agrid"></div>
+      <div class="none" id="anone" hidden></div>
+    </div>
+  </section>
+</div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>&copy; <span id="yr"></span> Tokoku. Semua hak dilindungi.</span>
+    <span>Instagram &middot; TikTok &middot; Shopee &middot; <a href="agen.html">Portal mitra</a> &middot; <a href="agen.html#daftar">Daftar jadi mitra</a></span>
+  </div>
+</footer>
+
+<a class="wa" data-wa="Halo, saya mau tanya produk Tokoku" href="#" aria-label="Chat WhatsApp">
+  <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.2 14.1c-.2.6-1.300 1.200-1.800 1.200-.5.1-1 .2-3.300-.7-2.800-1.100-4.600-4-4.700-4.200-.1-.2-1.100-1.500-1.100-2.800 0-1.300.7-1.900.9-2.200.2-.3.500-.3.700-.3h.5c.2 0 .4 0 .6.500l.8 2c.1.200.1.400 0 .5l-.3.500-.4.400c-.1.200-.3.300-.1.600.2.300.8 1.300 1.700 2.100 1.200 1 2.100 1.300 2.400 1.500.3.100.5.100.6-.1l.9-1.100c.2-.3.400-.2.600-.1l1.900.9c.3.100.5.200.5.300.1.200.1.800-.1 1.400z"/></svg>
+</a>
+
+<button class="cbtn" id="chatBtn" type="button" aria-controls="chatWin" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg><span>Chat admin</span><b class="cbadge" id="chatBadge" hidden>0</b></button>
+<section class="cwin" id="chatWin" role="dialog" aria-label="Chat dengan admin" hidden>
+  <div class="ch"><div><b class="ct">ADMIN TOKOKU <span class="vb" title="Akun resmi terverifikasi"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#C9A24B" d="M12 1.8l2.4 1.7 2.9-.1 1 2.8 2.4 1.7-.9 2.8.9 2.8-2.4 1.7-1 2.8-2.9-.1L12 22.2l-2.4-1.7-2.9.1-1-2.8-2.4-1.7.9-2.8-.9-2.8 2.4-1.7 1-2.8 2.9.1z"/><path d="M8 12.3l2.7 2.7 5.5-5.5" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></b><small>Akun resmi &middot; Tanya produk, stok, atau pengiriman</small></div><div class="chr"><button class="chwa" id="chatWa" type="button" title="Lanjutkan chat di WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.2 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.8 0-1.3.7-1.9.9-2.2.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.3.5-.4.4c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.2.1.8-.1 1.4z"/></svg>WhatsApp</button><button id="chatClose" type="button" aria-label="Tutup chat">&times;</button></div></div>
+  <select id="chatWho" aria-label="Pilih percakapan" hidden style="margin:8px 12px 0;width:calc(100% - 24px);padding:8px 10px;border-radius:10px;border:1.5px solid var(--line);font:inherit"></select>
+  <form class="cname" id="chatNameForm" hidden>
+    <p>Isi nama dulu supaya admin tahu siapa yang chat.</p>
+    <input id="chatName" maxlength="40" required placeholder="Nama kamu" autocomplete="name" aria-label="Nama">
+    <button class="btn btn-primary" type="submit">Mulai chat</button>
+  </form>
+  <div class="cmsgs" id="chatMsgs" role="log" aria-live="polite"></div>
+  <div class="cprod" id="chatProd" hidden><span id="chatProdTxt"></span><button id="chatProdX" type="button" aria-label="Lepas produk">&times;</button></div>
+  <div class="cprod" id="chatImgBar" hidden><img id="chatImgPrev" alt="Gambar yang akan dikirim"><span>Gambar siap dikirim</span><button id="chatImgX" type="button" aria-label="Lepas gambar">&times;</button></div>
+  <form class="cform" id="chatForm"><button class="cattach" id="chatAttach" type="button" aria-label="Kirim gambar" title="Kirim gambar"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.6"/><path d="M4 18l5-5 4 4 3-3 4 4"/></svg></button><input id="chatFile" type="file" accept="image/*" hidden><textarea id="chatText" rows="1" maxlength="1000" placeholder="Tulis pesan..." aria-label="Pesan"></textarea><button class="btn btn-primary" id="chatSend" type="submit">Kirim</button></form>
+</section>
+
+<script>
+/* ====== EDIT BAGIAN INI ====== */
+const CONFIG = {
+  waNumber: "6281234567890",           // nomor WhatsApp, format 62 tanpa + atau 0
+  promoEnd: "2026-11-30T23:59:59",     // batas waktu promo
+  stripText: "Gratis ongkir untuk pembelian pertama. Kode: HEMAT10"
+};
+const PRODUCTS = [
+  { name:"Produk Satu",  desc:"Deskripsi singkat produk, satu kalimat.", price:149000, old:199000, tag:"Terlaris", color:"#B8B2FF" },
+  { name:"Produk Dua",   desc:"Deskripsi singkat produk, satu kalimat.", price:89000,  old:129000, tag:"Promo",    color:"#FFD84D" },
+  { name:"Produk Tiga",  desc:"Deskripsi singkat produk, satu kalimat.", price:219000, old:279000, tag:"Baru",     color:"#9BE3D0" },
+  { name:"Produk Empat", desc:"Deskripsi singkat produk, satu kalimat.", price:59000,  old:79000,  tag:"Hemat",    color:"#FFB4A2" }
+];
+/* ============================= */
+
+const rp = n => "Rp" + Number(n).toLocaleString("id-ID");
+const wa = t => `https://wa.me/${CONFIG.waNumber}?text=${encodeURIComponent(t)}`;
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+document.getElementById("strip").textContent = CONFIG.stripText;
+document.getElementById("yr").textContent = new Date().getFullYear();
+
+let PROMO = null, lastList = [], CATS = {}, REAL = [], pOk = false, cOk = false, SLUG = null;
+let AG = {}, RAW = [], aOk = false, ASLUG = null;   // AG = mitra aktif, RAW = semua produk aktif sebelum disaring
+const disc = p => !PROMO || p.agentId || p.price < (PROMO.min || 0) ? p.price : PROMO.type === "pct" ? Math.round(p.price * (100 - PROMO.value) / 100) : Math.max(0, p.price - PROMO.value);
+const agWa = (p, t) => "https://wa.me/" + String((AG[p.agentId] || {}).wa || "").replace(/\D/g, "") + "?text=" + encodeURIComponent(t);
+function card(p){
+  const fp = disc(p), orig = fp < p.price ? p.price : p.old;
+  const soldOut = p.stock != null && p.stock <= 0;
+  const ag = p.agentId ? AG[p.agentId] : null;
+  const safeImg = /^(data:image\/|https?:\/\/)/i.test(p.img || "") ? encodeURI(p.img).replace(/'/g, "%27").replace(/\(/g, "%28").replace(/\)/g, "%29") : "";
+  const img = safeImg ? `background-image:url('${safeImg}');background-size:cover;background-position:center;` : "";
+  const by = ag ? `<span class="by">oleh <a href="#agen/${esc(ag.slug)}">${esc(ag.name)}</a></span>` : "";
+  const ask = `<button class="btn btn-ghost" type="button" data-ask${ag ? ` data-ag="${esc(p.agentId)}"` : ""} data-pn="${esc(p.name)}" data-pp="${fp}" style="margin-bottom:10px">${ag ? "Chat penjual" : "Tanya admin"}</button>`;
+  const order = soldOut
+    ? `<span class="btn btn-ghost" style="opacity:.55;pointer-events:none">Stok habis</span>`
+    : `<div class="card-actions"><button class="btn btn-ghost" type="button" data-cart-add data-pid="${esc(p.id || "")}"${!p.id ? " disabled" : ""}>Tambah ke keranjang</button><button class="btn btn-primary" type="button" data-buy data-pid="${esc(p.id || "")}"${!p.id ? " disabled" : ""}>Pesan sekarang</button></div>`;
+  return `
+  <article class="card">
+    <div class="thumb${safeImg ? " has-img" : ""}" style="background-color:${safeColor(p.color || "#ddd")};${img}">${p.tag ? `<span class="tag">${esc(p.tag)}</span>` : ""}<i></i></div>
+    <div class="info">
+      <h3>${esc(p.name)}</h3>
+      ${by}
+      <p>${esc(p.desc)}</p>
+      <div class="price"><b>${rp(fp)}</b>${orig > fp ? `<s>${rp(orig)}</s>` : ""}</div>
+    </div>
+    ${ask}
+    ${order}
+  </article>`;
+}
+function renderProducts(list){
+  lastList = list;
+  document.getElementById("grid").innerHTML = list.slice(0, 8).map(card).join("");
+  renderCats();
+}
+
+function wireWa(){
+  document.querySelectorAll("[data-wa]").forEach(a => {
+    a.href = wa(a.dataset.wa);
+    a.target = "_blank";
+    a.rel = "noopener";
+  });
+}
+
+function applySettings(s){
+  if (s.waNumber) CONFIG.waNumber = s.waNumber;
+  if ("stripText" in s) { const st = document.getElementById("strip"); st.textContent = s.stripText; st.hidden = !s.stripText; }
+  if (s.promoEnd) { end = new Date(s.promoEnd).getTime(); tick(); }
+  renderLoc(s);
+  wireWa();
+}
+
+/* Banner geser otomatis */
+let bnT, bnI = 0;
+const safeLink = u => /^(https?:\/\/|#|\/)/.test(u || "") ? u : "";
+function bnShow(i){
+  const sl = document.querySelectorAll("#bn .sl"), dt = document.querySelectorAll("#bn .dots button");
+  bnI = (i + sl.length) % sl.length;
+  sl.forEach((x, k) => x.classList.toggle("on", k === bnI));
+  dt.forEach((x, k) => x.classList.toggle("on", k === bnI));
+}
+function renderBanners(list){
+  const w = document.getElementById("bannerWrap"), b = document.getElementById("bn");
+  clearInterval(bnT); bnI = 0;
+  w.hidden = !list.length; if (!list.length) return;
+  b.innerHTML = list.map((x, i) => `<div class="sl${i ? "" : " on"}" style="background-color:${esc(x.color || "#4A3AFF")};${x.img ? `background-image:url('${encodeURI(x.img)}')` : ""}"><div class="sl-t"><h2>${esc(x.title)}</h2>${x.sub ? `<p>${esc(x.sub)}</p>` : ""}${safeLink(x.link) ? `<a class="btn" href="${esc(safeLink(x.link))}">${esc(x.btn || "Lihat")}</a>` : ""}</div></div>`).join("")
+    + (list.length > 1 ? `<div class="dots">${list.map((_, i) => `<button type="button" aria-label="Banner ${i + 1}" class="${i ? "" : "on"}" data-i="${i}"></button>`).join("")}</div>` : "");
+  b.querySelectorAll(".dots button").forEach(d => d.onclick = () => { bnShow(+d.dataset.i); });
+  if (list.length > 1 && !matchMedia("(prefers-reduced-motion:reduce)").matches) bnT = setInterval(() => bnShow(bnI + 1), 5000);
+}
+
+/* Lokasi toko & peta */
+function renderLoc(s){
+  const has = s.address || (s.lat != null && s.lng != null);
+  document.getElementById("lokasi").hidden = !has; if (!has) return;
+  const q = s.lat != null && s.lng != null ? s.lat + "," + s.lng : s.address;
+  document.getElementById("map").src = "https://maps.google.com/maps?q=" + encodeURIComponent(q) + "&z=16&output=embed";
+  document.getElementById("lDir").href = "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent(q);
+  document.getElementById("lAddr").textContent = s.address || "";
+  document.getElementById("lHours").textContent = s.hours ? "Jam buka: " + s.hours : "";
+}
+
+const byId = id => document.getElementById(id);
+const safeColor = c => /^#[0-9a-f]{3,8}$/i.test(c || "") ? c : "#B8B2FF";
+const allCats = () => { const o = { ...CATS }; REAL.forEach(p => { if (p.cat && !o[p.cat]) o[p.cat] = { name: p.cat.replace(/-/g, " ").replace(/\b\w/g, m => m.toUpperCase()), order: 999 }; }); return o; };
+const catList = () => Object.entries(allCats()).filter(([, c]) => c.active !== false).sort((a, b) => (a[1].order || 0) - (b[1].order || 0));
+const menuHtml = cur => [["#beranda", "Beranda", "home"], ["#kategori/semua", "Semua produk", "semua"], ...(Object.keys(AG).length ? [["#mitra", "Brand mitra", "mitra"]] : []), ...catList().map(([id, c]) => ["#kategori/" + encodeURIComponent(id), c.name, id])]
+  .map(([h, t, id]) => `<a href="${h}"${id === cur ? ' aria-current="page"' : ""}>${esc(t)}</a>`).join("");
+(function(){
+  const menu = byId("menu"), btn = byId("menuBtn"); let back;
+  function open(o){ menu.hidden = !o; document.body.classList.toggle("lock", o); btn.setAttribute("aria-expanded", o); if (o) { back = document.activeElement; byId("mClose").focus(); } else if (back) back.focus(); }
+  btn.onclick = () => open(true); byId("mClose").onclick = () => open(false);
+  menu.addEventListener("click", e => { if (e.target.closest("a")) open(false); });
+  document.addEventListener("keydown", e => {
+    if (menu.hidden) return;
+    if (e.key === "Escape") return open(false);
+    if (e.key === "Tab") { const f = [...menu.querySelectorAll("a[href],button")], a = f[0], z = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === a) { e.preventDefault(); z.focus(); } else if (!e.shiftKey && document.activeElement === z) { e.preventDefault(); a.focus(); } }
+  });
+})();
+function renderCats(){
+  const n = {}; lastList.forEach(p => { if (p.cat) n[p.cat] = (n[p.cat] || 0) + 1; });
+  const tile = (h, i, t, c, x) => `<a class="cat" href="${h}" style="--c:${safeColor(c)}"><i>${esc(i)}</i><b>${esc(t)}</b><span>${x[0]}</span>${x[1] ? `<small>${esc(x[1])}</small>` : ""}</a>`;
+  byId("catGrid").innerHTML = tile("#kategori/semua", "", "Semua produk", "#C9A24B", [lastList.length + " produk"])
+    + catList().map(([id, c]) => tile("#kategori/" + encodeURIComponent(id), c.icon || "", c.name, c.color, [(n[id] || 0) + " produk", c.desc])).join("");
+  byId("mList").innerHTML = menuHtml(SLUG == null ? "home" : SLUG);
+}
+
+renderProducts(PRODUCTS);
+wireWa();
+
+let end = new Date(CONFIG.promoEnd).getTime();
+const $t = id => document.getElementById(id);
+const pad = n => String(n).padStart(2, "0");
+function tick(){
+  let t = Math.max(0, end - Date.now());
+  const d = Math.floor(t / 864e5); t %= 864e5;
+  const h = Math.floor(t / 36e5);  t %= 36e5;
+  const m = Math.floor(t / 6e4);   t %= 6e4;
+  $t("d").textContent = pad(d); $t("h").textContent = pad(h);
+  $t("m").textContent = pad(m); $t("s").textContent = pad(Math.floor(t / 1e3));
+}
+tick(); setInterval(tick, 1000);
+
+/* Halaman kategori (satu file, alamat #kategori/nama) */
+const HOME_TITLE = document.title;
+function renderKat(){
+  if (SLUG == null) return;
+  const all = SLUG === "semua", c = allCats()[SLUG], known = all || (c && c.active !== false);
+  byId("mList").innerHTML = menuHtml(SLUG);
+  byId("kchips").innerHTML = [["semua", "Semua"], ...catList().map(([id, x]) => [id, x.name])]
+    .map(([id, n]) => `<a href="#kategori/${encodeURIComponent(id)}"${id === SLUG ? ' aria-current="page"' : ""}>${esc(n)}</a>`).join("");
+  const name = all ? "Semua produk" : known ? c.name : cOk ? "Kategori tidak ditemukan" : "Memuat…";
+  byId("kName").textContent = name;
+  byId("kIcon").textContent = all ? "" : known ? (c.icon || "") : "";
+  byId("kDesc").textContent = all ? "Semua produk Tokoku dalam satu halaman." : known ? (c.desc || "") : "";
+  byId("khero").style.setProperty("--c", all ? "#C9A24B" : safeColor(known ? c.color : ""));
+  byId("kcrumb").textContent = name;
+  document.title = name + " – Tokoku";
+  const grid = byId("kgrid"), none = byId("knone");
+  if (!all && cOk && !known) { grid.innerHTML = ""; none.hidden = false; none.innerHTML = 'Kategori ini tidak ada atau sedang disembunyikan. <a href="#kategori/semua">Lihat semua produk</a>'; byId("kcount").textContent = ""; return; }
+  const key = byId("ksort").value, ts = p => p.createdAt?.seconds || 0;
+  const list = REAL.filter(p => all || p.cat === SLUG)
+    .sort(key === "low" ? (a, b) => disc(a) - disc(b) : key === "high" ? (a, b) => disc(b) - disc(a) : (a, b) => ts(b) - ts(a));
+  grid.innerHTML = list.map(card).join("");
+  none.hidden = pOk && list.length > 0;
+  none.textContent = pOk ? "Belum ada produk di kategori ini." : "Memuat produk…";
+  byId("kcount").textContent = pOk ? list.length + " produk" : "";
+}
+function rebuild(){
+  // produk milik mitra hanya tampil jika mitranya aktif dan produknya tidak diblokir admin
+  REAL = RAW.filter(p => !p.agentId || (AG[p.agentId] && !p.hold));
+  renderProducts(RAW.length ? REAL : PRODUCTS);
+  renderKat(); renderAgen(); renderMitra();
+}
+const agLogo = (a, el) => { const ok = /^data:image\//.test(a.logo || ""); el.style.backgroundColor = safeColor(a.color || "#4A3AFF"); el.style.backgroundImage = ok ? `url("${a.logo}")` : "none"; el.textContent = ok ? "" : (a.name || "?")[0].toUpperCase(); };
+function renderMitra(){
+  const list = Object.values(AG).sort((x, y) => (x.name || "").localeCompare(y.name || ""));
+  byId("mitra").hidden = !list.length;
+  const g = byId("mitraGrid"); g.textContent = "";
+  list.forEach(a => {
+    const n = REAL.filter(p => p.agentId === a.id).length;
+    const t = document.createElement("a"); t.className = "mt"; t.href = "#agen/" + encodeURIComponent(a.slug);
+    const lg = document.createElement("div"); lg.className = "lg"; agLogo(a, lg);
+    const b = document.createElement("b"); b.textContent = a.name || "";
+    const d = document.createElement("span"); d.textContent = a.desc || "";
+    const c = document.createElement("small"); c.textContent = n + " produk";
+    t.append(lg, b, d, c); g.append(t);
+  });
+  byId("mList").innerHTML = menuHtml(ASLUG != null ? "mitra" : SLUG == null ? "home" : SLUG);
+}
+function renderAgen(){
+  if (ASLUG == null) return;
+  const a = Object.values(AG).find(x => x.slug === ASLUG), grid = byId("agrid"), none = byId("anone");
+  const name = a ? a.name : aOk ? "Toko tidak ditemukan" : "Memuat…";
+  byId("aName").textContent = name; byId("aCrumb").textContent = name; document.title = name + " – Tokoku";
+  byId("aDesc").textContent = a ? (a.desc || "") : "";
+  const lg = byId("aLogo"); if (a) agLogo(a, lg); else { lg.style.backgroundImage = "none"; lg.style.backgroundColor = "var(--line)"; lg.textContent = ""; }
+  byId("aHero").style.setProperty("--c", a ? safeColor(a.color) : "#4A3AFF");
+  const wb = byId("aWa"); wb.hidden = true; wb.removeAttribute("href");
+  const ac = byId("aChat"); ac.hidden = !a; if (a) ac.dataset.ag = a.id;
+  if (!a) { grid.innerHTML = ""; byId("acount").textContent = ""; none.hidden = false; if (aOk) none.innerHTML = 'Toko ini tidak ada atau sedang tidak aktif. <a href="#beranda">Kembali ke beranda</a>'; else none.textContent = "Memuat toko…"; return; }
+  const list = REAL.filter(p => p.agentId === a.id);
+  grid.innerHTML = list.map(card).join("");
+  none.hidden = list.length > 0; none.textContent = "Belum ada produk di toko ini.";
+  byId("acount").textContent = list.length + " produk";
+}
+function route(){
+  // link alternatif: tokoku.html?agen=nama-toko (tahan dibagikan di aplikasi yang menghapus tanda #)
+  const qa = new URLSearchParams(location.search).get("agen") || new URLSearchParams(location.search).get("toko");
+  if (qa && /^[a-z0-9-]{1,40}$/i.test(qa) && !/^#(agen|kategori)\//i.test(location.hash)) { try { history.replaceState(null, "", location.pathname + location.search + "#agen/" + qa.toLowerCase()); } catch (e) {} }
+  const m = location.hash.match(/^#kategori\/([a-z0-9-]*)$/i), ma = location.hash.match(/^#agen\/([a-z0-9-]+)$/i);
+  byId("viewHome").hidden = !!(m || ma); byId("viewKat").hidden = !m; byId("viewAgen").hidden = !ma;
+  if (ma) { ASLUG = ma[1].toLowerCase(); SLUG = null; renderAgen(); renderMitra(); window.scrollTo(0, 0); }
+  else if (m) { ASLUG = null; SLUG = m[1].toLowerCase() || "semua"; renderKat(); window.scrollTo(0, 0); }
+  else { ASLUG = null; SLUG = null; document.title = HOME_TITLE; renderCats(); const t = location.hash.length > 1 && document.getElementById(location.hash.slice(1)); t ? t.scrollIntoView() : window.scrollTo(0, 0); }
+}
+byId("ksort").onchange = renderKat;
+addEventListener("hashchange", route);
+route();
+</script>
+<!-- ================= FIREBASE (tersinkron real-time dengan admin.html) ================= -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, collection, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp, increment, writeBatch, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, collection, doc, getDoc, setDoc, addDoc, updateDoc, onSnapshot, query, where, orderBy, serverTimestamp, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth, onAuthStateChanged, signInAnonymously, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail, updateProfile, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-/* ====== KONFIGURASI FIREBASE (sama dengan tokoku.html dan admin.html) ====== */
+/* ====== KONFIGURASI FIREBASE (harus sama dengan di admin.html) ====== */
 const firebaseConfig = {
   apiKey: "AIzaSyCqhLvrLnJwZnaqthRJjqDwUN9_xpgWyZI",
   authDomain: "database-e5b59.firebaseapp.com",
@@ -326,378 +835,537 @@ const firebaseConfig = {
   appId: "1:1068757334273:web:a542af0c1d901f88848300",
   measurementId: "G-X31DP5DZ1T"
 };
-/* ========================================================================== */
+/* ==================================================================== */
 
-const app = initializeApp(firebaseConfig), auth = getAuth(app), db = getFirestore(app);
-const $ = id => document.getElementById(id);
-const rp = n => "Rp" + Number(n || 0).toLocaleString("id-ID");
-const el = (t, c, x) => { const e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; };
-const mkBtn = (t, fn, cls = "") => { const b = el("button", "btn " + cls, t); b.type = "button"; b.onclick = fn; return b; };
-const toast = t => { const e = $("toast"); e.textContent = t; e.classList.add("show"); setTimeout(() => e.classList.remove("show"), 2400); };
-const slugify = t => t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 30);
-const RESERVED = ["admin", "semua", "kategori", "agen", "mitra", "beranda", "toko", "tokoku", "api"];
-const cleanWa = v => { let n = String(v || "").replace(/\D/g, ""); if (n.startsWith("0")) n = "62" + n.slice(1); return n; };
-const safeColor = c => /^#[0-9a-f]{6}$/i.test(c || "") ? c : "#4A3AFF";
-const isImg = s => /^data:image\//.test(s || "");
-const pct = n => (Math.round(Number(n || 0) * 100) / 100) + "%";
-/* Alamat website tokomu yang sudah online (hosting), tanpa garis miring di akhir. Contoh: "https://database-e5b59.web.app"
-   Kosongkan hanya jika file dibuka dari server yang sama. Jika file dibuka dari komputer (file:///...), WAJIB diisi
-   supaya link toko/portal yang dibagikan bisa dibuka orang lain. */
-const PUBLIC_URL = "https://tokokumitra.web.app";
-const pageUrl = f => PUBLIC_URL ? PUBLIC_URL.replace(/\/+$/, "") + "/" + f : new URL(f, location.href).href;
-const siteBase = () => pageUrl("tokoku.html");
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+import("https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js")
+  .then(m => m.isSupported().then(ok => ok && m.getAnalytics(app))).catch(() => {});
 
-const params = new URLSearchParams(location.search);
+/* Produk: tampil otomatis setiap kali admin menambah, mengubah, atau menghapus */
+onSnapshot(collection(db, "products"), snap => {
+  RAW = snap.docs.map(d => ({ ...d.data(), id: d.id })).filter(p => p.active !== false)
+    .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+  pOk = true;
+  rebuild();   // kosong = tampilkan produk contoh; produk mitra disaring sesuai status mitra
+}, e => { pOk = true; console.warn("Memakai data contoh:", e.code); renderKat(); });
 
-let me = null, priv = {}, items = {}, orders = {}, cats = {}, store = {}, editId = null, pImg = "", sLogo = "";
-let unsubMe = null, unsubs = [], appOn = false;
-let threads = {}, chSel = null, chUnsub = null;
+/* Mitra / agen: hanya yang berstatus aktif yang tampil */
+onSnapshot(collection(db, "agents"), snap => {
+  AG = {}; snap.forEach(d => { const a = d.data(); if (a.status === "active" && a.slug) AG[d.id] = { ...a, id: d.id }; });
+  aOk = true; rebuild();
+}, e => { aOk = true; console.warn("Mitra tidak terbaca:", e.code); renderAgen(); });
 
-const authError = c => ({
-  "auth/invalid-credential": "Email atau password salah.", "auth/invalid-email": "Format email tidak valid.",
-  "auth/user-disabled": "Akun ini dinonaktifkan.", "auth/too-many-requests": "Terlalu banyak percobaan. Coba lagi nanti.",
-  "auth/email-already-in-use": "Email sudah terdaftar. Silakan masuk, lalu lengkapi pendaftaran.",
-  "auth/weak-password": "Password terlalu lemah (minimal 6 karakter).",
-  "auth/operation-not-allowed": "Login email/password belum diaktifkan di Firebase.",
-  "auth/network-request-failed": "Koneksi bermasalah. Periksa internet kamu."
-}[c] || "Gagal (" + c + ").");
+/* Pengaturan: nomor WhatsApp, waktu promo, teks banner */
+onSnapshot(doc(db, "settings", "store"), s => { if (s.exists()) applySettings(s.data()); },
+  e => console.warn("Pengaturan tidak terbaca:", e.code));
 
-/* ---------- Tampilan ---------- */
-function view(n){ ["vAuth", "vWait", "vApp"].forEach(v => $(v).hidden = v !== n); }
-function pane(up){ $("segIn").classList.toggle("on", !up); $("segUp").classList.toggle("on", up); $("paneIn").hidden = up; $("paneUp").hidden = !up; }
-$("segIn").onclick = () => pane(false); $("segUp").onclick = () => pane(true);
-if (location.hash === "#daftar" || params.has("daftar")) pane(true);
-$("rName").oninput = () => { if (!$("rSlug").dataset.t) $("rSlug").value = slugify($("rName").value); };
-$("rSlug").oninput = () => { $("rSlug").dataset.t = "1"; $("rSlug").value = $("rSlug").value.toLowerCase().replace(/[^a-z0-9-]/g, ""); };
-
-/* ---------- Masuk ---------- */
-$("loginForm").onsubmit = async e => {
-  e.preventDefault(); $("loginMsg").className = "msg"; $("loginMsg").textContent = ""; $("btnLogin").disabled = true;
-  try { await signInWithEmailAndPassword(auth, $("lEmail").value.trim(), $("lPass").value); }
-  catch (err) { $("loginMsg").textContent = authError(err.code); }
-  $("btnLogin").disabled = false;
-};
-$("btnReset").onclick = async () => {
-  const m = $("loginMsg"), em = $("lEmail").value.trim(); m.className = "msg";
-  if (!em) { m.textContent = "Isi email dulu, lalu klik Lupa password."; return; }
-  try { await sendPasswordResetEmail(auth, em); m.className = "msg ok"; m.textContent = "Tautan reset password dikirim ke " + em + "."; }
-  catch (err) { m.textContent = authError(err.code); }
-};
-const out = () => signOut(auth);
-$("btnOut").onclick = out; $("wOut").onclick = out; $("btnOutReg").onclick = out;
-
-/* ---------- Daftar (terbuka, tapi menunggu persetujuan admin) ---------- */
-function regMode(signedIn){
-  // sudah punya akun tapi belum punya data mitra: tidak perlu email/password lagi
-  $("rEmailL").hidden = $("rPassL").hidden = signedIn;
-  $("rEmail").required = $("rPass").required = !signedIn;
-  $("btnOutReg").classList.toggle("hidden", !signedIn);
-  $("upTitle").textContent = signedIn ? "Lengkapi data brand" : "Daftar sebagai mitra";
-}
-$("regForm").onsubmit = async e => {
+/* Kode promo: dicek ke database, lalu harga produk dihitung ulang */
+document.getElementById("promoForm").onsubmit = async e => {
   e.preventDefault();
-  const m = $("regMsg"); m.className = "msg"; m.textContent = "";
-  const v = {
-    name: $("rName").value.trim(), slug: $("rSlug").value.trim(),
-    owner: $("rOwner").value.trim(), wa: cleanWa($("rWa").value), desc: $("rDesc").value.trim(), email: $("rEmail").value.trim(), pass: $("rPass").value
-  };
-  if (!/^[a-z0-9-]{3,30}$/.test(v.slug) || RESERVED.includes(v.slug)) { m.textContent = "Alamat toko tidak valid atau tidak boleh dipakai. Gunakan 3-30 huruf kecil, angka, atau strip."; return; }
-  if (!/^[0-9]{9,15}$/.test(v.wa)) { m.textContent = "Nomor WhatsApp tidak valid."; return; }
-  $("btnReg").disabled = true;
+  const msg = document.getElementById("promoMsg"), code = document.getElementById("promoCode").value.trim().toUpperCase().replace(/[^A-Z0-9_-]/g, "");
+  const set = (t, c) => { msg.textContent = t; msg.className = c || ""; };
+  const redraw = () => { renderProducts(lastList); renderKat(); };
+  const no = t => { PROMO = null; redraw(); set(t, "bad"); };
+  if (!code) { PROMO = null; redraw(); return set(""); }
   try {
-    if ((await getDoc(doc(db, "slugs", v.slug))).exists()) throw { msg: "Alamat toko sudah dipakai. Coba alamat lain." };
-    let u = auth.currentUser;
-    if (!u || u.isAnonymous) u = (await createUserWithEmailAndPassword(auth, v.email, v.pass)).user;
-    const b = writeBatch(db);
-    b.set(doc(db, "agents", u.uid), { uid: u.uid, name: v.name, slug: v.slug, owner: v.owner, wa: v.wa, desc: v.desc, color: "#4A3AFF", logo: "", status: "pending", createdAt: serverTimestamp() });
-    b.set(doc(db, "agentPrivate", u.uid), { email: u.email || v.email, bank: "", createdAt: serverTimestamp() });
-    b.set(doc(db, "slugs", v.slug), { uid: u.uid, createdAt: serverTimestamp() });
-    await b.commit();
-    toast("Pendaftaran terkirim");
-  } catch (err) { m.textContent = err.msg || (err.code && err.code.startsWith("auth/") ? authError(err.code) : "Gagal mendaftar (" + (err.code || err.message) + ")."); }
-  $("btnReg").disabled = false;
+    const d = await getDoc(doc(db, "promos", code)), m = d.exists() ? d.data() : null;
+    if (!m || m.active === false) return no("Kode promo tidak ditemukan.");
+    if (m.until && new Date(m.until + "T23:59:59") < new Date()) return no("Kode promo sudah kedaluwarsa.");
+    if (m.quota && (m.used || 0) >= m.quota) return no("Kuota kode promo sudah habis.");
+    PROMO = { code, type: m.type, value: m.value, min: m.min || 0 };
+    redraw();
+    set("Kode " + code + " dipakai: " + (m.type === "pct" ? m.value + "%" : rp(m.value)) + " off" + (m.min ? " untuk produk min. " + rp(m.min) : "") + ".", "ok");
+  } catch (err) { set("Kode tidak bisa dicek sekarang. Coba lagi.", "bad"); }
 };
 
-/* ---------- Status login ---------- */
-function stopApp(){ unsubs.forEach(f => f()); unsubs = []; if (chUnsub) { chUnsub(); chUnsub = null; } chSel = null; threads = {}; appOn = false; items = {}; orders = {}; priv = {}; }
-onAuthStateChanged(auth, user => {
-  if (unsubMe) { unsubMe(); unsubMe = null; } stopApp(); me = null;
-  if (!user || user.isAnonymous) { regMode(false); view("vAuth"); return; }
-  unsubMe = onSnapshot(doc(db, "agents", user.uid), s => {
-    if (!s.exists()) {
-      me = null; stopApp(); regMode(true); pane(true); view("vAuth");
-      const m = $("regMsg"); m.className = "msg ok";
-      m.textContent = "Login berhasil (" + (user.email || "") + "), tetapi akun ini belum punya data mitra. Mungkin belum didaftarkan, atau pendaftarannya sudah ditolak/dihapus admin. Lengkapi data brand di bawah, lalu tunggu persetujuan admin.";
-      return;
-    }
-    me = s.data();
-    if (me.status === "active") { view("vApp"); if (!appOn) startApp(user); renderHead(); fillProfile(false); renderAll(); }
-    else {
-      stopApp(); view("vWait");
-      $("wTitle").textContent = me.status === "suspended" ? "Akun mitra ditangguhkan" : "Pendaftaran sedang ditinjau";
-      $("wText").textContent = me.status === "suspended" ? "Toko dan produkmu disembunyikan sementara. Hubungi admin Tokoku untuk informasi lebih lanjut." : "Admin akan memeriksa data brand kamu. Setelah disetujui, portal ini langsung terbuka dan tokomu tampil di website.";
-      getDoc(doc(db, "settings", "store")).then(x => { const n = x.exists() ? String(x.data().waNumber || "").replace(/\D/g, "") : ""; $("wWa").hidden = !n; if (n) $("wWa").href = "https://wa.me/" + n + "?text=" + encodeURIComponent("Halo admin Tokoku, saya mitra " + me.name + ". Mohon info status akun saya."); }).catch(() => {});
-    }
-  }, e => {
-    toast("Gagal memuat akun: " + e.code); stopApp(); regMode(false); pane(false); view("vAuth");
-    const m = $("loginMsg"); m.className = "msg";
-    m.textContent = "Login berhasil, tetapi data akun tidak bisa dibaca (" + e.code + "). Biasanya Rules Firestore belum diterbitkan ulang. Hubungi admin.";
-  });
-});
+/* Kategori: tampil otomatis di menu dan kartu kategori */
+onSnapshot(collection(db, "categories"), snap => { CATS = {}; snap.forEach(d => CATS[d.id] = d.data()); cOk = true; renderCats(); renderKat(); },
+  e => { cOk = true; console.warn("Kategori tidak terbaca:", e.code); renderKat(); });
 
-/* ---------- Tab ---------- */
-document.querySelectorAll(".tabs button").forEach(b => b.onclick = () => {
-  document.querySelectorAll(".tabs button").forEach(x => x.classList.toggle("on", x === b));
-  ["ringkasan", "produk", "pesanan", "chat", "profil"].forEach(t => $("tab-" + t).classList.toggle("hidden", b.dataset.tab !== t));
-});
+/* Banner: tampil otomatis sesuai urutan dari admin */
+onSnapshot(collection(db, "banners"), snap => {
+  renderBanners(snap.docs.map(d => d.data()).filter(b => b.active !== false).sort((a, b) => (a.order || 0) - (b.order || 0)));
+}, e => console.warn("Banner tidak terbaca:", e.code));
 
-/* ---------- Chat pelanggan (pesan dari produk milikmu) ---------- */
-const chVisible = () => !$("tab-chat").classList.contains("hidden");
-const chTime = ts => ts && ts.seconds ? new Date(ts.seconds * 1000).toLocaleString("id-ID", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }) : "";
-function openLightbox(src){ if (!/^data:image\//.test(src)) return; const o = el("div", "clb"), i = el("img"); i.src = src; i.alt = "Gambar"; o.append(i); o.onclick = () => o.remove(); document.body.append(o); }
-function markChatRead(){ if (chSel && chVisible() && threads[chSel] && threads[chSel].unreadAgent > 0) updateDoc(doc(db, "agentChats", chSel), { unreadAgent: 0 }).catch(() => {}); }
-function renderChatList(){
-  const L = $("chList"); L.textContent = "";
-  const ids = Object.keys(threads).sort((a, b) => ((threads[b].lastAt || {}).seconds || 9e9) - ((threads[a].lastAt || {}).seconds || 9e9));
-  const unread = ids.filter(id => threads[id].unreadAgent > 0).length, bd = $("chBadge"); bd.hidden = !unread; bd.textContent = unread;
-  if (!ids.length) { L.append(el("div", "empty", "Belum ada pesan dari pelanggan.")); return; }
-  ids.forEach(id => {
-    const t = threads[id], b = el("button", "ci" + (id === chSel ? " on" : "")); b.type = "button";
-    const i = el("div"), n = el("b", "", t.name || "Pelanggan"); if (t.unreadAgent > 0) n.append(el("span", "badge", t.unreadAgent));
-    i.append(n, el("small", "", (t.prod ? "[" + t.prod + "] " : "") + (t.lastFrom === "agent" ? "Kamu: " : "") + (t.lastMsg || "")));
-    b.append(i); b.onclick = () => selectChat(id); L.append(b);
+/* ====== CHAT LANGSUNG DENGAN ADMIN (tersambung ke tab Chat di admin.html) ====== */
+const auth = getAuth(app);
+const $c = id => document.getElementById(id);
+let cUser = null, cOpen = false, cProd = null, cUnread = 0, cUnsubMsgs = null, cUnsubDoc = null, cUnsubThreads = null, cSending = false;
+let cTarget = "admin", cThreads = {}, cUnreadAdmin = 0;   // cTarget: "admin" atau uid agen pemilik produk
+const cAgName = id => (AG[id] || {}).name || (cThreads[id] || {}).agentName || "Penjual";
+const cCid = () => cUser.uid + "_" + cTarget;
+const cPath = () => cTarget === "admin" ? ["chats", cUser.uid] : ["agentChats", cCid()];
+const cLS = { get: k => { try { return localStorage.getItem(k) || ""; } catch (e) { return ""; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} } };
+const cNameNow = () => (cUser && (cUser.displayName || (cUser.email || "").split("@")[0])) || cLS.get("tk_chat_name");
+const cTime = ts => ts && ts.seconds ? new Date(ts.seconds * 1000).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }) : "";
+
+let cLast = [], cImg = "";
+const CHAT_VB = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#C9A24B" d="M12 1.8l2.4 1.7 2.9-.1 1 2.8 2.4 1.7-.9 2.8.9 2.8-2.4 1.7-1 2.8-2.9-.1L12 22.2l-2.4-1.7-2.9.1-1-2.8-2.4-1.7.9-2.8-.9-2.8 2.4-1.7 1-2.8 2.9.1z"/><path d="M8 12.3l2.7 2.7 5.5-5.5" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+function cNote(t){ const b = $c("chatMsgs"); b.textContent = ""; const p = document.createElement("p"); p.className = "cempty"; p.textContent = t; b.append(p); }
+function cRenderMsgs(list){
+  cLast = list;
+  const box = $c("chatMsgs"); box.textContent = "";
+  if (!list.length) { cNote(cTarget === "admin" ? "Halo! Tanyakan apa saja soal produk, stok, atau pengiriman. Admin akan membalas di sini." : "Halo! Tanyakan soal produk, stok, atau pengiriman. " + cAgName(cTarget) + " akan membalas di sini."); return; }
+  list.forEach(m => {
+    const d = document.createElement("div"); d.className = "cm " + (m.from === "admin" || m.from === "agent" ? "adm" : "usr");
+    if (m.from === "admin") { const n = document.createElement("div"); n.className = "cn"; n.append(document.createTextNode("ADMIN TOKOKU")); const v = document.createElement("span"); v.className = "vb"; v.title = "Akun resmi terverifikasi"; v.innerHTML = CHAT_VB; n.append(v); d.append(n); }
+    if (m.from === "agent") { const n = document.createElement("div"); n.className = "cn"; n.textContent = cAgName(cTarget); d.append(n); }
+    if (m.prodName) { const p = document.createElement("div"); p.className = "cp"; p.textContent = "Produk: " + m.prodName + (m.prodPrice ? " · " + rp(m.prodPrice) : ""); d.append(p); }
+    if (m.img && /^data:image\//.test(m.img)) { const im = document.createElement("img"); im.className = "cimg"; im.src = m.img; im.alt = "Gambar"; im.onclick = () => openLightbox(m.img); d.append(im); }
+    if (m.text) { const t = document.createElement("div"); t.textContent = m.text; d.append(t); }
+    const tm = document.createElement("small"); tm.textContent = cTime(m.createdAt); d.append(tm);
+    box.append(d);
   });
+  box.scrollTop = box.scrollHeight;
 }
-function selectChat(id){
-  chSel = id; if (chUnsub) { chUnsub(); chUnsub = null; }
-  const t = threads[id] || {};
-  $("chWho").textContent = t.name || "Pelanggan"; $("chProd").textContent = t.prod ? "Produk: " + t.prod : "";
-  $("chText").disabled = $("chSend").disabled = false;
-  renderChatList(); markChatRead();
-  chUnsub = onSnapshot(query(collection(db, "agentChats", id, "messages"), orderBy("createdAt", "asc")), s => {
-    const box = $("chMsgs"); box.textContent = "";
-    s.forEach(x => {
-      const m = x.data(), d = el("div", "cm " + (m.from === "agent" ? "adm" : "usr"));
-      if (m.prodName) d.append(el("div", "cp", "Produk: " + m.prodName + (m.prodPrice ? " · " + rp(m.prodPrice) : "")));
-      if (m.img && /^data:image\//.test(m.img)) { const im = el("img", "cimg"); im.src = m.img; im.alt = "Gambar"; im.onclick = () => openLightbox(m.img); d.append(im); }
-      if (m.text) d.append(el("div", "", m.text));
-      d.append(el("small", "", chTime(m.createdAt))); box.append(d);
+function cRenderBadge(){ const b = $c("chatBadge"); b.hidden = cOpen || cUnread <= 0; b.textContent = cUnread > 9 ? "9+" : cUnread; }
+function cRenderProd(){ $c("chatProd").hidden = !cProd; if (cProd) $c("chatProdTxt").textContent = cProd.name + (cProd.price ? " · " + rp(cProd.price) : ""); }
+function cCalcUnread(){ cUnread = cUnreadAdmin + Object.values(cThreads).reduce((t, x) => t + (x.unreadUser || 0), 0); cRenderBadge(); }
+function cStop(){ [cUnsubMsgs, cUnsubDoc, cUnsubThreads].forEach(f => f && f()); cUnsubMsgs = cUnsubDoc = cUnsubThreads = null; cUnread = cUnreadAdmin = 0; cThreads = {}; cRenderBadge(); }
+function cMarkRead(){
+  if (!cUser || !cOpen) return;
+  if (cTarget === "admin") { if (cUnreadAdmin > 0) updateDoc(doc(db, "chats", cUser.uid), { unreadUser: 0 }).catch(() => {}); }
+  else { const t = cThreads[cTarget]; if (t && t.unreadUser > 0) updateDoc(doc(db, "agentChats", cCid()), { unreadUser: 0 }).catch(() => {}); }
+}
+const CT_HTML = document.querySelector("#chatWin .ct").innerHTML, CT_SUB = document.querySelector("#chatWin .ch > div small").innerHTML;
+function cRenderHead(){
+  const ct = document.querySelector("#chatWin .ct"), sm = document.querySelector("#chatWin .ch > div small");
+  if (cTarget === "admin") { ct.innerHTML = CT_HTML; sm.innerHTML = CT_SUB; $c("chatWin").setAttribute("aria-label", "Chat dengan admin"); }
+  else { ct.textContent = cAgName(cTarget); sm.textContent = "Penjual Tokoku - Tanya produk, stok, atau pengiriman"; $c("chatWin").setAttribute("aria-label", "Chat dengan " + cAgName(cTarget)); }
+  $c("chatWa").hidden = cTarget !== "admin";
+}
+function cRenderWho(){
+  const sel = $c("chatWho"), ids = Object.keys(cThreads);
+  if (cTarget !== "admin" && !ids.includes(cTarget)) ids.push(cTarget);
+  sel.textContent = "";
+  const add = (v, t) => { const o = document.createElement("option"); o.value = v; o.textContent = t; sel.append(o); };
+  add("admin", "Admin Tokoku" + (cUnreadAdmin > 0 && cTarget !== "admin" ? " (" + cUnreadAdmin + " baru)" : ""));
+  ids.forEach(id => { const n = (cThreads[id] || {}).unreadUser || 0; add(id, cAgName(id) + (n > 0 && id !== cTarget ? " (" + n + " baru)" : "")); });
+  sel.value = cTarget; sel.hidden = ids.length === 0;
+}
+function cListen(){
+  if (cUnsubMsgs) cUnsubMsgs(); cUnsubMsgs = null; if (!cUser) return;
+  const p = cPath();
+  cUnsubMsgs = onSnapshot(query(collection(db, p[0], p[1], "messages"), orderBy("createdAt", "asc")),
+    s => cRenderMsgs(s.docs.map(d => d.data())), e => cNote("Pesan tidak bisa dimuat (" + e.code + ")."));
+}
+function cStart(){
+  cStop(); if (!cUser) return;
+  const uid = cUser.uid;
+  cUnsubDoc = onSnapshot(doc(db, "chats", uid), d => { cUnreadAdmin = d.exists() ? (d.data().unreadUser || 0) : 0; cCalcUnread(); cMarkRead(); cRenderWho(); }, () => {});
+  cUnsubThreads = onSnapshot(query(collection(db, "agentChats"), where("uid", "==", uid)), s => { cThreads = {}; s.forEach(d => { const x = d.data(); cThreads[x.agentId] = x; }); cCalcUnread(); cMarkRead(); cRenderWho(); if (cOpen) cRenderHead(); }, () => {});
+  cListen();
+}
+function cSetTarget(t){ cTarget = t || "admin"; cRenderHead(); cRenderWho(); cListen(); cMarkRead(); }
+async function cPrepare(){
+  const need = !cNameNow();
+  $c("chatNameForm").hidden = !need; $c("chatMsgs").hidden = need; $c("chatForm").hidden = need;
+  if (need) { $c("chatName").focus(); return; }
+  if (!cUser) {
+    cNote("Menyambungkan…");
+    try { await signInAnonymously(auth); }
+    catch (err) { cNote(err.code === "auth/operation-not-allowed" || err.code === "auth/admin-restricted-operation" ? "Chat belum aktif: login Anonymous belum diaktifkan di Firebase Authentication." : "Chat belum bisa tersambung. Periksa internet lalu coba lagi."); }
+    return;
+  }
+  $c("chatText").focus();
+}
+function cOpenChat(){
+  cOpen = true; $c("chatWin").hidden = false; $c("chatBtn").hidden = true; $c("chatBtn").setAttribute("aria-expanded", "true");
+  cRenderBadge(); cRenderProd(); cRenderHead(); cRenderWho(); cMarkRead(); cPrepare();
+}
+function cCloseChat(){
+  cOpen = false; $c("chatWin").hidden = true; $c("chatBtn").hidden = false; $c("chatBtn").setAttribute("aria-expanded", "false");
+  cRenderBadge(); $c("chatBtn").focus();
+}
+onAuthStateChanged(auth, u => { cUser = u; if (u) cStart(); else cStop(); if (cOpen) cPrepare(); });
+
+/* ====== AKUN PELANGGAN, ALAMAT TERSIMPAN, DAN RIWAYAT PESANAN ====== */
+const acct = id => document.getElementById(id);
+let accountRegister = false, customerProfile = null, accountOrdersStop = null;
+const cartKey = uid => uid && uid !== "guest" ? "tk_cart_" + uid : "tk_cart_guest";
+function readCart(key) { try { const v=JSON.parse(localStorage.getItem(key)||"[]"); return Array.isArray(v) ? v.filter(x=>x && typeof x.id==="string" && Number.isInteger(x.qty) && x.qty>0).slice(0,20) : []; } catch (_) { return []; } }
+let cartItems = readCart(cartKey(auth.currentUser?.uid));
+function persistCart() { try { localStorage.setItem(cartKey(auth.currentUser && !auth.currentUser.isAnonymous ? auth.currentUser.uid : "guest"),JSON.stringify(cartItems)); } catch (_) {} }
+function migrateCart(user) {
+  if(!user || user.isAnonymous) { cartItems=readCart(cartKey("guest")); renderCart(); return; }
+  const saved=readCart(cartKey(user.uid)), guest=readCart(cartKey("guest")), merged=new Map(saved.map(x=>[x.id,x.qty]));
+  guest.forEach(x=>merged.set(x.id,Math.min(20,(merged.get(x.id)||0)+x.qty)));
+  cartItems=[...merged].map(([id,qty])=>({id,qty})).slice(0,20);
+  try { localStorage.setItem(cartKey(user.uid),JSON.stringify(cartItems)); localStorage.removeItem(cartKey("guest")); } catch (_) {}
+  renderCart();
+}
+const accountOpen = () => { acct("accountWin").hidden = false; renderAccount(); };
+const accountClose = () => { acct("accountWin").hidden = true; if (accountOrdersStop) accountOrdersStop(); accountOrdersStop = null; };
+function accountStatus(message, id = "accountStatus") { acct(id).textContent = message || ""; }
+const legacyAddress = p => p?.address ? [{ id:"alamat-lama", label:"Alamat utama", name:p.name || "", phone:p.phone || "", address:p.address, isDefault:true }] : [];
+function customerAddresses() { return Array.isArray(customerProfile?.addresses) && customerProfile.addresses.length ? customerProfile.addresses : legacyAddress(customerProfile); }
+function renderAddresses() {
+  const box = acct("addressList"), addresses = customerAddresses(); box.textContent = "";
+  if (!addresses.length) { const p = document.createElement("p"); p.className="account-note"; p.textContent="Belum ada alamat. Tambahkan alamat untuk mulai memesan."; box.append(p); }
+  addresses.forEach(a => {
+    const card = document.createElement("div"); card.className="account-address";
+    const title = document.createElement("b"); title.textContent=(a.label || "Alamat") + (a.isDefault ? " · Alamat utama" : "");
+    const who = document.createElement("small"); who.style.display="block"; who.textContent=(a.name || "") + (a.phone ? " · " + a.phone : "");
+    const addr = document.createElement("small"); addr.style.display="block"; addr.textContent=a.address || "";
+    const actions = document.createElement("div"); actions.className="row";
+    const edit = document.createElement("button"); edit.type="button"; edit.className="btn btn-ghost"; edit.textContent="Ubah"; edit.onclick=()=>editAddress(a);
+    actions.append(edit);
+    if (!a.isDefault) { const primary=document.createElement("button"); primary.type="button"; primary.className="btn btn-ghost"; primary.textContent="Jadikan utama"; primary.onclick=()=>saveAddressList(addresses.map(x=>({...x,isDefault:x.id===a.id}))); actions.append(primary); }
+    const remove=document.createElement("button"); remove.type="button"; remove.className="btn btn-ghost"; remove.textContent="Hapus"; remove.onclick=()=>{ if(confirm("Hapus alamat ini?")) saveAddressList(addresses.filter(x=>x.id!==a.id)); }; actions.append(remove);
+    card.append(title,who,addr,actions); box.append(card);
+  });
+  const select=acct("cartAddress"), old=select.value; select.textContent="";
+  addresses.forEach(a=>{ const op=document.createElement("option"); op.value=a.id; op.textContent=(a.label || "Alamat") + (a.isDefault ? " (utama)" : "") + " — " + (a.address || ""); select.append(op); });
+  if(addresses.some(a=>a.id===old)) select.value=old; else { const primary=addresses.find(a=>a.isDefault)||addresses[0]; if(primary) select.value=primary.id; }
+  if(!addresses.length){ const op=document.createElement("option"); op.value=""; op.textContent="Tambahkan alamat di profil"; select.append(op); }
+  renderCart();
+}
+function editAddress(a) {
+  acct("addressId").value=a.id || ""; acct("addressLabel").value=a.label || "Rumah";
+  acct("addressName").value=a.name || ""; acct("addressPhone").value=a.phone || "";
+  acct("addressProvince").value=a.province || ""; acct("addressCity").value=a.city || "";
+  acct("addressDistrict").value=a.district || ""; acct("addressVillage").value=a.village || "";
+  acct("addressStreet").value=a.street || a.address || ""; acct("addressRtRw").value=a.rtRw || "";
+  acct("addressPostal").value=a.postalCode || ""; acct("addressNote").value=a.note || "";
+  acct("addressDefault").checked=!!a.isDefault;
+  acct("addressForm").hidden=false; acct("addressLabel").focus();
+}
+async function saveAddressList(addresses) {
+  const user=auth.currentUser; if(!user || user.isAnonymous) return;
+  if(addresses.length>8) return accountStatus("Maksimal 8 alamat tersimpan.","addressStatus");
+  if(addresses.length && !addresses.some(a=>a.isDefault)) addresses[0].isDefault=true;
+  let defaultSeen=false;
+  addresses=addresses.map(a=>{const isDefault=!!a.isDefault && !defaultSeen;if(isDefault)defaultSeen=true;return {...a,isDefault};});
+  const primary=addresses.find(a=>a.isDefault)||addresses[0]||null;
+  const profile={...(customerProfile||{}),name:acct("profileName").value.trim() || primary?.name || user.displayName || "",phone:acct("profilePhone").value.trim() || primary?.phone || "",addresses,
+    address:primary?.address || "",email:user.email || "",updatedAt:serverTimestamp()};
+  try { await setDoc(doc(db,"users",user.uid),profile,{merge:true}); customerProfile=profile; acct("addressForm").hidden=true; accountStatus("Alamat berhasil disimpan.","addressStatus"); renderAddresses(); }
+  catch(e){
+    console.warn("Gagal menyimpan alamat pelanggan:",e);
+    accountStatus(e?.code==="permission-denied" ? "Firebase menolak perubahan profil. Terapkan aturan Firestore terbaru lalu coba lagi." : "Alamat belum tersimpan ("+(e?.code||"koneksi")+"). Periksa koneksi dan coba lagi.","addressStatus");
+  }
+}
+function renderAccount() {
+  const user = auth.currentUser;
+  const member = !!user && !user.isAnonymous;
+  acct("accountGuest").hidden = member; acct("accountMember").hidden = !member;
+  acct("accountBtn").textContent = member ? "Akun saya" : "Masuk / Daftar";
+  if (!member) return;
+  acct("accountEmailText").textContent = user.email || "Akun pelanggan";
+  acct("profileName").value = customerProfile?.name || user.displayName || "";
+  acct("profilePhone").value = customerProfile?.phone || "";
+  renderAddresses();
+  if (accountOrdersStop) accountOrdersStop();
+  acct("accountOrders").textContent = "Memuat pesanan…";
+  accountOrdersStop = onSnapshot(query(collection(db, "orders"), where("uid", "==", user.uid)), snap => {
+    const box = acct("accountOrders"); box.textContent = "";
+    const rows = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+    if (!rows.length) { const p = document.createElement("p"); p.className = "account-note"; p.textContent = "Belum ada pesanan."; box.append(p); return; }
+    rows.slice(0, 20).forEach(o => {
+      const row = document.createElement("div"); row.className = "account-order";
+      const name = document.createElement("b"); name.textContent = o.prod || (o.items || []).map(x => x.name).join(", ") || "Pesanan Tokoku";
+      const state = document.createElement("small"); state.textContent = "Pesanan #" + o.id.slice(0, 6).toUpperCase() + " · " + (o.status || "Diproses");
+      const total = document.createElement("small"); total.textContent = "Total " + rp(o.total || 0) + (o.paid ? " · Sudah dibayar" : " · Menunggu pembayaran");
+      row.append(name, state, total);
+      if(o.courier || o.resi){ const ship=document.createElement("small"); ship.textContent="Pengiriman: "+(o.courier||"Kurir belum ditentukan")+(o.resi?" · Resi "+o.resi:""); row.append(ship); }
+      box.append(row);
     });
-    box.scrollTop = box.scrollHeight; markChatRead();
-  }, e => toast("Pesan tidak bisa dimuat: " + e.code));
+  }, () => { acct("accountOrders").textContent = "Pesanan belum dapat dimuat. Coba buka kembali."; });
 }
-$("chText").addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); $("chForm").requestSubmit(); } });
-$("chForm").onsubmit = async e => {
-  e.preventDefault(); const text = $("chText").value.trim(); if (!text || !chSel || !me) return;
-  $("chSend").disabled = true; $("chText").value = "";
+function setAccountMode(register) {
+  accountRegister = register;
+  acct("loginTab").setAttribute("aria-selected", String(!register));
+  acct("registerTab").setAttribute("aria-selected", String(register));
+  acct("accountNameWrap").hidden = !register;
+  acct("accountPassword").autocomplete = register ? "new-password" : "current-password";
+  acct("accountPassword").minLength = register ? 8 : 1;
+  acct("accountSubmit").textContent = register ? "Buat akun" : "Masuk";
+  acct("forgotPassword").hidden = register; accountStatus("");
+}
+acct("accountBtn").onclick = accountOpen; acct("accountClose").onclick = accountClose;
+acct("accountWin").addEventListener("click", e => { if (e.target === acct("accountWin")) accountClose(); });
+acct("loginTab").onclick = () => setAccountMode(false); acct("registerTab").onclick = () => setAccountMode(true);
+acct("googleLogin").onclick = async () => {
+  accountStatus("Membuka masuk Google…");
   try {
-    await addDoc(collection(db, "agentChats", chSel, "messages"), { from: "agent", text, name: (me.name || "Penjual").slice(0, 40), createdAt: serverTimestamp() });
-    await updateDoc(doc(db, "agentChats", chSel), { lastMsg: text.slice(0, 100), lastFrom: "agent", lastAt: serverTimestamp(), unreadAgent: 0, unreadUser: increment(1) });
-  } catch (err) { $("chText").value = text; toast("Gagal mengirim: " + (err.code || err.message)); }
-  $("chSend").disabled = false; $("chText").focus();
+    const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: "select_account" });
+    await signInWithPopup(auth, provider);
+    customerProfile = null; renderAccount();
+    const saved = await getDoc(doc(db, "users", auth.currentUser.uid));
+    customerProfile = saved.exists() ? saved.data() : null;
+    renderAccount();
+    if (!customerProfile?.phone || !customerAddresses().length) accountStatus("Google berhasil. Lengkapi nomor WhatsApp dan tambahkan alamat pengiriman.", "profileStatus");
+  } catch (err) {
+    const messages = {
+      "auth/operation-not-allowed": "Login Google belum diaktifkan di Firebase Authentication.",
+      "auth/unauthorized-domain": "Domain website belum ditambahkan ke Authorized domains Firebase Authentication.",
+      "auth/popup-blocked": "Jendela masuk Google diblokir. Izinkan pop-up lalu coba lagi.",
+      "auth/popup-closed-by-user": "Proses masuk Google dibatalkan.",
+      "auth/cancelled-popup-request": "Proses masuk Google sebelumnya masih berjalan. Coba lagi sebentar."
+    };
+    accountStatus(messages[err.code] || "Masuk Google gagal. Periksa koneksi dan konfigurasi Firebase.");
+  }
+};
+acct("accountAuthForm").onsubmit = async e => {
+  e.preventDefault(); accountStatus("Memproses…");
+  const email = acct("accountEmail").value.trim().toLowerCase(), password = acct("accountPassword").value;
+  try {
+    if (accountRegister) {
+      const name = acct("accountName").value.trim();
+      if (!name) throw new Error("Isi nama lengkap terlebih dahulu.");
+      const credential = await createUserWithEmailAndPassword(auth, email, password);
+      await updateProfile(credential.user, { displayName: name });
+      customerProfile = { name, phone: "", address: "" }; renderAccount();
+      accountStatus("Akun berhasil dibuat. Lengkapi nomor WhatsApp dan tambahkan alamat pengiriman.", "profileStatus");
+    } else { await signInWithEmailAndPassword(auth, email, password); customerProfile = null; renderAccount(); }
+  } catch (err) {
+    const messages = { "auth/email-already-in-use":"Email sudah terdaftar. Silakan masuk.", "auth/invalid-credential":"Email atau kata sandi salah.", "auth/weak-password":"Kata sandi minimal 8 karakter.", "auth/invalid-email":"Format email belum benar.", "auth/too-many-requests":"Terlalu banyak percobaan. Coba lagi nanti.", "auth/operation-not-allowed":"Login email belum diaktifkan di Firebase Authentication." };
+    accountStatus(messages[err.code] || err.message || "Tidak bisa memproses akun. Coba lagi.");
+  }
+};
+acct("forgotPassword").onclick = async () => {
+  const email = acct("accountEmail").value.trim().toLowerCase();
+  if (!email) return accountStatus("Masukkan email terlebih dahulu.");
+  try { await sendPasswordResetEmail(auth, email); accountStatus("Tautan untuk mengganti kata sandi dikirim ke email."); }
+  catch (err) { accountStatus(err.code === "auth/user-not-found" ? "Email belum terdaftar." : "Email pemulihan belum dapat dikirim."); }
+};
+acct("profileForm").onsubmit = async e => {
+  e.preventDefault(); const user = auth.currentUser; if (!user || user.isAnonymous) return accountOpen();
+  const profile = { name: acct("profileName").value.trim(), phone: acct("profilePhone").value.trim() };
+  if (!profile.name || !profile.phone) return accountStatus("Isi nama dan nomor WhatsApp utama.", "profileStatus");
+  if (!/^[0-9+() .-]{8,24}$/.test(profile.phone)) return accountStatus("Nomor WhatsApp belum valid.", "profileStatus");
+  accountStatus("Menyimpan data akun…", "profileStatus");
+  try {
+    await updateProfile(user,{displayName:profile.name});
+    await setDoc(doc(db, "users", user.uid), { ...profile, email: user.email || "", updatedAt: serverTimestamp() }, { merge: true });
+    customerProfile = { ...(customerProfile || {}), ...profile }; accountStatus("Data akun berhasil disimpan.", "profileStatus"); renderAddresses();
+  } catch (err) { accountStatus("Data belum tersimpan. Pastikan aturan Firebase terbaru sudah diterapkan.", "profileStatus"); }
+};
+acct("addAddress").onclick=()=>{
+  if(customerAddresses().length>=8) return accountStatus("Maksimal 8 alamat tersimpan.","addressStatus");
+  acct("addressForm").reset(); acct("addressId").value=""; acct("addressLabel").value=customerAddresses().length ? "Rumah" : "Rumah";
+  acct("addressName").value=acct("profileName").value || auth.currentUser?.displayName || "";
+  acct("addressPhone").value=acct("profilePhone").value || ""; acct("addressDefault").checked=customerAddresses().length===0;
+  acct("addressForm").hidden=false; acct("addressLabel").focus();
+};
+acct("cancelAddress").onclick=()=>{acct("addressForm").hidden=true;accountStatus("","addressStatus");};
+acct("addressForm").onsubmit=async e=>{
+  e.preventDefault();
+  const id=acct("addressId").value || (crypto.randomUUID ? crypto.randomUUID() : "addr-"+Date.now());
+  const value={id,label:acct("addressLabel").value.trim(),name:acct("addressName").value.trim(),phone:acct("addressPhone").value.trim(),
+    province:acct("addressProvince").value,city:acct("addressCity").value.trim(),district:acct("addressDistrict").value.trim(),village:acct("addressVillage").value.trim(),
+    street:acct("addressStreet").value.trim(),rtRw:acct("addressRtRw").value.trim(),postalCode:acct("addressPostal").value.trim(),note:acct("addressNote").value.trim(),isDefault:acct("addressDefault").checked};
+  if(!value.label || !value.name || !value.phone || !value.province || !value.city || !value.district || !value.village || !value.street || !value.postalCode) return accountStatus("Lengkapi penerima dan semua bagian alamat, termasuk provinsi dan kode pos.","addressStatus");
+  if(!/^[0-9+() .-]{8,24}$/.test(value.phone)) return accountStatus("Nomor WhatsApp alamat belum valid.","addressStatus");
+  if(!/^\d{5}$/.test(value.postalCode)) return accountStatus("Kode pos harus terdiri dari 5 angka.","addressStatus");
+  value.address=[value.street,value.rtRw?"RT/RW "+value.rtRw:"",value.village,value.district,value.city,value.province,value.postalCode,value.note?"Catatan: "+value.note:""].filter(Boolean).join(", ").slice(0,500);
+  let addresses=customerAddresses().filter(a=>a.id!==id).map(a=>({...a}));
+  if(value.isDefault || !addresses.length) addresses=addresses.map(a=>({...a,isDefault:false}));
+  value.isDefault=value.isDefault || !addresses.length; addresses.push(value);
+  await saveAddressList(addresses);
+};
+acct("accountSignOut").onclick = async () => { if (accountOrdersStop) accountOrdersStop(); accountOrdersStop = null; customerProfile = null; await signOut(auth); setAccountMode(false); renderAccount(); };
+onAuthStateChanged(auth, async user => {
+  migrateCart(user);
+  customerProfile = null;
+  if (user && !user.isAnonymous) {
+    try { const s = await getDoc(doc(db, "users", user.uid)); if (auth.currentUser?.uid === user.uid && s.exists()) customerProfile = s.data(); } catch (_) {}
+  }
+  renderAccount();
+});
+
+$c("chatBtn").onclick = cOpenChat;
+$c("chatClose").onclick = cCloseChat;
+$c("chatWho").onchange = e => { cProd = null; cRenderProd(); cSetTarget(e.target.value); };
+$c("chatProdX").onclick = () => { cProd = null; cRenderProd(); };
+document.addEventListener("keydown", e => { if (e.key === "Escape" && cOpen) cCloseChat(); });
+$c("chatText").addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); $c("chatForm").requestSubmit(); } });
+$c("chatNameForm").onsubmit = e => { e.preventDefault(); const n = $c("chatName").value.trim().slice(0, 40); if (!n) return; cLS.set("tk_chat_name", n); cPrepare(); };
+
+function cartProduct(id) { return RAW.find(p=>p.id===id) || REAL.find(p=>p.id===id) || null; }
+function renderCart() {
+  const box=acct("cartLines"); if(!box) return;
+  box.textContent="";
+  let count=0,total=0;
+  cartItems.forEach(item=>{
+    count+=item.qty; const p=cartProduct(item.id), row=document.createElement("div"); row.className="cart-line";
+    if(!p){ row.innerHTML='<div><b>Produk tidak tersedia</b><small>Produk mungkin sudah dihapus dari toko.</small></div>'; }
+    else {
+      const left=document.createElement("div"), title=document.createElement("b"), sub=document.createElement("small");
+      title.textContent=p.name || "Produk Tokoku"; sub.textContent=rp(p.price||0)+" × "+item.qty; left.append(title,sub);
+      const qty=document.createElement("div"); qty.className="cart-qty";
+      const dec=document.createElement("button"); dec.type="button"; dec.textContent="−"; dec.setAttribute("aria-label","Kurangi jumlah"); dec.dataset.cartDec=item.id;
+      const val=document.createElement("b"); val.textContent=item.qty;
+      const inc=document.createElement("button"); inc.type="button"; inc.textContent="+"; inc.setAttribute("aria-label","Tambah jumlah"); inc.dataset.cartInc=item.id;
+      const del=document.createElement("button"); del.type="button"; del.textContent="×"; del.title="Hapus produk"; del.dataset.cartRemove=item.id;
+      qty.append(dec,val,inc,del); row.append(left,qty); total+=Number(p.price||0)*item.qty;
+      if(p.stock!=null && item.qty>p.stock) sub.textContent += " · stok tersedia "+p.stock;
+    }
+    box.append(row);
+  });
+  acct("cartBadge").textContent=count>99?"99+":String(count);
+  acct("cartSubtotal").textContent=rp(total);
+  acct("checkoutBtn").disabled=!cartItems.length;
+  if(!cartItems.length){const empty=document.createElement("p");empty.className="account-note";empty.textContent="Keranjang masih kosong. Tambahkan produk yang ingin dibeli.";box.append(empty);}
+  const addresses=customerAddresses();
+  acct("cartAddress").disabled=!addresses.length;
+}
+function updateCart(id, delta, remove=false) {
+  const p=cartProduct(id), item=cartItems.find(x=>x.id===id);
+  if(remove) cartItems=cartItems.filter(x=>x.id!==id);
+  else if(item){ const next=item.qty+delta; if(next<1) cartItems=cartItems.filter(x=>x.id!==id); else if(next>20) { acct("cartStatus").textContent="Maksimal 20 unit per produk."; return; } else if(p && p.stock!=null && next>p.stock){acct("cartStatus").textContent="Jumlah melebihi stok yang tersedia.";return;} else item.qty=next; }
+  else if(p && delta>0){ if(cartItems.length>=20){acct("cartStatus").textContent="Maksimal 20 jenis produk dalam satu checkout.";return;} if(p.stock!=null && p.stock<1){acct("cartStatus").textContent="Stok produk habis.";return;} cartItems.push({id,qty:1}); }
+  persistCart(); acct("cartStatus").textContent=""; renderCart();
+}
+function addToCart(id, open=true) {
+  const p=cartProduct(id); if(!id || !p){alert("Produk ini belum tersedia untuk dipesan online.");return;}
+  const item=cartItems.find(x=>x.id===id), next=(item?.qty||0)+1;
+  if(next>20 || (p.stock!=null && next>p.stock)){acct("cartStatus").textContent="Jumlah melebihi stok yang tersedia.";acct("cartWin").hidden=false;return;}
+  updateCart(id,1); if(open) acct("cartWin").hidden=false;
+}
+async function checkoutCart(){
+  if(!cartItems.length) return;
+  const user=auth.currentUser;
+  if(!user || user.isAnonymous){acct("cartWin").hidden=true;accountOpen();accountStatus("Masuk atau daftar untuk melanjutkan checkout.");return;}
+  try { const saved=await getDoc(doc(db,"users",user.uid)); customerProfile=saved.exists()?saved.data():null; }
+  catch(_){acct("cartStatus").textContent="Profil belum dapat dimuat. Coba lagi.";return;}
+  const addresses=customerAddresses(), address=addresses.find(a=>a.id===acct("cartAddress").value);
+  if(!address){acct("cartWin").hidden=true;accountOpen();accountStatus("Tambahkan alamat pengiriman sebelum checkout.","addressStatus");return;}
+  const unavailable=cartItems.find(x=>!cartProduct(x.id));
+  if(unavailable){acct("cartStatus").textContent="Hapus produk yang sudah tidak tersedia dari keranjang.";return;}
+  try {
+    const phone=String(CONFIG.waNumber||"").replace(/\D/g,"");
+    if(!/^[0-9]{9,15}$/.test(phone)) throw new Error("Nomor WhatsApp admin belum diatur. Silakan hubungi admin Tokoku.");
+    const rows=cartItems.map(row=>{const p=cartProduct(row.id);return p?{p,qty:row.qty,price:Number(p.price)||0,unit:Number(disc(p))||0}:null;});
+    if(rows.some(x=>!x)) throw new Error("Ada produk yang sudah tidak tersedia. Periksa keranjang lalu coba lagi.");
+    if(rows.some(x=>x.p.stock!=null && x.qty>Number(x.p.stock))) throw new Error("Jumlah salah satu produk melebihi stok. Periksa keranjang lalu coba lagi.");
+    const subtotal=rows.reduce((sum,x)=>sum+x.unit*x.qty,0), original=rows.reduce((sum,x)=>sum+x.price*x.qty,0), discount=Math.max(0,original-subtotal);
+    const addressParts=[address.street,address.rtRw?"RT/RW "+address.rtRw:"",address.village,address.district,address.city,address.province,address.postalCode].filter(Boolean);
+    const fullAddress=addressParts.join(", ") || address.address || "Alamat belum lengkap";
+    const reference="TK-"+Date.now().toString(36).toUpperCase();
+    const lines=[
+      "Halo Admin Tokoku, saya ingin memesan:",
+      "Referensi: "+reference,
+      "Nama: "+(address.name||customerProfile?.name||user.displayName||""),
+      "WhatsApp pelanggan: "+(address.phone||customerProfile?.phone||""),
+      "Email: "+(user.email||"-"), "", "Rincian barang:",
+      ...rows.map(x=>"• "+(x.p.name||"Produk")+(x.p.agentId&&AG[x.p.agentId]?" — Brand "+AG[x.p.agentId].name:"")+" × "+x.qty+" = "+rp(x.unit*x.qty)),
+      "Subtotal: "+rp(original),
+      ...(discount?["Diskon"+(PROMO?.code?" ("+PROMO.code+")":"")+": -"+rp(discount)]:[]),
+      "Total sementara: "+rp(subtotal), "Ongkir: mohon dikonfirmasi admin", "",
+      "Alamat pengiriman ("+(address.label||"Alamat")+"):",
+      (address.name||customerProfile?.name||"")+" / "+(address.phone||customerProfile?.phone||""),
+      fullAddress, address.note?"Catatan kurir: "+address.note:"", "",
+      "Mohon konfirmasi stok, ongkir, total akhir, dan metode pembayaran. Saya akan mengirim bukti transfer di chat ini. Setelah pembayaran diverifikasi, mohon proses pesanan dan transfer hasil penjualan ke brand/mitra sesuai kesepakatan."
+    ].filter(Boolean);
+    acct("cartStatus").textContent="Membuka WhatsApp admin…";
+    location.href="https://wa.me/"+phone+"?text="+encodeURIComponent(lines.join("\n"));
+  } catch(err){acct("cartStatus").textContent=err?.message||"Checkout belum bisa dibuka. Periksa koneksi lalu coba lagi.";}
+}
+acct("cartBtn").onclick=()=>{acct("cartWin").hidden=false;renderCart();};
+acct("cartClose").onclick=()=>{acct("cartWin").hidden=true;};
+acct("cartWin").addEventListener("click",e=>{if(e.target===acct("cartWin"))acct("cartWin").hidden=true;});
+acct("checkoutBtn").onclick=checkoutCart;
+document.addEventListener("click", e=>{
+  const add=e.target.closest("[data-cart-add]"); if(add){updateCart(add.dataset.pid,1);acct("cartWin").hidden=false;return;}
+  const buy=e.target.closest("[data-buy]"); if(buy){addToCart(buy.dataset.pid,true);return;}
+  const inc=e.target.closest("[data-cart-inc]"); if(inc){updateCart(inc.dataset.cartInc,1);return;}
+  const dec=e.target.closest("[data-cart-dec]"); if(dec){updateCart(dec.dataset.cartDec,-1);return;}
+  const rem=e.target.closest("[data-cart-remove]"); if(rem)updateCart(rem.dataset.cartRemove,0,true);
+});
+/* Tombol "Tanya admin" / "Chat penjual": buka chat ke pemilik produk (agen) atau admin, produk terlampir */
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-ask]"); if (!b) return;
+  cProd = b.dataset.pn ? { name: b.dataset.pn, price: Number(b.dataset.pp) || 0 } : null;
+  const t = b.dataset.ag || "admin";
+  if (t !== cTarget) { cTarget = t; cRenderHead(); cListen(); }
+  cOpenChat();
+  const ta = $c("chatText");
+  if (!ta.value) ta.value = cProd ? "Halo, saya mau tanya tentang " + cProd.name + "." : (t === "admin" ? "" : "Halo " + cAgName(t) + ", saya mau bertanya.");
+  cRenderProd(); ta.focus();
+});
+
+$c("chatForm").onsubmit = async e => {
+  e.preventDefault();
+  const ta = $c("chatText"), text = ta.value.trim();
+  if ((!text && !cImg) || !cUser || cSending) return;
+  cSending = true; $c("chatSend").disabled = true;
+  const name = cNameNow() || "Pelanggan", prod = cProd;
+  const msg = { from: "user", text, name, createdAt: serverTimestamp() };
+  if (cImg) msg.img = cImg;
+  if (prod) { msg.prodName = prod.name.slice(0, 120); msg.prodPrice = Number(prod.price) || 0; }
+  ta.value = "";
+  try {
+    if (cTarget === "admin") {
+      await addDoc(collection(db, "chats", cUser.uid, "messages"), msg);
+      await setDoc(doc(db, "chats", cUser.uid), Object.assign(
+        { uid: cUser.uid, name, email: cUser.email || "", lastMsg: (text || "Foto").slice(0, 100), lastFrom: "user", lastAt: serverTimestamp(), unreadAdmin: increment(1), unreadUser: 0 },
+        prod ? { prod: prod.name.slice(0, 120) } : {}), { merge: true });
+    } else {
+      // chat produk milik agen: masuk ke kotak chat agen tersebut
+      await addDoc(collection(db, "agentChats", cCid(), "messages"), msg);
+      await setDoc(doc(db, "agentChats", cCid()), Object.assign(
+        { uid: cUser.uid, agentId: cTarget, agentName: cAgName(cTarget).slice(0, 40), name: name.slice(0, 40), lastMsg: (text || "Foto").slice(0, 100), lastFrom: "user", lastAt: serverTimestamp(), unreadAgent: increment(1), unreadUser: 0 },
+        prod ? { prod: prod.name.slice(0, 120) } : {}), { merge: true });
+    }
+    if (prod) { cProd = null; cRenderProd(); }
+    cImg = ""; cRenderImg();
+  } catch (err) {
+    ta.value = text;
+    const m = document.createElement("div"); m.className = "cempty"; m.textContent = "Pesan gagal terkirim (" + (err.code || err.message) + "). Coba lagi."; $c("chatMsgs").append(m);
+  }
+  cSending = false; $c("chatSend").disabled = false; ta.focus();
 };
 
-/* ---------- Data ---------- */
-function startApp(user){
-  appOn = true;
-  const note = t => e => toast(t + ": " + e.code);
-  unsubs.push(onSnapshot(doc(db, "agentPrivate", user.uid), s => { priv = s.exists() ? s.data() : {}; $("sBank").value = priv.bank || ""; renderAll(); }, note("Data pribadi")));
-  unsubs.push(onSnapshot(query(collection(db, "products"), where("agentId", "==", user.uid)), s => { items = {}; s.forEach(d => items[d.id] = d.data()); renderAll(); }, note("Produk")));
-  unsubs.push(onSnapshot(query(collection(db, "agentOrders"), where("agentId", "==", user.uid)), s => { orders = {}; s.forEach(d => orders[d.id] = d.data()); renderAll(); }, note("Pesanan")));
-  unsubs.push(onSnapshot(query(collection(db, "agentChats"), where("agentId", "==", user.uid)), s => { threads = {}; s.forEach(d => threads[d.id] = d.data()); renderChatList(); markChatRead(); }, note("Chat")));
-  unsubs.push(onSnapshot(collection(db, "categories"), s => { cats = {}; s.forEach(d => cats[d.id] = d.data()); fillCats(); }, () => {}));
-  unsubs.push(onSnapshot(doc(db, "settings", "store"), s => { store = s.exists() ? s.data() : {}; renderAll(); }, () => {}));
-}
-const pctNow = () => Number(priv.commission ?? store.agentCommission ?? 10);
-const cm = o => Math.round((o.total || 0) * Number(o.commissionPct ?? 0) / 100);
-const odate = o => { const t = (o.paid && o.paidAt) || o.createdAt; return t && t.seconds ? new Date(t.seconds * 1000) : new Date(); };
-const ym = d => d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
-const nowYm = () => ym(new Date());
+/* Alihkan percakapan ke WhatsApp (ringkasan chat ikut terkirim) */
+$c("chatWa").onclick = () => {
+  const nm = cNameNow() || "pelanggan", toAg = cTarget !== "admin";
+  const lastProd = cProd || cLast.slice().reverse().find(m => m.prodName);
+  const pr = lastProd ? "Produk: " + (lastProd.name || lastProd.prodName) + ((lastProd.price || lastProd.prodPrice) ? " (" + rp(lastProd.price || lastProd.prodPrice) + ")" : "") + "\n" : "";
+  const rec = cLast.slice(-6).map(m => (m.from === "user" ? "Saya: " : (toAg ? cAgName(cTarget) : "Admin") + ": ") + String(m.text || "[Gambar]").replace(/\s+/g, " ").slice(0, 160)).join("\n");
+  const txt = ("Halo " + (toAg ? cAgName(cTarget) : "Admin Tokoku") + ", saya " + nm + ". Saya lanjutkan chat dari website.\n" + pr + (rec ? "\nRiwayat chat:\n" + rec : "")).slice(0, 1200);
+  if (toAg) return;
+  window.open(wa(txt), "_blank", "noopener");
+};
 
-function renderHead(){
-  const nm = me.name || "Mitra";
-  $("hello").textContent = "Halo, " + (me.owner || nm).split(" ")[0] + "!";
-  $("who").textContent = nm;
-  const av = $("avatar"); av.textContent = isImg(me.logo) ? "" : nm[0].toUpperCase(); av.style.backgroundImage = isImg(me.logo) ? `url("${me.logo}")` : "none";
-  const link = siteBase() + "#agen/" + me.slug;
-  $("myLink").textContent = link; $("hView").href = link; renderAltLinks(link);
-  const lh = $("linkHint"); if (lh) lh.hidden = !(location.protocol === "file:" && !PUBLIC_URL);
-  $("sSlug").value = me.slug;
-  const n = String(store.waNumber || "").replace(/\D/g, ""); $("adminWa").hidden = !n; if (n) $("adminWa").href = "https://wa.me/" + n + "?text=" + encodeURIComponent("Halo admin Tokoku, saya mitra " + nm + ".");
-}
-/* ---------- Link alternatif & bagikan ---------- */
-function renderAltLinks(main){
-  const box = $("altLinks"); if (!box) return; box.textContent = "";
-  const slug = encodeURIComponent(me.slug);
-  const rows = [
-    ["Link tokomu (transaksi tercatat)", pageUrl("tokoku.html") + "?agen=" + slug, "Bagikan tautan ini agar pesanan tercatat pada akun mitramu."]
-  ];
-  rows.forEach(([lb, url, tip]) => {
-    const w = el("div"), l = el("div", "muted", lb); l.style.cssText = "font-weight:600;font-size:.88rem;margin-bottom:4px";
-    const lk = el("div", "linkbox"), c = el("code", "", url);
-    lk.append(c, mkBtn("Salin", async () => { try { await navigator.clipboard.writeText(url); toast("Link disalin"); } catch (e) { prompt("Salin link:", url); } }));
-    const t = el("p", "muted", tip); t.style.cssText = "margin-top:4px;font-size:.82rem";
-    w.append(l, lk, t); box.append(w);
-  });
-  const sh = el("div"), sl = el("div", "muted", "Bagikan toko"); sl.style.cssText = "font-weight:600;font-size:.88rem;margin-bottom:6px";
-  const r = el("div", "row"), enc = encodeURIComponent;
-  if (navigator.share) r.append(mkBtn("Bagikan...", () => navigator.share({ title: me.name, text: promo, url: main }).catch(() => {}), "primary"));
-  r.append(
-    mkBtn("WhatsApp", () => window.open("https://wa.me/?text=" + enc(promo + main), "_blank", "noopener"), navigator.share ? "" : "primary"),
-    mkBtn("Telegram", () => window.open("https://t.me/share/url?url=" + enc(main) + "&text=" + enc(promo), "_blank", "noopener")),
-    mkBtn("Facebook", () => window.open("https://www.facebook.com/sharer/sharer.php?u=" + enc(main), "_blank", "noopener")),
-    mkBtn("X", () => window.open("https://twitter.com/intent/tweet?url=" + enc(main) + "&text=" + enc(promo), "_blank", "noopener")),
-    mkBtn("Kode QR", () => window.open("https://api.qrserver.com/v1/create-qr-code/?size=400x400&margin=12&data=" + enc(main), "_blank", "noopener")),
-    mkBtn("Salin teks promosi", async () => { const t = promo + main; try { await navigator.clipboard.writeText(t); toast("Teks promosi disalin"); } catch (e) { prompt("Salin teks:", t); } }));
-  sh.append(sl, r); box.append(sh);
-}
-$("copyLink").onclick = async () => { try { await navigator.clipboard.writeText($("myLink").textContent); toast("Link disalin"); } catch (e) { toast("Salin manual: tekan lama pada link"); } };
-
-function renderAll(){
-  if (!me || me.status !== "active") return;
-  renderHead(); renderStats(); renderProducts(); renderOrders(); fillProdSelect();
-  $("howPct").textContent = "Komisi untuk Tokoku: " + pct(pctNow()) + " dari setiap penjualan lunas.";
-}
-function renderStats(){
-  const all = Object.values(orders), m = nowYm();
-  const okOrders = all.filter(o => o.paid && o.status !== "Batal");
-  const sales = okOrders.filter(o => ym(odate(o)) === m).reduce((t, o) => t + (o.total || 0), 0);
-  const due = okOrders.filter(o => !o.commissionPaid).reduce((t, o) => t + cm(o), 0);
-  const wait = all.filter(o => !o.paid && o.status !== "Batal").length;
-  const act = Object.values(items).filter(p => p.active !== false && !p.hold).length;
-  const st = $("stats"); st.textContent = "";
-  [["Penjualan lunas bulan ini", rp(sales), "ok"], ["Komisi yang perlu disetor", rp(due), "warn"], ["Menunggu pembayaran", wait, ""], ["Produk tampil", act, ""]]
-    .forEach(([l, v, c]) => { const d = el("div", "stat " + c); d.append(el("b", "", v), el("span", "", l)); st.append(d); });
-}
-
-/* ---------- Gambar ---------- */
-function toImg(file, W, H, cap){
+function toChatImg(file, cap = 260000){
   return new Promise((ok, no) => {
     if (!/^image\//.test(file.type)) return no(new Error("File bukan gambar"));
     const im = new Image(), u = URL.createObjectURL(file);
     im.onload = () => {
-      const c = document.createElement("canvas"); c.width = W; c.height = H;
-      const x = c.getContext("2d"); x.fillStyle = "#fff"; x.fillRect(0, 0, W, H);
-      const r = Math.max(W / im.width, H / im.height), w = im.width * r, h = im.height * r;
-      x.drawImage(im, (W - w) / 2, (H - h) / 2, w, h); URL.revokeObjectURL(u);
-      let q = .85, d = c.toDataURL("image/jpeg", q);
-      while (d.length > cap && q > .4) { q -= .1; d = c.toDataURL("image/jpeg", q); }
-      d.length > cap * 1.25 ? no(new Error("Gambar terlalu besar")) : ok(d);
+      URL.revokeObjectURL(u);
+      for (const mx of [1000, 800, 600, 450]) {
+        const r = Math.min(1, mx / Math.max(im.width, im.height)), w = Math.max(1, Math.round(im.width * r)), h = Math.max(1, Math.round(im.height * r));
+        const cv = document.createElement("canvas"); cv.width = w; cv.height = h;
+        const x = cv.getContext("2d"); x.fillStyle = "#fff"; x.fillRect(0, 0, w, h); x.drawImage(im, 0, 0, w, h);
+        let q = .82, d = cv.toDataURL("image/jpeg", q);
+        while (d.length > cap && q > .4) { q -= .08; d = cv.toDataURL("image/jpeg", q); }
+        if (d.length <= cap) return ok(d);
+      }
+      no(new Error("Gambar terlalu besar"));
     };
-    im.onerror = () => { URL.revokeObjectURL(u); no(new Error("File bukan gambar yang valid")); }; im.src = u;
+    im.onerror = () => { URL.revokeObjectURL(u); no(new Error("File bukan gambar yang valid")); };
+    im.src = u;
   });
 }
+function openLightbox(src){
+  if (!/^data:image\//.test(src)) return;
+  const o = document.createElement("div"); o.className = "clb";
+  const i = document.createElement("img"); i.src = src; i.alt = "Gambar"; o.append(i);
+  o.onclick = () => o.remove(); document.body.append(o);
+}
 
-/* ---------- Produk ---------- */
-function fillCats(){
-  const sel = $("pCat"), v = sel.value; sel.textContent = "";
-  const o0 = el("option", "", "Tanpa kategori"); o0.value = ""; sel.append(o0);
-  Object.keys(cats).filter(id => cats[id].active !== false).sort((a, b) => (cats[a].order || 0) - (cats[b].order || 0))
-    .forEach(id => { const o = el("option", "", (cats[id].icon ? cats[id].icon + " " : "") + cats[id].name); o.value = id; sel.append(o); });
-  sel.value = v;
-}
-const pSetPrev = () => { $("pPrev").style.backgroundImage = pImg ? `url("${pImg}")` : "none"; $("pClr").classList.toggle("hidden", !pImg); };
-$("pFile").onchange = async e => { const f = e.target.files[0]; if (!f) return; try { pImg = await toImg(f, 800, 800, 220000); pSetPrev(); } catch (err) { toast(err.message); e.target.value = ""; } };
-$("pClr").onclick = () => { pImg = ""; $("pFile").value = ""; pSetPrev(); };
-function pReset(){ editId = null; pImg = ""; pSetPrev(); $("pForm").reset(); $("pColor").value = "#B8B2FF"; $("pActive").checked = true; $("pTitle").textContent = "Tambah produk"; $("pSave").textContent = "Simpan produk"; }
-$("pCancel").onclick = pReset;
-function pEdit(id){
-  const p = items[id]; editId = id;
-  $("pName").value = p.name || ""; $("pDesc").value = p.desc || ""; $("pPrice").value = p.price ?? ""; $("pOld").value = p.old || "";
-  $("pTag").value = p.tag || ""; $("pStock").value = p.stock ?? ""; $("pCat").value = p.cat || ""; $("pColor").value = p.color || "#B8B2FF";
-  pImg = p.img || ""; $("pFile").value = ""; pSetPrev(); $("pActive").checked = p.active !== false;
-  $("pTitle").textContent = "Edit produk"; $("pSave").textContent = "Simpan perubahan"; window.scrollTo({ top: 0, behavior: "smooth" });
-}
-$("pForm").onsubmit = async e => {
-  e.preventDefault();
-  const num = id => $(id).value === "" ? null : Number($(id).value);
-  const d = { name: $("pName").value.trim(), desc: $("pDesc").value.trim(), price: Number($("pPrice").value), old: num("pOld") || 0, tag: $("pTag").value.trim(), stock: num("pStock"), cat: $("pCat").value, color: $("pColor").value, img: pImg, active: $("pActive").checked };
-  $("pSave").disabled = true;
-  try {
-    if (editId) await updateDoc(doc(db, "products", editId), d);
-    else await addDoc(collection(db, "products"), { ...d, agentId: me.uid, agentName: me.name, agentSlug: me.slug, hold: false, createdAt: serverTimestamp() });
-    toast(editId ? "Perubahan disimpan" : "Produk ditambahkan"); pReset();
-  } catch (err) { toast("Gagal menyimpan: " + (err.code || err.message)); }
-  $("pSave").disabled = false;
+function cRenderImg(){ $c("chatImgBar").hidden = !cImg; if (cImg) $c("chatImgPrev").src = cImg; }
+$c("chatAttach").onclick = () => $c("chatFile").click();
+$c("chatImgX").onclick = () => { cImg = ""; cRenderImg(); };
+$c("chatFile").onchange = async e => {
+  const f = e.target.files[0]; e.target.value = ""; if (!f) return;
+  try { cImg = await toChatImg(f); cRenderImg(); $c("chatText").focus(); }
+  catch (err) { const m = document.createElement("div"); m.className = "cempty"; m.textContent = err.message + ". Pilih gambar JPG, PNG, atau WebP."; $c("chatMsgs").append(m); $c("chatMsgs").scrollTop = $c("chatMsgs").scrollHeight; }
 };
-function renderProducts(){
-  const l = $("pList"); l.textContent = "";
-  const ids = Object.keys(items).sort((a, b) => (items[b].createdAt?.seconds || 9e9) - (items[a].createdAt?.seconds || 9e9));
-  if (!ids.length) { l.append(el("div", "empty panel", "Belum ada produk. Tambahkan produk pertamamu lewat form di atas.")); return; }
-  ids.forEach(id => {
-    const p = items[id], r = el("div", "item"), sw = el("div", "sw"); sw.style.backgroundColor = p.color || "#ccc"; if (isImg(p.img)) sw.style.backgroundImage = `url("${p.img}")`;
-    const i = el("div"), h = el("h3", "", p.name);
-    if (p.hold) h.append(el("span", "badge", "Diblokir admin")); else if (p.active === false) h.append(el("span", "badge", "Disembunyikan"));
-    i.append(h, el("p", "", rp(p.price) + (p.old > p.price ? " (coret " + rp(p.old) + ")" : "") + " | Stok: " + (p.stock == null ? "tidak dibatasi" : p.stock)));
-    const a = el("div", "row");
-    a.append(mkBtn("Edit", () => pEdit(id)),
-      mkBtn("Stok", async () => { const d = prompt("Tambah atau kurangi stok. Contoh: 10 atau -3", "10"); if (d == null) return; const n = Math.trunc(Number(d)); if (!n) return toast("Angka tidak valid"); if (p.stock == null) return toast("Stok tidak dibatasi. Isi angka stok lewat Edit."); try { await updateDoc(doc(db, "products", id), { stock: increment(n) }); toast("Stok diperbarui"); } catch (err) { toast("Gagal: " + err.code); } }),
-      mkBtn(p.active === false ? "Tampilkan" : "Sembunyikan", () => updateDoc(doc(db, "products", id), { active: p.active === false }).catch(err => toast("Gagal: " + err.code))),
-      mkBtn("Hapus", async () => { if (confirm("Hapus produk \"" + p.name + "\"?")) { try { await deleteDoc(doc(db, "products", id)); toast("Produk dihapus"); } catch (err) { toast("Gagal: " + err.code); } } }, "danger"));
-    r.append(sw, i, a); l.append(r);
-  });
-}
-
-/* ---------- Pesanan ---------- */
-const STATUS = ["Diproses", "Dikirim", "Selesai"];
-function fillProdSelect(){
-  const s = $("oProd"), v = s.value; s.textContent = "";
-  const o0 = el("option", "", "Produk lain (tulis di catatan)"); o0.value = ""; s.append(o0);
-  Object.keys(items).forEach(id => { const o = el("option", "", items[id].name + " (" + rp(items[id].price) + ")"); o.value = id; s.append(o); });
-  if (items[v]) s.value = v;
-}
-function autoTotal(){ const p = items[$("oProd").value]; if (p) $("oTotal").value = p.price * (Number($("oQty").value) || 1); }
-$("oProd").onchange = autoTotal; $("oQty").oninput = autoTotal;
-$("oForm").onsubmit = e => { e.preventDefault(); toast("Pesanan dibuat melalui checkout Tokoku."); };
-async function stockAdj(o, dir){ const p = items[o.pid]; if (o.pid && p && p.stock != null) { try { await updateDoc(doc(db, "products", o.pid), { stock: increment(dir * (o.qty || 1)) }); } catch (e) {} } }
-async function setStatus(id, st){
-  const o = orders[id];
-  if (!o || !o.paid || o.commissionPaid || !STATUS.includes(st)) { renderOrders(); return; }
-  try { await updateDoc(doc(db, "agentOrders", id), { status: st }); toast("Status diubah: " + st); }
-  catch (err) { toast("Gagal: " + (err.code || err.message)); }
-}
-function renderOrders(){
-  const l = $("oList"); l.textContent = "";
-  const f = $("oFilter").value, m = $("oMonth").value;
-  const ids = Object.keys(orders).filter(id => { const o = orders[id]; if (f && o.status !== f) return false; if (m && ym(odate(o)) !== m) return false; return true; })
-    .sort((a, b) => (orders[b].createdAt?.seconds || 9e9) - (orders[a].createdAt?.seconds || 9e9));
-  $("oCount").textContent = ids.length + " pesanan";
-  if (!ids.length) { l.append(el("div", "empty panel", "Belum ada pesanan.")); return; }
-  ids.forEach(id => {
-    const o = orders[id], r = el("div", "item"), sg = el("div", "sw", "x" + o.qty); sg.style.background = "#4A3AFF";
-    const i = el("div"), h = el("h3", "", o.name);
-    h.append(el("span", "badge " + (o.paid ? "ok" : o.status === "Batal" ? "" : "wait"), o.paid ? "Lunas" : o.status === "Batal" ? "Batal" : "Belum bayar"));
-    if (o.commissionPaid) h.append(el("span", "badge ok", "Komisi diterima"));
-    const when = o.createdAt && o.createdAt.seconds ? new Date(o.createdAt.seconds * 1000).toLocaleDateString("id-ID", { day: "numeric", month: "short" }) : "";
-    i.append(h, el("p", "", o.prod + " | " + rp(o.total) + " | Komisi " + rp(cm(o)) + " (" + pct(o.commissionPct) + ")" + (when ? " | " + when : "")));
-    if (o.note) i.append(el("p", "", o.note));
-    const a = el("div", "row"), sel = el("select"); sel.style.width = "auto";
-    if (!STATUS.includes(o.status)) { const current = el("option", "", o.status); current.value = o.status; sel.append(current); }
-    STATUS.forEach(x => { const op = el("option", "", x); op.value = x; sel.append(op); }); sel.value = o.status; sel.disabled = !o.paid || !!o.commissionPaid || o.status === "Batal"; sel.onchange = () => setStatus(id, sel.value);
-    a.append(sel);
-    r.append(sg, i, a); l.append(r);
-  });
-}
-$("oFilter").onchange = renderOrders; $("oMonth").onchange = renderOrders;
-
-/* ---------- Profil ---------- */
-function fillProfile(force){
-  if (!force && $("sName").dataset.f) return; $("sName").dataset.f = "1";
-  $("sName").value = me.name || ""; $("sOwner").value = me.owner || ""; $("sWa").value = me.wa || ""; $("sColor").value = safeColor(me.color); $("sDesc").value = me.desc || "";
-  sLogo = isImg(me.logo) ? me.logo : ""; sSetPrev();
-}
-const sSetPrev = () => { $("sPrev").style.backgroundImage = sLogo ? `url("${sLogo}")` : "none"; $("sClr").classList.toggle("hidden", !sLogo); };
-$("sFile").onchange = async e => { const f = e.target.files[0]; if (!f) return; try { sLogo = await toImg(f, 240, 240, 40000); sSetPrev(); } catch (err) { toast(err.message); e.target.value = ""; } };
-$("sClr").onclick = () => { sLogo = ""; $("sFile").value = ""; sSetPrev(); };
-$("sForm").onsubmit = async e => {
-  e.preventDefault();
-  const wa = cleanWa($("sWa").value); if (!/^[0-9]{9,15}$/.test(wa)) return toast("Nomor WhatsApp tidak valid");
-  try {
-    await updateDoc(doc(db, "agents", me.uid), { name: $("sName").value.trim(), owner: $("sOwner").value.trim(), wa, color: $("sColor").value, desc: $("sDesc").value.trim(), logo: sLogo });
-    await updateDoc(doc(db, "agentPrivate", me.uid), { bank: $("sBank").value.trim() });
-    toast("Profil disimpan");
-  } catch (err) { toast("Gagal menyimpan: " + (err.code || err.message)); }
-};
+document.querySelectorAll("[data-android-app]").forEach(a => { a.hidden = !/Android/i.test(navigator.userAgent); });
 </script>
 </body>
 </html>
