@@ -390,7 +390,7 @@ header nav{display:grid;grid-template-columns:1fr auto 1fr}
         <div class="row"><button class="btn btn-primary" type="submit">Simpan alamat</button><button class="btn btn-ghost" id="cancelAddress" type="button">Batal</button></div>
         <p class="account-status" id="addressStatus" role="status"></p>
       </form>
-      <h3 style="margin-top:22px">Pesanan saya</h3><div class="account-orders" id="accountOrders"><p class="account-note">Memuat pesanan…</p></div>
+      <h3 style="margin-top:22px">Riwayat pesanan</h3><p class="account-note">Pesanan baru dikirim lewat WhatsApp admin. Simpan chat sebagai bukti; riwayat WhatsApp tidak otomatis tampil di sini.</p><div class="account-orders" id="accountOrders"><p class="account-note">Memuat pesanan…</p></div>
       <button class="btn btn-ghost" id="accountSignOut" type="button">Keluar dari akun</button>
     </div>
   </div>
@@ -401,9 +401,9 @@ header nav{display:grid;grid-template-columns:1fr auto 1fr}
     <div class="account-head"><h2 id="cartTitle">Keranjang belanja</h2><button class="account-close" id="cartClose" type="button" aria-label="Tutup keranjang">&times;</button></div>
     <div class="cart-lines" id="cartLines"></div>
     <div class="cart-total"><span>Subtotal produk</span><span id="cartSubtotal">Rp0</span></div>
-    <p class="account-note">Ongkir dikonfirmasi admin setelah kurir dan tujuan diperiksa.</p>
+    <p class="account-note">Pesanan dikirim ke WhatsApp admin. Admin mengonfirmasi stok, ongkir, dan pembayaran.</p>
     <label class="account-form" style="margin:10px 0">Alamat tujuan<select id="cartAddress" style="width:100%;padding:12px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);font:inherit"></select></label>
-    <button class="btn btn-primary" id="checkoutBtn" type="button" style="width:100%">Lanjut checkout</button>
+    <button class="btn btn-primary" id="checkoutBtn" type="button" style="width:100%">Pesan lewat WhatsApp admin</button>
     <p class="account-status" id="cartStatus" role="status"></p>
   </div>
 </section>
@@ -521,8 +521,8 @@ header nav{display:grid;grid-template-columns:1fr auto 1fr}
     <div class="wrap">
       <div class="head"><h2>Pertanyaan yang sering muncul</h2></div>
       <div class="faq">
-        <details><summary>Bagaimana cara memesan?</summary><p>Klik tombol Pesan pada produk, kirim pesan WhatsApp yang sudah terisi, lalu admin akan mengonfirmasi stok dan total pembayaran.</p></details>
-        <details><summary>Metode pembayaran apa saja?</summary><p>Transfer bank, e-wallet, dan QRIS. Detailnya dikirim admin setelah pesanan dikonfirmasi.</p></details>
+        <details><summary>Bagaimana cara memesan?</summary><p>Masukkan produk ke keranjang, pilih alamat, lalu tekan Pesan lewat WhatsApp admin. Admin akan mengecek stok dan ongkir, kemudian mengirim total akhir serta cara pembayaran lewat chat.</p></details>
+        <details><summary>Bagaimana pembayaran dan pengiriman dana ke brand?</summary><p>Transfer hanya dilakukan setelah admin mengirim total dan rekening/QRIS resmi. Kirim bukti transfer lewat WhatsApp. Admin memeriksa pembayaran, memproses pesanan, lalu menyelesaikan transfer hasil penjualan kepada brand/mitra sesuai kesepakatan.</p></details>
         <details><summary>Berapa lama pengiriman?</summary><p>Pesanan diproses 1 hari kerja. Estimasi tiba 2 sampai 5 hari tergantung kota tujuan.</p></details>
         <details><summary>Apakah bisa retur?</summary><p>Bisa dalam 7 hari setelah barang diterima, selama kondisi barang sesuai syarat retur kami.</p></details>
       </div>
@@ -1235,32 +1235,34 @@ async function checkoutCart(){
   if(!address){acct("cartWin").hidden=true;accountOpen();accountStatus("Tambahkan alamat pengiriman sebelum checkout.","addressStatus");return;}
   const unavailable=cartItems.find(x=>!cartProduct(x.id));
   if(unavailable){acct("cartStatus").textContent="Hapus produk yang sudah tidak tersedia dari keranjang.";return;}
-  const oldText=acct("checkoutBtn").textContent; acct("checkoutBtn").disabled=true;acct("checkoutBtn").textContent="Mencatat pesanan…";
   try {
-    const slugMatch=location.hash.match(/^#agen\/([a-z0-9-]+)/i);
-    const idToken=await user.getIdToken();
-    const response=await fetch("/api/create-order",{method:"POST",headers:{"content-type":"application/json","authorization":"Bearer "+idToken},body:JSON.stringify({items:cartItems.map(x=>({pid:x.id,qty:x.qty})),addressId:address.id,referralSlug:slugMatch?slugMatch[1].toLowerCase():"",promoCode:PROMO?.code||""})});
-    const data=await response.json().catch(()=>({}));
-    if(!response.ok){const error=new Error(data.message||"Checkout gagal.");error.code=data.error||"checkout-failed";throw error;}
-    const rows=data.orders||[];
-    cartItems=[];persistCart();renderCart();acct("cartWin").hidden=true;
-    alert("Pesanan berhasil dibuat. "+rows.map(x=>"#"+(x.orderCode||"")+" "+rp(x.total||0)).join(" · ")+". Ongkir dan pembayaran akan dikonfirmasi admin Tokoku.");
-    accountOpen();
-  } catch(err){
-    console.warn("Checkout Tokoku gagal:",err);
-    const code=String(err?.code||"").replace(/^functions\//,"");
-    const hints={
-      unauthenticated:"Sesi login tidak aktif. Keluar lalu masuk kembali ke akun pelanggan.",
-      "failed-precondition":"Alamat atau produk belum terbaca oleh server. Simpan ulang alamat dan pastikan API checkout Vercel sudah dipasang.",
-      "permission-denied":"Akses checkout ditolak. Periksa Firestore Rules yang sudah dipublikasikan.",
-      "not-found":"Salah satu produk sudah tidak tersedia.",
-      "resource-exhausted":"Layanan pesanan sedang sibuk. Coba lagi sebentar.",
-      internal:"Checkout gagal di server. Kode laporan: "+(err?.message||code),
-      unavailable:"Layanan pesanan tidak terhubung. Periksa internet dan coba lagi."
-    };
-    acct("cartStatus").textContent=hints[code] || (err?.message ? err.message+" ("+(code||"error")+")" : "Pesanan gagal dicatat. Kode: "+(code||"tidak diketahui"));
-  }
-  finally{acct("checkoutBtn").disabled=!cartItems.length;acct("checkoutBtn").textContent=oldText;}
+    const phone=String(CONFIG.waNumber||"").replace(/\D/g,"");
+    if(!/^[0-9]{9,15}$/.test(phone)) throw new Error("Nomor WhatsApp admin belum diatur. Silakan hubungi admin Tokoku.");
+    const rows=cartItems.map(row=>{const p=cartProduct(row.id);return p?{p,qty:row.qty,price:Number(p.price)||0,unit:Number(disc(p))||0}:null;});
+    if(rows.some(x=>!x)) throw new Error("Ada produk yang sudah tidak tersedia. Periksa keranjang lalu coba lagi.");
+    if(rows.some(x=>x.p.stock!=null && x.qty>Number(x.p.stock))) throw new Error("Jumlah salah satu produk melebihi stok. Periksa keranjang lalu coba lagi.");
+    const subtotal=rows.reduce((sum,x)=>sum+x.unit*x.qty,0), original=rows.reduce((sum,x)=>sum+x.price*x.qty,0), discount=Math.max(0,original-subtotal);
+    const addressParts=[address.street,address.rtRw?"RT/RW "+address.rtRw:"",address.village,address.district,address.city,address.province,address.postalCode].filter(Boolean);
+    const fullAddress=addressParts.join(", ") || address.address || "Alamat belum lengkap";
+    const reference="TK-"+Date.now().toString(36).toUpperCase();
+    const lines=[
+      "Halo Admin Tokoku, saya ingin memesan:",
+      "Referensi: "+reference,
+      "Nama: "+(address.name||customerProfile?.name||user.displayName||""),
+      "WhatsApp pelanggan: "+(address.phone||customerProfile?.phone||""),
+      "Email: "+(user.email||"-"), "", "Rincian barang:",
+      ...rows.map(x=>"• "+(x.p.name||"Produk")+(x.p.agentId&&AG[x.p.agentId]?" — Brand "+AG[x.p.agentId].name:"")+" × "+x.qty+" = "+rp(x.unit*x.qty)),
+      "Subtotal: "+rp(original),
+      ...(discount?["Diskon"+(PROMO?.code?" ("+PROMO.code+")":"")+": -"+rp(discount)]:[]),
+      "Total sementara: "+rp(subtotal), "Ongkir: mohon dikonfirmasi admin", "",
+      "Alamat pengiriman ("+(address.label||"Alamat")+"):",
+      (address.name||customerProfile?.name||"")+" / "+(address.phone||customerProfile?.phone||""),
+      fullAddress, address.note?"Catatan kurir: "+address.note:"", "",
+      "Mohon konfirmasi stok, ongkir, total akhir, dan metode pembayaran. Saya akan mengirim bukti transfer di chat ini. Setelah pembayaran diverifikasi, mohon proses pesanan dan transfer hasil penjualan ke brand/mitra sesuai kesepakatan."
+    ].filter(Boolean);
+    acct("cartStatus").textContent="Membuka WhatsApp admin…";
+    location.href="https://wa.me/"+phone+"?text="+encodeURIComponent(lines.join("\n"));
+  } catch(err){acct("cartStatus").textContent=err?.message||"Checkout belum bisa dibuka. Periksa koneksi lalu coba lagi.";}
 }
 acct("cartBtn").onclick=()=>{acct("cartWin").hidden=false;renderCart();};
 acct("cartClose").onclick=()=>{acct("cartWin").hidden=true;};
